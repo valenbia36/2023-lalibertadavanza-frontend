@@ -10,7 +10,7 @@ const Home = () => {
         <img src={logo} className="Home-logo" alt="logo" />
         <p>
           <h1><code>HeliApp</code></h1>
-          <Button href='/Login' size="small" variant="contained" style={{marginRight: "10%"}}>Login</Button>
+          <Button href='/Login' size="small" variant="contained">Login</Button>
           <Button href='/SignUp' size="small" variant="contained">Sign up</Button>
         </p>
       </header>
