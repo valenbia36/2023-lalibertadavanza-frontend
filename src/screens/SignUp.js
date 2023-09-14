@@ -12,8 +12,6 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel } from '@mui/material';
 
-import '../styles/SignUp.css';
-
 const defaultTheme = createTheme();
 
 const SignUp = () => {
@@ -69,7 +67,7 @@ const SignUp = () => {
           <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
             <LockOutlinedIcon />
           </Avatar>
-          <Typography component="h1" variant="h5">
+          <Typography component="h1" variant="h5" style={{color: 'black'}}>
             Sign up
           </Typography>
           <Box sx={{ mt: 3 }}>
@@ -83,10 +81,10 @@ const SignUp = () => {
               id="firstName"
               label="First Name"
               InputLabelProps={{
-                style: { color: 'white' },
+                style: { color: 'black' },
               }}
               InputProps={{
-                style: { color: 'white' },
+                style: { color: 'black' },
               }}
               autoFocus
               onChange={(e) => setUser({...user, firstName: e.target.value})} 
@@ -102,10 +100,10 @@ const SignUp = () => {
               name="lastName"
               autoComplete="family-name"
               InputLabelProps={{
-                style: { color: 'white' },
+                style: { color: 'black' },
               }}
               InputProps={{
-                style: { color: 'white' },
+                style: { color: 'black' },
               }}
               onChange={(e) => setUser({...user, lastName: e.target.value})} 
               onKeyPress={event => { if (event.key === 'Enter') { handleRegister() } }}
@@ -120,10 +118,10 @@ const SignUp = () => {
               name="email"
               autoComplete="email"
               InputLabelProps={{
-                style: { color: 'white' },
+                style: { color: 'black' },
               }}
               InputProps={{
-                style: { color: 'white' },
+                style: { color: 'black' },
               }}
               onChange={(e) => setUser({...user, email: e.target.value})} 
               onKeyPress={event => { if (event.key === 'Enter') { handleRegister() } }}
@@ -139,10 +137,10 @@ const SignUp = () => {
               id="password"
               autoComplete="new-password"
               InputLabelProps={{
-                style: { color: 'white' },
+                style: { color: 'black' },
               }}
               InputProps={{
-                style: { color: 'white' },
+                style: { color: 'black' },
               }}
               onChange={(e) => setUser({...user, password: e.target.value})} 
               onKeyPress={event => { if (event.key === 'Enter') { handleRegister() } }}
@@ -157,10 +155,10 @@ const SignUp = () => {
               name="age"
               type="number"
               InputLabelProps={{
-                style: { color: 'white' },
+                style: { color: 'black' },
               }}
               InputProps={{
-                style: { color: 'white', min: 0},
+                style: { color: 'black', min: 0},
               }}
               onChange={(e) => setUser({...user, age: e.target.value})} 
               onKeyPress={event => { if (event.key === 'Enter') { handleRegister() } }}
@@ -168,7 +166,7 @@ const SignUp = () => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <FormControl>
-              <FormLabel style={{ color: 'white' }}>Sex</FormLabel>
+              <FormLabel style={{ color: 'black' }}>Sex</FormLabel>
               <FormGroup row>
                 <FormControlLabel
                   control={
@@ -176,12 +174,12 @@ const SignUp = () => {
                       name="sex"
                       value="male"
                       color="primary"
-                      style={{ color: 'white' }}
+                      style={{ color: 'black' }}
                       onChange={(e) => setUser({...user, sex: 'male'})} 
                     />
                   }
                   label="Male"
-                  style={{ color: 'white' }}
+                  style={{ color: 'black' }}
                 />
                 <FormControlLabel
                   control={
@@ -189,12 +187,12 @@ const SignUp = () => {
                       name="sex"
                       value="female"
                       color="primary"
-                      style={{ color: 'white' }}
+                      style={{ color: 'black' }}
                       onChange={(e) => setUser({...user, sex: 'female'})} 
                     />
                   }
                   label="Female"
-                  style={{ color: 'white' }}
+                  style={{ color: 'black' }}
                 />
               </FormGroup>
             </FormControl>
@@ -208,11 +206,11 @@ const SignUp = () => {
               name="height"
               type="number"
               InputLabelProps={{
-                style: { color: 'white' },
+                style: { color: 'black' },
               }}
               InputProps={{
                 style: { 
-                  color: 'white',
+                  color: 'black',
                   min: 0 
                 }
               }}
@@ -229,11 +227,11 @@ const SignUp = () => {
               name="weight"
               type="number"
               InputLabelProps={{
-                style: { color: 'white' },
+                style: { color: 'black' },
               }}
               InputProps={{
                 style: { 
-                  color: 'white',
+                  color: 'black',
                   min: 0 
                 }
               }}

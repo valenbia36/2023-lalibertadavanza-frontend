@@ -8,7 +8,6 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const defaultTheme = createTheme();
@@ -52,11 +51,31 @@ const Login = () => {
   
   return(
     <ThemeProvider theme={defaultTheme}>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
+    <Grid container component="main" sx={{ height: '100vh' }}>
+      <CssBaseline />
+      <Grid
+        item
+        xs={false}
+        sm={4}
+        md={7}
+        sx={{
+          backgroundImage: 'url(https://img.freepik.com/foto-gratis/lay-flat-delicioso-concepto-comida-sana_23-2148648502.jpg?w=1380&t=st=1694729010~exp=1694729610~hmac=8f6349b5b92090526d1bd3acdd7e87d04fcd5b2bb1ab6d30f326c790dc75de66)',
+          backgroundRepeat: 'no-repeat',
+          backgroundColor: (t) =>
+            t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      />
+      <Grid item xs={12} sm={8} md={5} style={{backgroundColor: '#CAD2C5'}} elevation={6} square>
+        <div style={{justifyContent: 'center', textAlign: 'center', color: 'black'}}>
+          <h1><code>HeliApp</code></h1>
+        </div>
+        
         <Box
           sx={{
-            marginTop: 8,
+            my: 8,
+            mx: 4,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -65,7 +84,7 @@ const Login = () => {
           <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
             <LockOutlinedIcon />
           </Avatar>
-          <Typography component="h1" variant="h5">
+          <Typography component="h1" variant="h5" style={{color: 'black'}}>
             Sign in
           </Typography>
           <Box sx={{ mt: 1 }}>
@@ -79,10 +98,10 @@ const Login = () => {
               autoComplete="email"
               autoFocus
               InputLabelProps={{
-                style: { color: 'white' },
+                style: { color: 'black'},
               }}
               InputProps={{
-                style: { color: 'white', min: 0},
+                style: { color: 'color', min: 0},
               }}
               onChange={(e) => setUser({...user, email: e.target.value})} 
               onKeyPress={event => { if (event.key === 'Enter') { handleLogin() } }}
@@ -97,10 +116,10 @@ const Login = () => {
               id="password"
               autoComplete="current-password"
               InputLabelProps={{
-                style: { color: 'white' },
+                style: { color: 'black' },
               }}
               InputProps={{
-                style: { color: 'white', min: 0},
+                style: { color: 'black', min: 0},
               }}
               onChange={(e) => setUser({...user, password: e.target.value})} 
               onKeyPress={event => { if (event.key === 'Enter') { handleLogin() } }}
@@ -116,7 +135,7 @@ const Login = () => {
             </Button>
             <Grid container justifyContent="center">
               {errorMessage && <p style={{color: 'red', fontSize: '14px', justifyContent: 'center', textAlign: 'center'}}>Please review your input. There are errors in one or more fields.</p>}
-              <Grid item>
+              <Grid item style={{justifyContent: 'center'}}>
                 <Link href="/SignUp" variant="body2">
                   {"Don't have an account? Sign Up"}
                 </Link>
@@ -124,8 +143,9 @@ const Login = () => {
             </Grid>
           </Box>
         </Box>
-      </Container>
-    </ThemeProvider>
+      </Grid>
+    </Grid>
+  </ThemeProvider>
   );
 }
 
