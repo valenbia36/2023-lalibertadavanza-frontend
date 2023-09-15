@@ -16,8 +16,10 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import SettingsIcon from '@mui/icons-material/Settings';
+import LogoutIcon from '@mui/icons-material/Logout';
+import Notifications from "./Notifications"
 
 const drawerWidth = 240;
 
@@ -77,6 +79,7 @@ export default function PersistentDrawerLeft({user}) {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+  const icons = [<AccountBoxIcon /> ,<SettingsIcon/>,<LogoutIcon/>]
 
   return (
     <Box sx={{ display: 'flex'}}>
@@ -95,6 +98,20 @@ export default function PersistentDrawerLeft({user}) {
           <Typography variant="h6" noWrap component="div">
             {"Hi " + user + "!"}
           </Typography>
+          <Box sx={{
+      position: 'fixed',
+      zIndex: 9999,
+      top: 10,
+      right: 40,
+      '@media (max-width: 600px)': {
+        // Adjust the positioning for smaller screens
+        right: '20px',
+        display:'flex',
+        ...(open && {display:'none'})
+      },
+    }}>
+        <Notifications badgeContent={4} />
+      </Box>
         </Toolbar>
       </AppBar>
       <Drawer
@@ -121,7 +138,7 @@ export default function PersistentDrawerLeft({user}) {
             <ListItem key={text} disablePadding>
               <ListItemButton>
                 <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                  {icons[index]}
                 </ListItemIcon>
                 <ListItemText primary={text} />
               </ListItemButton>

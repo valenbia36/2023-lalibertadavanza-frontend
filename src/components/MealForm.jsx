@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { TextField, Button } from '@mui/material';
+import Autocomplete  from './Autocomplete/Autocomplete'
 
 const FoodForm = ({ onAddFood }) => {
   const [newFood, setNewFood] = useState({ name: '', category: '' });
@@ -22,6 +23,7 @@ const FoodForm = ({ onAddFood }) => {
         value={newFood.name}
         onChange={(e) => setNewFood({ ...newFood, name: e.target.value })}
       />
+      <Autocomplete/>
       <TextField
         label="Date"
         variant="outlined"
