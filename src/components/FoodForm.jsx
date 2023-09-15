@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, {  useState } from 'react';
 import { TextField, Button,Modal,
   Box, } from '@mui/material';
-import Autocomplete  from './Autocomplete/Autocomplete'
 
 const FoodForm = ({open,setOpen}) => {
   const [newFood, setNewFood] = useState({ name: '', calories: '' });
