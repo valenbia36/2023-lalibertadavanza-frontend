@@ -15,7 +15,7 @@ const FoodForm = ({ onAddFood }) => {
   return (
     <div>
       <TextField
-        label="Nombre"
+        label="Name"
         variant="outlined"
         fullWidth
         margin="normal"
@@ -23,7 +23,15 @@ const FoodForm = ({ onAddFood }) => {
         onChange={(e) => setNewFood({ ...newFood, name: e.target.value })}
       />
       <TextField
-        label="Categoría"
+        label="Date"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+        value={newFood.category}
+        onChange={(e) => setNewFood({ ...newFood, category: e.target.value })}
+      />
+      <TextField
+        label="Hour"
         variant="outlined"
         fullWidth
         margin="normal"
@@ -34,6 +42,7 @@ const FoodForm = ({ onAddFood }) => {
         variant="contained"
         color="primary"
         onClick={handleAddFood}
+        sx={{ mt: 3, mb: 2, backgroundColor: '#373D20', '&:hover': {backgroundColor: '#373D20'}, fontWeight: 'bold' }}
         fullWidth
       >
         Agregar

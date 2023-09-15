@@ -68,10 +68,11 @@ const Login = () => {
         }}
       />
       <Grid item xs={12} sm={8} md={5} style={{backgroundColor: '#CAD2C5'}} elevation={6} square>
-        <div style={{justifyContent: 'center', textAlign: 'center', color: 'black'}}>
-          <h1><code>HeliApp</code></h1>
+        <div style={{justifyContent: 'center', textAlign: 'center', color: 'black', marginTop: '10%'}}>
+        <Typography variant="h3" color="inherit" noWrap>
+          HELIAPP
+          </Typography>        
         </div>
-        
         <Box
           sx={{
             my: 8,
@@ -84,7 +85,7 @@ const Login = () => {
           <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
             <LockOutlinedIcon />
           </Avatar>
-          <Typography component="h1" variant="h5" style={{color: 'black'}}>
+          <Typography component="h1" variant="h5" style={{color: 'black', fontWeight: 'bold'}}>
             Sign in
           </Typography>
           <Box sx={{ mt: 1 }}>
@@ -128,7 +129,7 @@ const Login = () => {
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mt: 3, mb: 2, backgroundColor: '#373D20', '&:hover': {backgroundColor: '#373D20'}, fontWeight: 'bold' }}
               onClick={() => handleLogin()}
             >
               Sign In
@@ -136,7 +137,7 @@ const Login = () => {
             <Grid container justifyContent="center">
               {errorMessage && <p style={{color: 'red', fontSize: '14px', justifyContent: 'center', textAlign: 'center'}}>Please review your input. There are errors in one or more fields.</p>}
               <Grid item style={{justifyContent: 'center'}}>
-                <Link href="/SignUp" variant="body2">
+                <Link href="/SignUp" variant="body2" sx={{color: 'black'}}>
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>

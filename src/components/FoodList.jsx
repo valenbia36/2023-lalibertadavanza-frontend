@@ -16,7 +16,7 @@ import FoodForm from './FoodForm'
 import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
 
 const FoodList = () => {
-  const [foods, setFoods] = useState(["Carne con papas"]);
+  const [foods, setFoods] = useState([{name: "Carne con papas", day: "12-09-2023", hour: "23:00"}]);
   const [newFood, setNewFood] = useState({ name: '', category: '' });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => {
@@ -43,21 +43,24 @@ const FoodList = () => {
   }; 
 
   return (
-    <div style={{ textAlign: 'center', marginTop: '10px' }}> 
-      <h2>Lista de Comidas</h2>
+    <div style={{ textAlign: 'center', marginTop: '10px', color: 'black' }}> 
+      <h2>Food Table</h2>
       <div style={{ display: 'flex', justifyContent: 'center'}}>
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Nombre</TableCell>
-                <TableCell>Categoría</TableCell>
+                <TableCell sx={{textAlign: 'center'}}>Name</TableCell>
+                <TableCell sx={{textAlign: 'center'}}>Day</TableCell>
+                <TableCell sx={{textAlign: 'center'}}>Hour</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {foods.map((food) => (
                 <TableRow key={food.id}>
-                  <TableCell>{food.name}</TableCell>
+                  <TableCell sx={{textAlign: 'center'}}>{food.name}</TableCell>
+                  <TableCell sx={{textAlign: 'center'}}>{food.day}</TableCell>
+                  <TableCell sx={{textAlign: 'center'}}>{food.hour}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -82,9 +85,6 @@ const FoodList = () => {
           p: 4,
         }}
       >
-        <Typography id="modal-title" variant="h6" component="div">
-          Agregar Comida
-        </Typography>
         <FoodForm onAddFood={handleAddFood} />
       </Box>
     </Modal>

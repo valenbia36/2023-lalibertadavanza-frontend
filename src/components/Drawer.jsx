@@ -81,7 +81,7 @@ export default function PersistentDrawerLeft({user}) {
   return (
     <Box sx={{ display: 'flex'}}>
       <CssBaseline />
-      <AppBar position="fixed" open={open}>
+      <AppBar position="fixed" open={open} style={{backgroundColor: '#373D20'}}>
         <Toolbar>
           <IconButton
             color="inherit"
@@ -93,7 +93,7 @@ export default function PersistentDrawerLeft({user}) {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            {"Hola "+user+"!"}
+            {"Hi " + user + "!"}
           </Typography>
         </Toolbar>
       </AppBar>
@@ -117,7 +117,7 @@ export default function PersistentDrawerLeft({user}) {
         </DrawerHeader>
         <Divider />
         <List>
-          {['My Profile', 'Setting', 'Logout'].map((text, index) => (
+          {['My Profile', 'Settings', 'Logout'].map((text, index) => (
             <ListItem key={text} disablePadding>
               <ListItemButton>
                 <ListItemIcon>

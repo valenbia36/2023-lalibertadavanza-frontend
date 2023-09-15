@@ -44,7 +44,7 @@ const SignUp = () => {
           body: JSON.stringify(user)
       }).then(function(response) {
           if(response.status === 200){
-              window.location.replace('/login');
+              window.location.replace('/');
           }
           else{
               setErrorMessage(true);
@@ -67,7 +67,7 @@ const SignUp = () => {
           <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
             <LockOutlinedIcon />
           </Avatar>
-          <Typography component="h1" variant="h5" style={{color: 'black'}}>
+          <Typography component="h1" variant="h5" style={{color: 'black', fontWeight: 'bold' }}>
             Sign up
           </Typography>
           <Box sx={{ mt: 3 }}>
@@ -244,7 +244,7 @@ const SignUp = () => {
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mt: 3, mb: 2, backgroundColor: '#373D20', '&:hover': {backgroundColor: '#373D20'}, fontWeight: 'bold' }}
               onClick={handleRegister}
             >
               Sign Up
@@ -252,7 +252,7 @@ const SignUp = () => {
             {errorMessage && <p style={{color: 'red', fontSize: '14px', justifyContent: 'center', textAlign: 'center'}}>Please review your input. There are errors in one or more fields.</p>}
             <Grid container justifyContent="center">
               <Grid item>
-                <Link href='/Login' variant="body2">
+                <Link href='/' variant="body2" sx={{color: 'black'}}>
                   Already have an account? Sign in
                 </Link>
               </Grid>
