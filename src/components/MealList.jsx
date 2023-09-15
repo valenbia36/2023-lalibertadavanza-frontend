@@ -15,7 +15,7 @@ import {
 import MealForm from './MealForm'
 import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
 
-const FoodList = () => {
+const MealList = () => {
   const [meals, setMeals] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const getMeals = async () => {
@@ -73,4 +73,4 @@ const FoodList = () => {
   );
 };
 
-export default FoodList;
+export default MealList;
