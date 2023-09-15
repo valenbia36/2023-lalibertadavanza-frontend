@@ -12,85 +12,60 @@ import {
   Typography,
   IconButton,
 } from '@mui/material';
-import FoodForm from './MealForm'
+import MealForm from './MealForm'
 import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
 
 const FoodList = () => {
-  const [foods, setFoods] = useState([{name: "Carne con papas", day: "12-09-2023", hour: "23:00"}]);
-  const [newFood, setNewFood] = useState({ name: '', category: '' });
+  const [meals, setMeals] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-   /*useEffect(() => {
-    fetch('http://localhost:3001/api/auth/login'
-      .then((response) => {
-        setFoods(response.data);
-      })
-      .catch((error) => {
-        console.error('Error al cargar los alimentos:', error);
+  const getMeals = async () => {
+      const response = await fetch('http://localhost:3001/api/meals/', {
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + localStorage.getItem('token')
+        }
       });
-  }, []);*/
+      const data = await response.json();
+      setMeals(data.data);
+  }
+  useEffect(() => {
+      getMeals();
+  }, [meals]);
 
-  const handleAddFood = () => {
-    //setFoods([...foods, response.data]);
-    setNewFood({ name: '', category: '' });
-    closeModal();
-      
-  }; 
 
   return (
     <div style={{ textAlign: 'center', marginBottom: '250px', color: 'black'}}> 
-      <h2>Food Table</h2>
+      <h2>Meals Table</h2>
       <div style={{ display: 'flex', justifyContent: 'flex-start', maxWidth:'100%',}}>
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
               <TableRow>
                 <TableCell sx={{textAlign: 'center'}}>Name</TableCell>
-                <TableCell sx={{textAlign: 'center'}}>Day</TableCell>
+                <TableCell sx={{textAlign: 'center'}}>Date</TableCell>
                 <TableCell sx={{textAlign: 'center'}}>Hour</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {foods.map((food) => (
-                <TableRow key={food.id}>
-                  <TableCell sx={{textAlign: 'center'}}>{food.name}</TableCell>
-                  <TableCell sx={{textAlign: 'center'}}>{food.day}</TableCell>
-                  <TableCell sx={{textAlign: 'center'}}>{food.hour}</TableCell>
+              {meals.map((meal) => (
+                <TableRow key={meal.id}>
+                  <TableCell sx={{textAlign: 'center'}}>{meal.name}</TableCell>
+                  <TableCell sx={{textAlign: 'center'}}>{meal.createdAt}</TableCell>
+                  <TableCell sx={{textAlign: 'center'}}>{meal.hour}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
       </div>
-      <Modal
-      open={isModalOpen}
-      onClose={closeModal}
-      aria-labelledby="modal-title"
-      aria-describedby="modal-description"
-    >
-      <Box
-        sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 400,
-          bgcolor: 'background.paper',
-          boxShadow: 24,
-          p: 4,
-        }}
-      >
-        <FoodForm onAddFood={handleAddFood} />
-      </Box>
-    </Modal>
+      
+      <React.Fragment>
+        <MealForm  open={isModalOpen} setOpen={setIsModalOpen}/>
+      </React.Fragment >
       <IconButton
         color="primary"
-        onClick={openModal}
+        onClick={()=> {setIsModalOpen(true)}}
       >
         <AddCircleRoundedIcon />
       </IconButton>

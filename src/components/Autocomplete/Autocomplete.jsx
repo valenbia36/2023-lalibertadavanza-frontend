@@ -2,8 +2,7 @@ import * as React from 'react';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Autocomplete from '@mui/material/Autocomplete';
-import SelectSmall from './Quantity';
-import { Box } from '@mui/material';
+import QuantityInput from './Quantity';
 
 export default function FreeSolo() {
   return (
@@ -28,7 +27,7 @@ export default function FreeSolo() {
         />
       </Grid>
       <Grid item xs={6}>
-        <SelectSmall />
+        <QuantityInput  />
       </Grid>
     </Grid>
 
