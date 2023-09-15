@@ -7,9 +7,6 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Modal,
-  Box,
-  Typography,
   IconButton,
 } from '@mui/material';
 import MealForm from './MealForm'
