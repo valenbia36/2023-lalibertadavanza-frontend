@@ -8,6 +8,7 @@ const Main = () => {
   return(
     <div>
         <Drawer user={localStorage.getItem('username')}/>
+        <FoodList />
         <MealList />
     </div>
   ); 
