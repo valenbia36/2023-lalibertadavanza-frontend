@@ -33,7 +33,7 @@ const FoodList = () => {
 
 
   return (
-    <div style={{ textAlign: 'center', marginBottom: '250px', color: 'black'}}> 
+    <div style={{ textAlign: 'center', color: 'black'}}> 
       <h2>Foods Table</h2>
       <div style={{ display: 'flex', justifyContent: 'flex-start', maxWidth:'100%',}}>
         <TableContainer component={Paper}>
