@@ -48,7 +48,7 @@ const MealList = () => {
               {meals.map((meal) => (
                 <TableRow key={meal.id}>
                   <TableCell sx={{textAlign: 'center'}}>{meal.name}</TableCell>
-                  <TableCell sx={{textAlign: 'center'}}>{meal.createdAt}</TableCell>
+                  <TableCell sx={{textAlign: 'center'}}>{meal.date}</TableCell>
                   <TableCell sx={{textAlign: 'center'}}>{meal.hour}</TableCell>
                 </TableRow>
               ))}
