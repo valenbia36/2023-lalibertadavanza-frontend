@@ -1,5 +1,16 @@
-import React, { useState } from 'react';
-import { TextField, Button, Modal, Box, IconButton, Grid } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import {
+  TextField,
+  Button,
+  Modal,
+  Box,
+  IconButton,
+  Grid,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+} from '@mui/material';
 import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
 import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
 
@@ -7,27 +18,40 @@ const initialMealState = {
   name: '',
   date: '',
   hour: '',
-  foods: [{ name: '', quantity: '' }], // Inicialmente, un solo campo de alimentos con cantidad
+  foods: [{ name: '', quantity: '' }],
 };
 
 const MealForm = ({ open, setOpen }) => {
   const [newMeal, setNewMeal] = useState(initialMealState);
   const [errorMessage, setErrorMessage] = useState(false);
+  const [foodOptions, setFoodOptions] = useState([]); // Lista de opciones de alimentos
+
+  const getFoods = async () => {
+    const response = await fetch('http://localhost:3001/api/foods/', {
+      method: 'GET',
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + localStorage.getItem('token')
+      }
+    });
+    const data = await response.json();
+    setFoodOptions(data.data);
+  }
+  useEffect(() => {
+    getFoods();
+  }, [foodOptions]);
 
   const closeModal = () => {
     setOpen(false);
-    // Restablecer los valores del estado al valor inicial
     setNewMeal(initialMealState);
   };
 
   const handleAddFoodInput = () => {
-    // Agregar un nuevo campo de alimentos con cantidad
     const updatedFoods = [...newMeal.foods, { name: '', quantity: '' }];
     setNewMeal({ ...newMeal, foods: updatedFoods });
   };
 
   const handleRemoveFoodInput = (index) => {
-    // Eliminar un campo de alimentos en el índice especificado
     const updatedFoods = [...newMeal.foods];
     updatedFoods.splice(index, 1);
     setNewMeal({ ...newMeal, foods: updatedFoods });
@@ -50,7 +74,6 @@ const MealForm = ({ open, setOpen }) => {
       setErrorMessage(true);
       return;
     } else {
-      console.log(JSON.stringify(newMeal));
       fetch('http://localhost:3001/api/meals', {
         method: 'POST',
         headers: {
@@ -121,27 +144,49 @@ const MealForm = ({ open, setOpen }) => {
           />
 
           {newMeal.foods.map((food, index) => (
-            <Grid container spacing={1} alignItems="center" key={index}>
+            <Grid container spacing={1} alignItems="center" key={index} sx={{marginTop: "2%"}}>
               <Grid item xs={7}>
-                <TextField
-                  label={`Food ${index + 1}`}
-                  variant="outlined"
-                  fullWidth
-                  margin="normal"
-                  value={food.name}
-                  onChange={(e) => handleFoodInputChange(e, index)}
-                />
+                <FormControl fullWidth>
+                  <InputLabel id="demo-simple-select-label">Food</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={food.name}
+                    label="Food"
+                    onChange={(e) => handleFoodInputChange(e, index)}
+                  >
+                  {Array.isArray(foodOptions) && foodOptions.length > 0 ? (
+                    foodOptions.map((option) => (
+                      <MenuItem key={option.id} value={option.name}>
+                        {option.name}
+                      </MenuItem>
+                    ))
+                  ) : (
+                    <MenuItem value="">No hay alimentos disponibles</MenuItem>
+                  )}
+                  
+                  </Select>
+                </FormControl>
               </Grid>
               <Grid item xs={3}>
                 <TextField
-                  label={`Quantity ${index + 1}`}
+                  label={`Quantity`}
                   variant="outlined"
                   fullWidth
-                  margin="normal"
                   value={food.quantity}
                   onChange={(e) => handleQuantityInputChange(e, index)}
                 />
               </Grid>
+              {index === 0 && (
+                <Grid item xs={2}>
+                  <IconButton
+                    color="primary"
+                    onClick={handleAddFoodInput}
+                  >
+                    <AddCircleRoundedIcon />
+                  </IconButton>
+                </Grid>
+              )}
               {index > 0 && (
                 <Grid item xs={2}>
                   <IconButton
@@ -154,13 +199,6 @@ const MealForm = ({ open, setOpen }) => {
               )}
             </Grid>
           ))}
-
-          <IconButton
-            color="primary"
-            onClick={handleAddFoodInput}
-          >
-            <AddCircleRoundedIcon />
-          </IconButton>
 
           <Button
             variant="contained"
