@@ -1,13 +1,20 @@
 import React, {  useState } from 'react';
-import { TextField, Button,Modal,
-  Box, } from '@mui/material';
+import { TextField, Button, Modal, Box, } from '@mui/material';
+
+const initialFoodState = {
+  name: '',
+  calories: ''
+};
 
 const FoodForm = ({open,setOpen}) => {
-  const [newFood, setNewFood] = useState({ name: '', calories: '' });
+  const [newFood, setNewFood] = useState(initialFoodState);
   const [errorMessage, setErrorMessage] = useState(false);
+
   const closeModal = () => {
     setOpen(false);
+    setNewFood(initialFoodState);
   };
+
   const handleAddFood = () => {
     if ( newFood.name === '') {
       setErrorMessage(true);

@@ -43,9 +43,6 @@ function Row(props) {
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
-              <Typography variant="h6" gutterBottom component="div">
-                Foods
-              </Typography>
               <Table size="small" aria-label="purchases">
                 <TableHead>
                   <TableRow>
@@ -110,7 +107,7 @@ export default function MealTable() {
           <TableRow>
             <TableCell />
             <TableCell>Name</TableCell>
-            <TableCell align="right">Calories</TableCell>
+            <TableCell align="right">Total Calories</TableCell>
             <TableCell align="right">Date&nbsp;</TableCell>
             <TableCell align="right">Hours&nbsp;</TableCell>
           </TableRow>
