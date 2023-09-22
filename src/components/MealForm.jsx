@@ -18,7 +18,7 @@ const initialMealState = {
   name: '',
   date: '',
   hour: '',
-  foods: [{ name: '', quantity: '' }],
+  foods: [{ name: '',calories:'' ,quantity: '' }],
 };
 
 const MealForm = ({ open, setOpen }) => {
@@ -47,7 +47,7 @@ const MealForm = ({ open, setOpen }) => {
   };
 
   const handleAddFoodInput = () => {
-    const updatedFoods = [...newMeal.foods, { name: '', quantity: '' }];
+    const updatedFoods = [...newMeal.foods, { name: '',calories:'' ,quantity: '' }];
     setNewMeal({ ...newMeal, foods: updatedFoods });
   };
 
@@ -60,6 +60,9 @@ const MealForm = ({ open, setOpen }) => {
   const handleFoodInputChange = (event, index) => {
     const updatedFoods = [...newMeal.foods];
     updatedFoods[index].name = event.target.value;
+    let result = (foodOptions.filter(item => item.name === event.target.value))
+    updatedFoods[index].calories = result[0].calories;
+    console.log(updatedFoods[index].calories);
     setNewMeal({ ...newMeal, foods: updatedFoods });
   };
 
@@ -74,6 +77,7 @@ const MealForm = ({ open, setOpen }) => {
       setErrorMessage(true);
       return;
     } else {
+      console.log(newMeal)
       fetch('http://localhost:3001/api/meals', {
         method: 'POST',
         headers: {
