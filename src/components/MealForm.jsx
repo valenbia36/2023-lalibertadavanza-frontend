@@ -18,6 +18,7 @@ const initialMealState = {
   name: '',
   date: '',
   hour: '',
+  calories: 0,
   foods: [{ name: '',calories:'' ,quantity: '' }],
 };
 
@@ -77,7 +78,7 @@ const MealForm = ({ open, setOpen }) => {
       setErrorMessage(true);
       return;
     } else {
-      console.log(newMeal)
+      newMeal.calories = newMeal.foods.map(food => parseInt(food.calories) * parseInt(food.quantity)).reduce((acc, calories) => acc + calories, 0);
       fetch('http://localhost:3001/api/meals', {
         method: 'POST',
         headers: {
