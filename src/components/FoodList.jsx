@@ -40,8 +40,8 @@ const FoodList = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell sx={{textAlign: 'center'}}>Name</TableCell>
-                <TableCell sx={{textAlign: 'center'}}>Calories</TableCell>
+                <TableCell sx={{textAlign: 'center', fontWeight:'bold'}}>Name</TableCell>
+                <TableCell sx={{textAlign: 'center', fontWeight:'bold'}}>Calories</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

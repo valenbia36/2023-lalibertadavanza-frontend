@@ -86,7 +86,7 @@ const FoodForm = ({open,setOpen}) => {
         sx={{ mt: 3, mb: 2, backgroundColor: '#373D20', '&:hover': {backgroundColor: '#373D20'}, fontWeight: 'bold' }}
         fullWidth
       >
-        Agregar
+        Add Food
       </Button>
     </div>
     </Box>

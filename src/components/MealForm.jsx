@@ -219,7 +219,7 @@ const MealForm = ({ open, setOpen }) => {
             }}
             fullWidth
           >
-            Agregar
+            Add Meal
           </Button>
         </div>
       </Box>

@@ -110,10 +110,18 @@ export default function MealTable() {
             <TableCell sx={{fontWeight:'bold'}} align="center">Hours&nbsp;</TableCell>
           </TableRow>
         </TableHead>
-        <TableBody sx={{textAlign: 'center'}}>
-          {(meals.length>0) && (meals.slice(startIndex, endIndex).map((row) => (
-            <Row key={row.name} row={row} sx={{textAlign: 'center'}}/>
-          )))}
+        <TableBody sx={{ textAlign: 'center' }}>
+          {(meals.length > 0) ? (
+            meals.slice(startIndex, endIndex).map((row) => (
+              <Row key={row.name} row={row} sx={{ textAlign: 'center' }} />
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={5} align="center">
+                No meals to show
+              </TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
       

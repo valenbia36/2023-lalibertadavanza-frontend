@@ -19,6 +19,7 @@ import ListItemText from '@mui/material/ListItemText';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
+import BarChartIcon from '@mui/icons-material/BarChart';
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({
@@ -118,7 +119,7 @@ export default function MiniDrawer({user}) {
     setOpen(false);
   };
 
-  const icons = [<AccountBoxIcon /> ,<SettingsIcon/>,<LogoutIcon/>]
+  const icons = [<BarChartIcon/>, <AccountBoxIcon/> ,<SettingsIcon/>, <LogoutIcon/>]
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -150,7 +151,7 @@ export default function MiniDrawer({user}) {
         </DrawerHeader>
         <Divider />
         <List>
-          {['My Profile', 'Settings', 'Logout'].map((text, index) => (
+          {['Statistics', 'My Profile', 'Settings', 'Logout'].map((text, index) => (
             <ListItem key={text} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 sx={{

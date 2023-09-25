@@ -104,10 +104,10 @@ export default function FoodTable({rows}) {
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
-      <TableHead>
-              <TableRow>
-                <TableCell sx={{textAlign: 'center'}}>Name</TableCell>
-                <TableCell sx={{textAlign: 'center'}}>Calories</TableCell>
+      <TableHead sx={{fontWeight: 'bold'}}>
+              <TableRow sx={{fontWeight: 'bold'}}>
+                <TableCell sx={{textAlign: 'center', fontWeight:'bold'}}>Name</TableCell>
+                <TableCell sx={{textAlign: 'center', fontWeight: 'bold'}}>Calories</TableCell>
               </TableRow>
             </TableHead>
         <TableBody>
@@ -121,9 +121,6 @@ export default function FoodTable({rows}) {
               </TableCell>
               <TableCell style={{ width: 160 }} align="right">
                 {row.calories}
-              </TableCell>
-              <TableCell style={{ width: 160 }} align="right">
-                {row.fat}
               </TableCell>
             </TableRow>
           ))}
