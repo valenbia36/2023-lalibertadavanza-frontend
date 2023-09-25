@@ -9,7 +9,6 @@ import TableRow from '@mui/material/TableRow';
 import IconButton from '@mui/material/IconButton';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
@@ -19,7 +18,6 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 function Row(props) {
   const { row } = props;
   const [open, setOpen] = React.useState(false);
-  console.log(props)
   return (
     <React.Fragment>
       <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
@@ -78,7 +76,7 @@ export default function MealTable() {
   const [page, setPage] = useState(0);
   const [meals, setMeals] = useState([]);
   const getMeals = async () => {
-      const response = await fetch('http://localhost:3001/api/meals/', {
+      const response = await fetch('http://localhost:3001/api/meals/user/'+ localStorage.getItem('userId'), {
         method: 'GET',
         headers: {
           "Content-Type": "application/json",
@@ -106,15 +104,15 @@ export default function MealTable() {
         <TableHead>
           <TableRow>
             <TableCell />
-            <TableCell>Name</TableCell>
-            <TableCell align="right">Total Calories</TableCell>
-            <TableCell align="right">Date&nbsp;</TableCell>
-            <TableCell align="right">Hours&nbsp;</TableCell>
+            <TableCell sx={{fontWeight:'bold'}} align='center'>Name</TableCell>
+            <TableCell sx={{fontWeight:'bold'}} align="center">Total Calories</TableCell>
+            <TableCell sx={{fontWeight:'bold'}} align="center">Date&nbsp;</TableCell>
+            <TableCell sx={{fontWeight:'bold'}} align="center">Hours&nbsp;</TableCell>
           </TableRow>
         </TableHead>
-        <TableBody>
+        <TableBody sx={{textAlign: 'center'}}>
           {(meals.length>0) && (meals.slice(startIndex, endIndex).map((row) => (
-            <Row key={row.name} row={row} />
+            <Row key={row.name} row={row} sx={{textAlign: 'center'}}/>
           )))}
         </TableBody>
       </Table>

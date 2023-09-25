@@ -31,11 +31,9 @@ const SignUp = () => {
 
   const handleRegister = () => {
       if ( user.firstName === '' || user.lastName === '' || user.email === '' || user.password === '' || user.sex === '' || user.age === '' || user.height === '' || user.weight === '' ) {
-        console.log(JSON.stringify(user));
         setErrorMessage(true);
         return;
       }
-      console.log(JSON.stringify(user));
       fetch('http://localhost:3001/api/auth/register', {
           method: 'POST',
           headers: {

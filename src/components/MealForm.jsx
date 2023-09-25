@@ -20,6 +20,7 @@ const initialMealState = {
   hour: '',
   calories: 0,
   foods: [{ name: '',calories:'' ,quantity: '' }],
+  userId: localStorage.getItem('userId')
 };
 
 const MealForm = ({ open, setOpen }) => {
