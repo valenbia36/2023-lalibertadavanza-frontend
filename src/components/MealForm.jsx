@@ -10,9 +10,12 @@ import {
   MenuItem,
   InputLabel,
   FormControl,
+  Alert
 } from '@mui/material';
 import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
 import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
+import Autocomplete from '@mui/material/Autocomplete';
+
 
 const initialMealState = {
   name: '',
@@ -133,10 +136,12 @@ const MealForm = ({ open, setOpen }) => {
             onChange={(e) => setNewMeal({ ...newMeal, name: e.target.value })}
           />
           <TextField
-            label="Date (DD/MM/AAAA)"
+            InputLabelProps={{shrink:true}}
+            label="Date"
             variant="outlined"
             fullWidth
             margin="normal"
+            type='date'
             value={newMeal.date}
             onChange={(e) => setNewMeal({ ...newMeal, date: e.target.value })}
           />
@@ -144,7 +149,15 @@ const MealForm = ({ open, setOpen }) => {
             label="Hour (MM:HH)"
             variant="outlined"
             fullWidth
+            type = 'time'
             margin="normal"
+            InputLabelProps={{
+              shrink: true, // Shrink the label to prevent overlapping
+            }}
+            inputProps={{
+              step: 60, // Set the step to 60 to represent time in minutes (HH:MM)
+            }}
+
             value={newMeal.hour}
             onChange={(e) => setNewMeal({ ...newMeal, hour: e.target.value })}
           />
@@ -153,6 +166,7 @@ const MealForm = ({ open, setOpen }) => {
             <Grid container spacing={1} alignItems="center" key={index} sx={{marginTop: "2%"}}>
               <Grid item xs={7}>
                 <FormControl fullWidth>
+                
                   <InputLabel id="demo-simple-select-label">Food</InputLabel>
                   <Select
                     labelId="demo-simple-select-label"
@@ -177,6 +191,7 @@ const MealForm = ({ open, setOpen }) => {
               <Grid item xs={3}>
                 <TextField
                   label={`Quantity`}
+                  type='number'
                   variant="outlined"
                   fullWidth
                   value={food.quantity}

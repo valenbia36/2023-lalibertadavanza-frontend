@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -72,25 +72,31 @@ function TablePaginationActions(props) {
   );
 }
 
-TablePaginationActions.propTypes = {
-  count: PropTypes.number.isRequired,
-  onPageChange: PropTypes.func.isRequired,
-  page: PropTypes.number.isRequired,
-  rowsPerPage: PropTypes.number.isRequired,
-};
-
-function createData(name, calories, fat) {
-  return { name, calories, fat };
-}
 
 
-export default function FoodTable({rows}) {
+
+export default function FoodTable() {
+  const [foods, setFoods] = useState([]);
+  const getFoods = async () => {
+      const response = await fetch('http://localhost:3001/api/foods/', {
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + localStorage.getItem('token')
+        }
+      });
+      const data = await response.json();
+      setFoods(data.data);
+  }
+  useEffect(() => {
+      getFoods();
+  }, [foods]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - foods.length) : 0;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -103,7 +109,7 @@ export default function FoodTable({rows}) {
 
   return (
     <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
+      <Table sx={{ minWidth: 200 }} aria-label="custom pagination table">
       <TableHead sx={{fontWeight: 'bold'}}>
               <TableRow sx={{fontWeight: 'bold'}}>
                 <TableCell sx={{textAlign: 'center', fontWeight:'bold'}}>Name</TableCell>
@@ -112,14 +118,14 @@ export default function FoodTable({rows}) {
             </TableHead>
         <TableBody>
           {(rowsPerPage > 0
-            ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            : rows
+            ? foods.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            : foods
           ).map((row) => (
             <TableRow key={row.name}>
-              <TableCell component="th" scope="row">
+              <TableCell component="th" scope="row" style={{ width: 160 }} align="center">
                 {row.name}
               </TableCell>
-              <TableCell style={{ width: 160 }} align="right">
+              <TableCell style={{ width: 160 }} align="center">
                 {row.calories}
               </TableCell>
             </TableRow>
@@ -133,9 +139,9 @@ export default function FoodTable({rows}) {
         <TableFooter>
           <TableRow>
             <TablePagination
-              rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+              rowsPerPageOptions={[5]}
               colSpan={3}
-              count={rows.length}
+              count={foods.length}
               rowsPerPage={rowsPerPage}
               page={page}
               SelectProps={{

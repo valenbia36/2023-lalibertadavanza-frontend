@@ -1,7 +1,7 @@
 import React from 'react';
 import Drawer from '../components/Drawer';
 import MealList from '../components/MealList2';
-import FoodList from '../components/FoodList';
+import FoodList from '../components/FoodList2';
 
 
 const Main = () => {
