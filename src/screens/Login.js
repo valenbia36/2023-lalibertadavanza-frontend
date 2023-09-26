@@ -67,7 +67,7 @@ const Login = () => {
           backgroundPosition: 'center',
         }}
       />
-      <Grid item xs={12} sm={8} md={5} style={{backgroundColor: '#CAD2C5'}} elevation={6} square>
+      <Grid item xs={12} sm={8} md={5} style={{backgroundColor: '#CAD2C5'}} elevation={6} square="true">
         <div style={{justifyContent: 'center', textAlign: 'center', color: 'black', marginTop: '10%'}}>
         <Typography variant="h3" color="inherit" noWrap>
           HELIAPP

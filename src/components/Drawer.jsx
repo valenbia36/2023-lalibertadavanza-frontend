@@ -20,8 +20,6 @@ import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import BarChartIcon from '@mui/icons-material/BarChart';
-import { Link } from 'react-router-dom'; // Import Link and useHistory from react-router-dom
-
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({
@@ -125,6 +123,7 @@ export default function MiniDrawer({ user }) {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    window.location.replace('/');
   };
 
   return (
@@ -187,9 +186,7 @@ export default function MiniDrawer({ user }) {
                 justifyContent: open ? 'initial' : 'center',
                 px: 2.5,
               }}
-              onClick={handleLogout} // Handle logout action
-              component={Link} // Use Link component to navigate
-              to="/" // Define the logout route
+              onClick={handleLogout}
             >
               <ListItemIcon
                 sx={{
