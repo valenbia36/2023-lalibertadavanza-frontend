@@ -70,7 +70,7 @@ function Row(props) {
 }
 
 
-const rowsPerPage = 2; // Number of rows per page
+const rowsPerPage = 5; // Number of rows per page
 
 export default function MealTable() {
   const [page, setPage] = useState(0);

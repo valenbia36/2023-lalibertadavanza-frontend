@@ -9,13 +9,10 @@ import {
   Select,
   MenuItem,
   InputLabel,
-  FormControl,
-  Alert
+  FormControl
 } from '@mui/material';
 import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
 import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
-import Autocomplete from '@mui/material/Autocomplete';
-
 
 const initialMealState = {
   name: '',

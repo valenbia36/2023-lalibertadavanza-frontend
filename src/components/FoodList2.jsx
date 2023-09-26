@@ -1,15 +1,6 @@
 
-import React, { useState, useEffect } from 'react';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  IconButton,
-} from '@mui/material';
+import React, { useState } from 'react';
+import { IconButton } from '@mui/material';
 import FoodForm from './FoodForm'
 import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
 import FoodTable from './Tables/FoodTable';

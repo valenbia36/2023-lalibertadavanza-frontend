@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
@@ -20,6 +20,8 @@ import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import BarChartIcon from '@mui/icons-material/BarChart';
+import { Link } from 'react-router-dom'; // Import Link and useHistory from react-router-dom
+
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({
@@ -107,9 +109,9 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 
-export default function MiniDrawer({user}) {
+export default function MiniDrawer({ user }) {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -119,12 +121,16 @@ export default function MiniDrawer({user}) {
     setOpen(false);
   };
 
-  const icons = [<BarChartIcon/>, <AccountBoxIcon/> ,<SettingsIcon/>, <LogoutIcon/>]
+  const icons = [<BarChartIcon />, <AccountBoxIcon />, <SettingsIcon />];
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+  };
 
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open} style={{backgroundColor: '#373D20'}}>
+      <AppBar position="fixed" open={open} style={{ backgroundColor: '#373D20' }}>
         <Toolbar>
           <IconButton
             color="inherit"
@@ -139,7 +145,7 @@ export default function MiniDrawer({user}) {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-          {"Hi " + user + "!"}
+            {"Hi " + user + "!"}
           </Typography>
         </Toolbar>
       </AppBar>
@@ -151,7 +157,7 @@ export default function MiniDrawer({user}) {
         </DrawerHeader>
         <Divider />
         <List>
-          {['Statistics', 'My Profile', 'Settings', 'Logout'].map((text, index) => (
+          {['Statistics', 'My Profile', 'Settings'].map((text, index) => (
             <ListItem key={text} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 sx={{
@@ -173,6 +179,30 @@ export default function MiniDrawer({user}) {
               </ListItemButton>
             </ListItem>
           ))}
+          {/* Logout button */}
+          <ListItem disablePadding sx={{ display: 'block' }}>
+            <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: open ? 'initial' : 'center',
+                px: 2.5,
+              }}
+              onClick={handleLogout} // Handle logout action
+              component={Link} // Use Link component to navigate
+              to="/" // Define the logout route
+            >
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: open ? 3 : 'auto',
+                  justifyContent: 'center',
+                }}
+              >
+                <LogoutIcon />
+              </ListItemIcon>
+              <ListItemText primary="Logout" sx={{ opacity: open ? 1 : 0 }} />
+            </ListItemButton>
+          </ListItem>
         </List>
       </Drawer>
       <Main open={open}>

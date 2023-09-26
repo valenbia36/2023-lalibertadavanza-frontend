@@ -1,30 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
-import TableFooter from '@mui/material/TableFooter';
-import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
-import FirstPageIcon from '@mui/icons-material/FirstPage';
-import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
-import LastPageIcon from '@mui/icons-material/LastPage';
-import { Tab } from 'bootstrap';
 import { TableHead } from '@mui/material';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 
 function TablePaginationActions(props) {
   const theme = useTheme();
-  const { count, page, rowsPerPage, onPageChange } = props;
-
-  const handleFirstPageButtonClick = (event) => {
-    onPageChange(event, 0);
-  };
+  const { count, page, onPageChange } = props;
 
   const handleBackButtonClick = (event) => {
     onPageChange(event, page - 1);
@@ -34,91 +24,64 @@ function TablePaginationActions(props) {
     onPageChange(event, page + 1);
   };
 
-  const handleLastPageButtonClick = (event) => {
-    onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
-  };
-
   return (
-    <Box sx={{ flexShrink: 0, ml: 2.5 }}>
-      <IconButton
-        onClick={handleFirstPageButtonClick}
-        disabled={page === 0}
-        aria-label="first page"
-      >
-        {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
-      </IconButton>
+    <Box sx={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}>
       <IconButton
         onClick={handleBackButtonClick}
         disabled={page === 0}
         aria-label="previous page"
       >
-        {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+        {theme.direction === 'rtl' ? <ArrowForwardIosIcon /> : <ArrowBackIosIcon />}
       </IconButton>
       <IconButton
         onClick={handleNextButtonClick}
-        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+        disabled={page >= Math.ceil(count / 5) - 1}
         aria-label="next page"
       >
-        {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-      </IconButton>
-      <IconButton
-        onClick={handleLastPageButtonClick}
-        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-        aria-label="last page"
-      >
-        {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
+        {theme.direction === 'rtl' ? <ArrowBackIosIcon /> : <ArrowForwardIosIcon />}
       </IconButton>
     </Box>
   );
 }
 
-
-
-
 export default function FoodTable() {
   const [foods, setFoods] = useState([]);
+  const [totalItems, setTotalItems] = useState(0); // Track the total number of items
   const getFoods = async () => {
-      const response = await fetch('http://localhost:3001/api/foods/', {
-        method: 'GET',
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + localStorage.getItem('token')
-        }
-      });
-      const data = await response.json();
-      setFoods(data.data);
-  }
-  useEffect(() => {
-      getFoods();
-  }, [foods]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const response = await fetch('http://localhost:3001/api/foods/', {
+      method: 'GET',
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + localStorage.getItem('token')
+      }
+    });
+    const data = await response.json();
+    setFoods(data.data);
+    setTotalItems(data.data.length); // Update the total number of items
+  };
 
-  // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - foods.length) : 0;
+  useEffect(() => {
+    getFoods();
+  }, []);
+
+  const [page, setPage] = React.useState(0);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 200 }} aria-label="custom pagination table">
-      <TableHead sx={{fontWeight: 'bold'}}>
-              <TableRow sx={{fontWeight: 'bold'}}>
-                <TableCell sx={{textAlign: 'center', fontWeight:'bold'}}>Name</TableCell>
-                <TableCell sx={{textAlign: 'center', fontWeight: 'bold'}}>Calories</TableCell>
-              </TableRow>
-            </TableHead>
+        <TableHead sx={{ fontWeight: 'bold' }}>
+          <TableRow sx={{ fontWeight: 'bold' }}>
+            <TableCell sx={{ textAlign: 'center', fontWeight: 'bold' }}>Name</TableCell>
+            <TableCell sx={{ textAlign: 'center', fontWeight: 'bold' }}>Calories</TableCell>
+          </TableRow>
+        </TableHead>
         <TableBody>
-          {(rowsPerPage > 0
-            ? foods.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+          {(5 > 0
+            ? foods.slice(page * 5, page * 5 + 5)
             : foods
           ).map((row) => (
             <TableRow key={row.name}>
@@ -130,33 +93,15 @@ export default function FoodTable() {
               </TableCell>
             </TableRow>
           ))}
-          {emptyRows > 0 && (
-            <TableRow style={{ height: 53 * emptyRows }}>
-              <TableCell colSpan={6} />
-            </TableRow>
-          )}
         </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TablePagination
-              rowsPerPageOptions={[5]}
-              colSpan={3}
-              count={foods.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              SelectProps={{
-                inputProps: {
-                  'aria-label': 'rows per page',
-                },
-                native: true,
-              }}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-              ActionsComponent={TablePaginationActions}
-            />
-          </TableRow>
-        </TableFooter>
       </Table>
+      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+        <TablePaginationActions
+          count={totalItems} // Use the total number of items as the count
+          page={page}
+          onPageChange={handleChangePage}
+        />
+      </Box>
     </TableContainer>
   );
 }
