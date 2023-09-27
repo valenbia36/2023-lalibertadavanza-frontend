@@ -62,7 +62,7 @@ export default function FoodTable() {
 
   useEffect(() => {
     getFoods();
-  }, []);
+  }, [foods]);
 
   const [page, setPage] = React.useState(0);
 
