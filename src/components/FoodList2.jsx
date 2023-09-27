@@ -8,7 +8,6 @@ import FoodTable from './Tables/FoodTable';
 const FoodList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-
   return (
     <div style={{ textAlign: 'center', color: 'black'}}> 
       <h2>Foods Table</h2>

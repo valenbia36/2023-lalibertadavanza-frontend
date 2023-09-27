@@ -3,7 +3,6 @@ import Drawer from '../components/Drawer';
 import MealList from '../components/MealList2';
 import FoodList from '../components/FoodList2';
 
-
 const Main = () => {
   return (
     <div className="container">

@@ -14,7 +14,6 @@ import Collapse from '@mui/material/Collapse';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 
-
 function Row(props) {
   const { row } = props;
   const [open, setOpen] = React.useState(false);
