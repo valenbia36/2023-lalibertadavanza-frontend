@@ -1,26 +1,26 @@
 import React from 'react';
+import Drawer from '../components/Drawer';
+import MealList from '../components/MealList2';
+import FoodList from '../components/FoodList2';
 
 const Main = () => {
-
-  return(
-    <div>
-        <span style={{fontSize: '12px'}}>
-            Username: {localStorage.getItem('username')}
-        </span>
-        <br/>
-        <span style={{fontSize: '12px'}}>
-            Role: {localStorage.getItem('roles')}
-        </span>
-        <br/>
-        <span style={{fontSize: '12px'}}>
-            UserId: {localStorage.getItem('userId')}
-        </span>
-        <br/>
-        <span style={{fontSize: '12px'}}>
-            Token: {localStorage.getItem('token')}
-        </span>
+  return (
+    <div className="container">
+      <Drawer user={localStorage.getItem('username')} />
+      <div className="row justify-content-center align-items-center">
+        <div className="col-md-10 justify-content-center">
+          <div className="row justify-content-center">
+            <div className="col-md-4">
+              <FoodList />
+            </div>
+            <div className="col-md-7">
+              <MealList />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  ); 
+  );
 }
 
 export default Main;

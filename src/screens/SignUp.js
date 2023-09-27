@@ -12,8 +12,6 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel } from '@mui/material';
 
-import '../styles/SignUp.css';
-
 const defaultTheme = createTheme();
 
 const SignUp = () => {
@@ -33,11 +31,9 @@ const SignUp = () => {
 
   const handleRegister = () => {
       if ( user.firstName === '' || user.lastName === '' || user.email === '' || user.password === '' || user.sex === '' || user.age === '' || user.height === '' || user.weight === '' ) {
-        console.log(JSON.stringify(user));
         setErrorMessage(true);
         return;
       }
-      console.log(JSON.stringify(user));
       fetch('http://localhost:3001/api/auth/register', {
           method: 'POST',
           headers: {
@@ -46,7 +42,7 @@ const SignUp = () => {
           body: JSON.stringify(user)
       }).then(function(response) {
           if(response.status === 200){
-              window.location.replace('/login');
+              window.location.replace('/');
           }
           else{
               setErrorMessage(true);
@@ -69,7 +65,7 @@ const SignUp = () => {
           <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
             <LockOutlinedIcon />
           </Avatar>
-          <Typography component="h1" variant="h5">
+          <Typography component="h1" variant="h5" style={{color: 'black', fontWeight: 'bold' }}>
             Sign up
           </Typography>
           <Box sx={{ mt: 3 }}>
@@ -83,10 +79,10 @@ const SignUp = () => {
               id="firstName"
               label="First Name"
               InputLabelProps={{
-                style: { color: 'white' },
+                style: { color: 'black' },
               }}
               InputProps={{
-                style: { color: 'white' },
+                style: { color: 'black' },
               }}
               autoFocus
               onChange={(e) => setUser({...user, firstName: e.target.value})} 
@@ -102,10 +98,10 @@ const SignUp = () => {
               name="lastName"
               autoComplete="family-name"
               InputLabelProps={{
-                style: { color: 'white' },
+                style: { color: 'black' },
               }}
               InputProps={{
-                style: { color: 'white' },
+                style: { color: 'black' },
               }}
               onChange={(e) => setUser({...user, lastName: e.target.value})} 
               onKeyPress={event => { if (event.key === 'Enter') { handleRegister() } }}
@@ -120,10 +116,10 @@ const SignUp = () => {
               name="email"
               autoComplete="email"
               InputLabelProps={{
-                style: { color: 'white' },
+                style: { color: 'black' },
               }}
               InputProps={{
-                style: { color: 'white' },
+                style: { color: 'black' },
               }}
               onChange={(e) => setUser({...user, email: e.target.value})} 
               onKeyPress={event => { if (event.key === 'Enter') { handleRegister() } }}
@@ -139,10 +135,10 @@ const SignUp = () => {
               id="password"
               autoComplete="new-password"
               InputLabelProps={{
-                style: { color: 'white' },
+                style: { color: 'black' },
               }}
               InputProps={{
-                style: { color: 'white' },
+                style: { color: 'black' },
               }}
               onChange={(e) => setUser({...user, password: e.target.value})} 
               onKeyPress={event => { if (event.key === 'Enter') { handleRegister() } }}
@@ -157,10 +153,10 @@ const SignUp = () => {
               name="age"
               type="number"
               InputLabelProps={{
-                style: { color: 'white' },
+                style: { color: 'black' },
               }}
               InputProps={{
-                style: { color: 'white', min: 0},
+                style: { color: 'black', min: 0},
               }}
               onChange={(e) => setUser({...user, age: e.target.value})} 
               onKeyPress={event => { if (event.key === 'Enter') { handleRegister() } }}
@@ -168,7 +164,7 @@ const SignUp = () => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <FormControl>
-              <FormLabel style={{ color: 'white' }}>Sex</FormLabel>
+              <FormLabel style={{ color: 'black' }}>Sex</FormLabel>
               <FormGroup row>
                 <FormControlLabel
                   control={
@@ -176,12 +172,12 @@ const SignUp = () => {
                       name="sex"
                       value="male"
                       color="primary"
-                      style={{ color: 'white' }}
+                      style={{ color: 'black' }}
                       onChange={(e) => setUser({...user, sex: 'male'})} 
                     />
                   }
                   label="Male"
-                  style={{ color: 'white' }}
+                  style={{ color: 'black' }}
                 />
                 <FormControlLabel
                   control={
@@ -189,12 +185,12 @@ const SignUp = () => {
                       name="sex"
                       value="female"
                       color="primary"
-                      style={{ color: 'white' }}
+                      style={{ color: 'black' }}
                       onChange={(e) => setUser({...user, sex: 'female'})} 
                     />
                   }
                   label="Female"
-                  style={{ color: 'white' }}
+                  style={{ color: 'black' }}
                 />
               </FormGroup>
             </FormControl>
@@ -208,11 +204,11 @@ const SignUp = () => {
               name="height"
               type="number"
               InputLabelProps={{
-                style: { color: 'white' },
+                style: { color: 'black' },
               }}
               InputProps={{
                 style: { 
-                  color: 'white',
+                  color: 'black',
                   min: 0 
                 }
               }}
@@ -229,11 +225,11 @@ const SignUp = () => {
               name="weight"
               type="number"
               InputLabelProps={{
-                style: { color: 'white' },
+                style: { color: 'black' },
               }}
               InputProps={{
                 style: { 
-                  color: 'white',
+                  color: 'black',
                   min: 0 
                 }
               }}
@@ -246,7 +242,7 @@ const SignUp = () => {
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mt: 3, mb: 2, backgroundColor: '#373D20', '&:hover': {backgroundColor: '#373D20'}, fontWeight: 'bold' }}
               onClick={handleRegister}
             >
               Sign Up
@@ -254,7 +250,7 @@ const SignUp = () => {
             {errorMessage && <p style={{color: 'red', fontSize: '14px', justifyContent: 'center', textAlign: 'center'}}>Please review your input. There are errors in one or more fields.</p>}
             <Grid container justifyContent="center">
               <Grid item>
-                <Link href='/Login' variant="body2">
+                <Link href='/' variant="body2" sx={{color: 'black'}}>
                   Already have an account? Sign in
                 </Link>
               </Grid>
