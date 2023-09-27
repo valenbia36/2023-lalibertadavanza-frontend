@@ -19,7 +19,7 @@ const initialMealState = {
   date: '',
   hour: '',
   calories: 0,
-  foods: [{ name: '',calories:'' ,quantity: '' }],
+  foods: [{ name: '', calories: '', quantity: '' }],
   userId: localStorage.getItem('userId')
 };
 
@@ -45,7 +45,14 @@ const MealForm = ({ open, setOpen }) => {
 
   const closeModal = () => {
     setOpen(false);
-    setNewMeal(initialMealState);
+    setNewMeal({
+      name: '',
+      date: '',
+      hour: '',
+      calories: 0,
+      foods: [{ name: '', calories: '', quantity: '' }],
+      userId: localStorage.getItem('userId')
+    });
   };
 
   const handleAddFoodInput = () => {
