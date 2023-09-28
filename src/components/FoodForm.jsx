@@ -1,9 +1,11 @@
 import React, {  useState } from 'react';
+import Grid from '@mui/material/Grid';
 import { TextField, Button, Modal, Box, } from '@mui/material';
 
 const initialFoodState = {
   name: '',
-  calories: ''
+  calories: '',
+  weight: '',
 };
 
 const FoodForm = ({open,setOpen}) => {
@@ -16,7 +18,7 @@ const FoodForm = ({open,setOpen}) => {
   };
 
   const handleAddFood = () => {
-    if ( newFood.name === '') {
+    if ( newFood.name === '' && parseInt(newFood.calories, 10) < 1 && parseInt(newFood.weight, 10) < 1) { //ACA DEBERIA SER
       setErrorMessage(true);
       return;
   } else{
@@ -70,14 +72,35 @@ const FoodForm = ({open,setOpen}) => {
         value={newFood.name}
         onChange={(e) => setNewFood({ ...newFood, name: e.target.value })}
       />
+
       <TextField
-        label="Calories"
+        InputProps={{
+          inputProps: { min: 1 }
+        }}
+        label={`Calories`}
+        type='number'
         variant="outlined"
         fullWidth
-        margin="normal"
         value={newFood.calories}
-        onChange={(e) => setNewFood({ ...newFood, calories: e.target.value })}
+        onChange={(e) => setNewFood({...newFood, calories: e.target.value})}
       />
+
+    <TextField
+        InputProps={{
+          inputProps: { min: 1 }
+        }}
+        label={`Weight`}
+        type='number'
+        variant="outlined"
+        fullWidth
+        value={newFood.weight}
+        onChange={(e) => setNewFood({...newFood, weight: e.target.value})}
+      />
+
+      <Grid container justifyContent="center">
+              {errorMessage && <p style={{color: 'red', fontSize: '14px', justifyContent: 'center', textAlign: 'center'}}>
+                Please review your input. There are errors in one or more fields.</p>}
+      </Grid>
 
       <Button
         variant="contained"

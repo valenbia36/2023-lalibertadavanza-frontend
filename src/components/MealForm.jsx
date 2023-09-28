@@ -65,9 +65,16 @@ const MealForm = ({ open, setOpen }) => {
   };
 
   const handleQuantityInputChange = (event, index) => {
-    const updatedFoods = [...newMeal.foods];
-    updatedFoods[index].quantity = event.target.value;
-    setNewMeal({ ...newMeal, foods: updatedFoods });
+    const newValue = parseInt(event.target.value, 10);
+
+    // Verificar si el nuevo valor es un número válido (mayor que cero)
+    if ( newValue > 0) {
+      const updatedFoods = [...newMeal.foods]; // Supongamos que tienes un array llamado 'foods'
+      updatedFoods[index].quantity = newValue;
+      setNewMeal({ ...newMeal, foods: updatedFoods });
+    } else {
+      setErrorMessage(true)
+    }
   };
 
   const handleAddMeal = () => {
@@ -183,6 +190,9 @@ const MealForm = ({ open, setOpen }) => {
               </Grid>
               <Grid item xs={3}>
                 <TextField
+                  InputProps={{
+                    inputProps: { min: 1 }
+                  }}
                   label={`Quantity`}
                   type='number'
                   variant="outlined"
@@ -213,6 +223,10 @@ const MealForm = ({ open, setOpen }) => {
               )}
             </Grid>
           ))}
+           <Grid container justifyContent="center">
+              {errorMessage && <p style={{color: 'red', fontSize: '14px', justifyContent: 'center', textAlign: 'center'}}>
+                Please review your input. There are errors in one or more fields.</p>}
+        </Grid>
 
           <Button
             variant="contained"
