@@ -34,6 +34,7 @@ const MealForm = ({ open, setOpen }) => {
 
   const closeModal = () => {
     setOpen(false);
+    setErrorMessage(false)
     setNewMeal({
       name: '',
       date: '',
@@ -64,21 +65,21 @@ const MealForm = ({ open, setOpen }) => {
     setNewMeal({ ...newMeal, foods: updatedFoods });
   };
 
-  const handleQuantityInputChange = (event, index) => {
-    const newValue = parseInt(event.target.value, 10);
-
-    // Verificar si el nuevo valor es un número válido (mayor que cero)
-    if ( newValue > 0) {
-      const updatedFoods = [...newMeal.foods]; // Supongamos que tienes un array llamado 'foods'
-      updatedFoods[index].quantity = newValue;
+  const handleQuantityInputChange = (e, index) => {
+    const inputValue = Number(e.target.value);
+    if (!isNaN(inputValue) && inputValue >= 1) {
+      const updatedFoods = [...newMeal.foods]; 
+      updatedFoods[index].quantity = inputValue;
       setNewMeal({ ...newMeal, foods: updatedFoods });
-    } else {
-      setErrorMessage(true)
+    }else{
+      const updatedFoods = [...newMeal.foods]; 
+      updatedFoods[index].quantity = '';
+      setNewMeal({ ...newMeal, foods: updatedFoods });
     }
   };
 
   const handleAddMeal = () => {
-    if (newMeal.name === '') {
+    if (newMeal.name === '' || newMeal.date === '' || newMeal.hour === '' || newMeal.foods[0].name === '' || newMeal.foods[0].quantity === ''   ) {
       setErrorMessage(true);
       return;
     } else {
