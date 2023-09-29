@@ -75,8 +75,9 @@ export default function FoodTable() {
       <Table sx={{ minWidth: 200 }} aria-label="custom pagination table">
         <TableHead sx={{ fontWeight: 'bold' }}>
           <TableRow sx={{ fontWeight: 'bold' }}>
-            <TableCell sx={{ textAlign: 'center', fontWeight: 'bold' }}>Name</TableCell>
+            <TableCell sx={{ textAlign: 'center', fontWeight: 'bold' }}>Name (gr/ml)</TableCell>
             <TableCell sx={{ textAlign: 'center', fontWeight: 'bold' }}>Calories</TableCell>
+            <TableCell sx={{ textAlign: 'center', fontWeight: 'bold' }}>Category</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -86,10 +87,13 @@ export default function FoodTable() {
           ).map((row) => (
             <TableRow key={row.name}>
               <TableCell component="th" scope="row" style={{ width: 160 }} align="center">
-                {row.name}
+                {row.name+" "+row.weight+"(gr/ml)"}
               </TableCell>
               <TableCell style={{ width: 160 }} align="center">
                 {row.calories}
+              </TableCell>
+              <TableCell style={{ width: 160 }} align="center">
+                {row.category}
               </TableCell>
             </TableRow>
           ))}

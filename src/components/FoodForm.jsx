@@ -6,6 +6,7 @@ const initialFoodState = {
   name: '',
   calories: '',
   weight: '',
+  category: '',
 };
 
 const FoodForm = ({open,setOpen}) => {
@@ -38,7 +39,7 @@ const FoodForm = ({open,setOpen}) => {
   };
 
   const handleAddFood = () => {
-    if ( newFood.name === ''|| newFood.calories === '' || newFood.weight === '' ) { //ACA DEBERIA SER
+    if ( newFood.name === ''|| newFood.calories === '' || newFood.weight === '' || newFood.category === '') { 
       enqueueSnackbar('Please complete all the fields.', { variant: 'error' });
       return;
     } else{
@@ -93,6 +94,19 @@ const FoodForm = ({open,setOpen}) => {
 
       <TextField
         InputProps={{
+          inputProps: { min: 1 }
+        }}
+        label={`Weight (gr/ml)`}
+        type='number'
+        variant="outlined"
+        fullWidth
+        value={newFood.weight}
+        onChange={(e) => handleWeightInputChange(e)}
+        style={{ marginBottom: '7px' }}
+      />
+
+      <TextField
+        InputProps={{
           inputProps: {
             step: 1, // Establece el incremento/decremento en 1
           },
@@ -103,19 +117,15 @@ const FoodForm = ({open,setOpen}) => {
         fullWidth
         value={newFood.calories}
         onChange={(e) => handleCaloriesInputChange(e)}
-        style={{ marginBottom: '7px' }}
       />
 
     <TextField
-        InputProps={{
-          inputProps: { min: 1 }
-        }}
-        label={`Weight`}
-        type='number'
+        label="Category"
         variant="outlined"
         fullWidth
-        value={newFood.weight}
-        onChange={(e) => handleWeightInputChange(e)}
+        margin="normal"
+        value={newFood.category}
+        onChange={(e) => setNewFood({ ...newFood, category: e.target.value })}
       />
 
       <Button
