@@ -10,24 +10,21 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Modal from '@mui/material/Modal';
-const bcrypt = require("bcryptjs");
+import { useSnackbar } from 'notistack';
 
 const defaultTheme = createTheme();
 
 const Login = () => {
+
+  const { enqueueSnackbar } = useSnackbar();
+
   const [user, setUser] = React.useState({
     email: '',
     password: ''
   });
 
-  const [errorMessage, setErrorMessage] = React.useState(false);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [recoveryEmail, setRecoveryEmail] = React.useState('');
-
-  const encrypt = async (passwordPlain) => {
-    const hash = await bcrypt.hash(passwordPlain, 10);
-    return hash;
-  }
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -39,7 +36,6 @@ const Login = () => {
 
   const generateSecretToken = async (email) => {
 
-    //Get userId to generate secreteToken
     const response = await fetch('http://localhost:3001/api/auth/users/email/' + email, {
         method: 'GET',
         headers: {
@@ -49,20 +45,7 @@ const Login = () => {
     const data = await response.json();
     const userId = data.data._id
 
-    const token = await encrypt(userId);
-    console.log(token)
-
-    //Update secret token in user
-    fetch('http://localhost:3001/api/auth/users/' + userId, {
-        method: 'PUT',
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          secretToken: token
-        })
-    })
-    return token;
+    return userId;
   }
 
   const handleRecoverClick = async () => {
@@ -83,12 +66,12 @@ const Login = () => {
         });
   
         if (response.status === 200) {
-          const data = await response.json();
-          console.log(JSON.stringify(data));
+          enqueueSnackbar('An email with the link to recover your password has been sent."', { variant: 'success' });
+          setRecoveryEmail('');
+          closeModal();
+        } else{
+          enqueueSnackbar('There was an issue with sending the email."', { variant: 'success' });
         }
-  
-        setRecoveryEmail('');
-        closeModal();
       } catch (error) {
         console.error("Error:", error);
       }
@@ -97,7 +80,7 @@ const Login = () => {
 
   const handleLogin= () => {
     if ( user.email === '' || user.password === '' ) {
-      setErrorMessage(true);      
+      enqueueSnackbar('Email or password is empty.', { variant: 'error' });
       return;
     } else{
       fetch('http://localhost:3001/api/auth/login', {
@@ -110,14 +93,15 @@ const Login = () => {
       .then(response => response.json())
       .then(data => {
         if(data.status === 200){
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('userId', data.user._id);
-            localStorage.setItem('username', data.user.firstName  + ' ' + data.user.lastName);
-            localStorage.setItem('roles', data.user.role[0]);
-            window.location.replace('/main');
-        }
+          enqueueSnackbar('Successful login.', { variant: 'success' });
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('userId', data.user._id);
+          localStorage.setItem('username', data.user.firstName  + ' ' + data.user.lastName);
+          localStorage.setItem('roles', data.user.role[0]);
+          window.location.replace('/main');
+          }
         else{
-          setErrorMessage(true);
+          enqueueSnackbar('Wrong Email or Password.', { variant: 'error' });
         }
       })
     }
@@ -209,7 +193,6 @@ const Login = () => {
                 Sign In
               </Button>
               <Grid container justifyContent="center">
-                {errorMessage && <p style={{ color: 'red', fontSize: '14px', justifyContent: 'center', textAlign: 'center' }}>Please review your input.</p>}
                 <Grid container>
                   <Grid item xs>
                     <span onClick={openModal} style={{ color: 'black', textDecoration: 'underline', fontSize: '14px', cursor: 'pointer' }}>

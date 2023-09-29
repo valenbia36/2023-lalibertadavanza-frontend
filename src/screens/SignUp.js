@@ -11,12 +11,13 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel } from '@mui/material';
+import { useSnackbar } from 'notistack';
 
 const defaultTheme = createTheme();
 
 const SignUp = () => {
 
-  const [errorMessage, setErrorMessage] = React.useState(false);
+  const { enqueueSnackbar } = useSnackbar();
     
   const [user, setUser] = React.useState({
       firstName: '',
@@ -31,7 +32,7 @@ const SignUp = () => {
 
   const handleRegister = () => {
       if ( user.firstName === '' || user.lastName === '' || user.email === '' || user.password === '' || user.sex === '' || user.age === '' || user.height === '' || user.weight === '' ) {
-        setErrorMessage(true);
+        enqueueSnackbar('Some fields are empty.', { variant: 'error' });
         return;
       }
       fetch('http://localhost:3001/api/auth/register', {
@@ -42,10 +43,11 @@ const SignUp = () => {
           body: JSON.stringify(user)
       }).then(function(response) {
           if(response.status === 200){
+              enqueueSnackbar('Registered successfully.', { variant: 'success' });
               window.location.replace('/');
           }
           else{
-              setErrorMessage(true);
+            enqueueSnackbar('Something went wrong.', { variant: 'error' });
           }
       });
   }
@@ -247,7 +249,6 @@ const SignUp = () => {
             >
               Sign Up
             </Button>
-            {errorMessage && <p style={{color: 'red', fontSize: '14px', justifyContent: 'center', textAlign: 'center'}}>Please review your input. There are errors in one or more fields.</p>}
             <Grid container justifyContent="center">
               <Grid item>
                 <Link href='/' variant="body2" sx={{color: 'black'}}>
