@@ -9,17 +9,91 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Modal from '@mui/material/Modal';
+const bcrypt = require("bcryptjs");
 
 const defaultTheme = createTheme();
 
 const Login = () => {
-
   const [user, setUser] = React.useState({
     email: '',
     password: ''
   });
 
   const [errorMessage, setErrorMessage] = React.useState(false);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [recoveryEmail, setRecoveryEmail] = React.useState('');
+
+  const encrypt = async (passwordPlain) => {
+    const hash = await bcrypt.hash(passwordPlain, 10);
+    return hash;
+  }
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const generateSecretToken = async (email) => {
+
+    //Get userId to generate secreteToken
+    const response = await fetch('http://localhost:3001/api/auth/users/email/' + email, {
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    const data = await response.json();
+    const userId = data.data._id
+
+    const token = await encrypt(userId);
+    console.log(token)
+
+    //Update secret token in user
+    fetch('http://localhost:3001/api/auth/users/' + userId, {
+        method: 'PUT',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          secretToken: token
+        })
+    })
+    return token;
+  }
+
+  const handleRecoverClick = async () => {
+    if (recoveryEmail === '') {
+      return;
+    } else {
+      try {
+        const token = await generateSecretToken(recoveryEmail);
+        const response = await fetch('http://localhost:3001/api/notifications/sendEmail', {
+          method: 'POST',
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            "email": recoveryEmail,
+            "token": token
+          })
+        });
+  
+        if (response.status === 200) {
+          const data = await response.json();
+          console.log(JSON.stringify(data));
+        }
+  
+        setRecoveryEmail('');
+        closeModal();
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+  };  
 
   const handleLogin= () => {
     if ( user.email === '' || user.password === '' ) {
@@ -48,106 +122,173 @@ const Login = () => {
       })
     }
   }
-  
-  return(
+
+  return (
     <ThemeProvider theme={defaultTheme}>
-    <Grid container component="main" sx={{ height: '100vh' }}>
-      <CssBaseline />
-      <Grid
-        item
-        xs={false}
-        sm={4}
-        md={7}
-        sx={{
-          backgroundImage: 'url(https://img.freepik.com/foto-gratis/lay-flat-delicioso-concepto-comida-sana_23-2148648502.jpg?w=1380&t=st=1694729010~exp=1694729610~hmac=8f6349b5b92090526d1bd3acdd7e87d04fcd5b2bb1ab6d30f326c790dc75de66)',
-          backgroundRepeat: 'no-repeat',
-          backgroundColor: (t) =>
-            t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      />
-      <Grid item xs={12} sm={8} md={5} style={{backgroundColor: '#CAD2C5'}} elevation={6} square="true">
-        <div style={{justifyContent: 'center', textAlign: 'center', color: 'black', marginTop: '10%'}}>
-        <Typography variant="h3" color="inherit" noWrap>
-          HELIAPP
-          </Typography>        
-        </div>
+      <Grid container component="main" sx={{ height: '100vh' }}>
+        <CssBaseline />
+        <Grid
+          item
+          xs={false}
+          sm={4}
+          md={7}
+          sx={{
+            backgroundImage: 'url(https://img.freepik.com/foto-gratis/lay-flat-delicioso-concepto-comida-sana_23-2148648502.jpg?w=1380&t=st=1694729010~exp=1694729610~hmac=8f6349b5b92090526d1bd3acdd7e87d04fcd5b2bb1ab6d30f326c790dc75de66)',
+            backgroundRepeat: 'no-repeat',
+            backgroundColor: (t) =>
+              t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        />
+        <Grid item xs={12} sm={8} md={5} style={{ backgroundColor: '#CAD2C5' }} elevation={6} square="true">
+          <div style={{ justifyContent: 'center', textAlign: 'center', color: 'black', marginTop: '10%' }}>
+            <Typography variant="h3" color="inherit" noWrap>
+              HELIAPP
+            </Typography>
+          </div>
+          <Box
+            sx={{
+              my: 8,
+              mx: 4,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
+            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+              <LockOutlinedIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5" style={{ color: 'black', fontWeight: 'bold' }}>
+              Sign in
+            </Typography>
+            <Box sx={{ mt: 1 }}>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                autoFocus
+                InputLabelProps={{
+                  style: { color: 'black' },
+                }}
+                InputProps={{
+                  style: { color: 'color', min: 0 },
+                }}
+                onChange={(e) => setUser({ ...user, email: e.target.value })}
+                onKeyPress={(event) => { if (event.key === 'Enter') { handleLogin() } }}
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                InputLabelProps={{
+                  style: { color: 'black' },
+                }}
+                InputProps={{
+                  style: { color: 'black', min: 0 },
+                }}
+                onChange={(e) => setUser({ ...user, password: e.target.value })}
+                onKeyPress={(event) => { if (event.key === 'Enter') { handleLogin() } }}
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2, backgroundColor: '#373D20', '&:hover': { backgroundColor: '#373D20' }, fontWeight: 'bold' }}
+                onClick={() => handleLogin()}
+              >
+                Sign In
+              </Button>
+              <Grid container justifyContent="center">
+                {errorMessage && <p style={{ color: 'red', fontSize: '14px', justifyContent: 'center', textAlign: 'center' }}>Please review your input.</p>}
+                <Grid container>
+                  <Grid item xs>
+                    <span onClick={openModal} style={{ color: 'black', textDecoration: 'underline', fontSize: '14px', cursor: 'pointer' }}>
+                      Forgot password?
+                    </span>
+                  </Grid>
+                  <Grid item style={{ justifyContent: 'center' }}>
+                    <Link href="/SignUp" variant="body2" sx={{ color: 'black', textDecorationColor: 'black' }}>
+                      {"Don't have an account? Sign Up"}
+                    </Link>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Box>
+          </Box>
+        </Grid>
+      </Grid>
+
+      <Modal
+        open={isModalOpen}
+        onClose={closeModal}
+        aria-labelledby="modal-title"
+        aria-describedby="modal-description"
+      >
         <Box
           sx={{
-            my: 8,
-            mx: 4,
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 500,
+            bgcolor: '#CAD2C5',
+            boxShadow: 24,
+            p: 4,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
+            borderColor: 'black',
+            borderStyle: 'solid',
+            borderRadius: '2%'
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5" style={{color: 'black', fontWeight: 'bold'}}>
-            Sign in
-          </Typography>
-          <Box sx={{ mt: 1 }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-              InputLabelProps={{
-                style: { color: 'black'},
-              }}
-              InputProps={{
-                style: { color: 'color', min: 0},
-              }}
-              onChange={(e) => setUser({...user, email: e.target.value})} 
-              onKeyPress={event => { if (event.key === 'Enter') { handleLogin() } }}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              InputLabelProps={{
-                style: { color: 'black' },
-              }}
-              InputProps={{
-                style: { color: 'black', min: 0},
-              }}
-              onChange={(e) => setUser({...user, password: e.target.value})} 
-              onKeyPress={event => { if (event.key === 'Enter') { handleLogin() } }}
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2, backgroundColor: '#373D20', '&:hover': {backgroundColor: '#373D20'}, fontWeight: 'bold' }}
-              onClick={() => handleLogin()}
-            >
-              Sign In
-            </Button>
-            <Grid container justifyContent="center">
-              {errorMessage && <p style={{color: 'red', fontSize: '14px', justifyContent: 'center', textAlign: 'center'}}>Please review your input. There are errors in one or more fields.</p>}
-              <Grid item style={{justifyContent: 'center'}}>
-                <Link href="/SignUp" variant="body2" sx={{color: 'black'}}>
-                  {"Don't have an account? Sign Up"}
-                </Link>
-              </Grid>
-            </Grid>
-          </Box>
+          <h2>Reset Password</h2>
+          <p>Enter your email address to recover your password.</p>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="email"
+            label="Email Address"
+            type="email"
+            id="email"
+            autoComplete="email"
+            InputLabelProps={{
+              style: { color: 'black' },
+            }}
+            InputProps={{
+              style: { color: 'black', min: 0 },
+            }}
+            onChange={(e) => setRecoveryEmail(e.target.value)}
+            onKeyPress={(event) => { if (event.key === 'Enter') { handleRecoverClick() } }}
+            style={{ width: '100%', marginBottom: '1rem' }} // Estilo para el campo de entrada
+          />
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: '#373D20',
+              '&:hover': { backgroundColor: '#373D20' },
+              fontWeight: 'bold',
+              width: '100%'
+            }}
+            onClick={handleRecoverClick}
+          >
+            Reset Password
+          </Button>
         </Box>
-      </Grid>
-    </Grid>
-  </ThemeProvider>
+      </Modal>
+    </ThemeProvider>
   );
-}
+};
 
 export default Login;
