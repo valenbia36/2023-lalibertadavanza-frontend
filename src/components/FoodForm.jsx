@@ -1,9 +1,11 @@
 import React, {  useState } from 'react';
+import Grid from '@mui/material/Grid';
 import { TextField, Button, Modal, Box, } from '@mui/material';
 
 const initialFoodState = {
   name: '',
-  calories: ''
+  calories: '',
+  weight: '',
 };
 
 const FoodForm = ({open,setOpen}) => {
@@ -12,11 +14,30 @@ const FoodForm = ({open,setOpen}) => {
 
   const closeModal = () => {
     setOpen(false);
+    setErrorMessage(false)
     setNewFood(initialFoodState);
   };
 
+  const handleCaloriesInputChange = (e, index) => {
+    const inputValue = Number(e.target.value);
+    if (!isNaN(inputValue) && inputValue >= 1) {
+      setNewFood({ ...newFood, calories: inputValue });
+    } else {
+      setNewFood({ ...newFood, calories: '' }); // Deja el campo de entrada vacío
+    }
+  };
+
+  const handleWeightInputChange = (e, index) => {
+    const inputValue = Number(e.target.value);
+    if (!isNaN(inputValue) && inputValue >= 1) {
+      setNewFood({ ...newFood, weight: inputValue });
+    } else {
+      setNewFood({ ...newFood, weight: '' }); // Deja el campo de entrada vacío
+    }
+  };
+
   const handleAddFood = () => {
-    if ( newFood.name === '') {
+    if ( newFood.name === ''|| newFood.calories === '' || newFood.weight === '' ) { //ACA DEBERIA SER
       setErrorMessage(true);
       return;
   } else{
@@ -70,14 +91,38 @@ const FoodForm = ({open,setOpen}) => {
         value={newFood.name}
         onChange={(e) => setNewFood({ ...newFood, name: e.target.value })}
       />
+
       <TextField
-        label="Calories"
+        InputProps={{
+          inputProps: {
+            step: 1, // Establece el incremento/decremento en 1
+          },
+        }}
+        label={`Calories`}
+        type='number'
         variant="outlined"
         fullWidth
-        margin="normal"
         value={newFood.calories}
-        onChange={(e) => setNewFood({ ...newFood, calories: e.target.value })}
+        onChange={(e) => handleCaloriesInputChange(e)}
+        style={{ marginBottom: '7px' }}
       />
+
+    <TextField
+        InputProps={{
+          inputProps: { min: 1 }
+        }}
+        label={`Weight`}
+        type='number'
+        variant="outlined"
+        fullWidth
+        value={newFood.weight}
+        onChange={(e) => handleWeightInputChange(e)}
+      />
+
+      <Grid container justifyContent="center">
+              {errorMessage && <p style={{color: 'red', fontSize: '14px', justifyContent: 'center', textAlign: 'center'}}>
+                Please review your input. There are errors in one or more fields.</p>}
+      </Grid>
 
       <Button
         variant="contained"

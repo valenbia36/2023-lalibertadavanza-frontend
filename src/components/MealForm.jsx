@@ -34,6 +34,7 @@ const MealForm = ({ open, setOpen }) => {
 
   const closeModal = () => {
     setOpen(false);
+    setErrorMessage(false)
     setNewMeal({
       name: '',
       date: '',
@@ -64,17 +65,27 @@ const MealForm = ({ open, setOpen }) => {
     setNewMeal({ ...newMeal, foods: updatedFoods });
   };
 
-  const handleQuantityInputChange = (event, index) => {
-    const updatedFoods = [...newMeal.foods];
-    updatedFoods[index].quantity = event.target.value;
-    setNewMeal({ ...newMeal, foods: updatedFoods });
+  const handleQuantityInputChange = (e, index) => {
+    const inputValue = Number(e.target.value);
+    if (!isNaN(inputValue) && inputValue >= 1) {
+      const updatedFoods = [...newMeal.foods]; 
+      updatedFoods[index].quantity = inputValue;
+      setNewMeal({ ...newMeal, foods: updatedFoods });
+    }else{
+      const updatedFoods = [...newMeal.foods]; 
+      updatedFoods[index].quantity = '';
+      setNewMeal({ ...newMeal, foods: updatedFoods });
+    }
   };
 
   const handleAddMeal = () => {
-    if (newMeal.name === '') {
+    if (newMeal.name === '' || newMeal.date === '' || newMeal.hour === '' || !(newMeal.foods.every(food => 
+      food.name !== '' && food.quantity !== '')))
+    {
       setErrorMessage(true);
       return;
-    } else {
+    } 
+    else {
       newMeal.calories = newMeal.foods.map(food => parseInt(food.calories) * parseInt(food.quantity)).reduce((acc, calories) => acc + calories, 0);
       fetch('http://localhost:3001/api/meals', {
         method: 'POST',
@@ -183,6 +194,9 @@ const MealForm = ({ open, setOpen }) => {
               </Grid>
               <Grid item xs={3}>
                 <TextField
+                  InputProps={{
+                    inputProps: { min: 1 }
+                  }}
                   label={`Quantity`}
                   type='number'
                   variant="outlined"
@@ -213,6 +227,10 @@ const MealForm = ({ open, setOpen }) => {
               )}
             </Grid>
           ))}
+           <Grid container justifyContent="center">
+              {errorMessage && <p style={{color: 'red', fontSize: '14px', justifyContent: 'center', textAlign: 'center'}}>
+                Please review your input. There are errors in one or more fields.</p>}
+        </Grid>
 
           <Button
             variant="contained"
