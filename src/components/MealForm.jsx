@@ -79,10 +79,13 @@ const MealForm = ({ open, setOpen }) => {
   };
 
   const handleAddMeal = () => {
-    if (newMeal.name === '' || newMeal.date === '' || newMeal.hour === '' || newMeal.foods[0].name === '' || newMeal.foods[0].quantity === ''   ) {
+    if (newMeal.name === '' || newMeal.date === '' || newMeal.hour === '' || !(newMeal.foods.every(food => 
+      food.name !== '' && food.quantity !== '')))
+    {
       setErrorMessage(true);
       return;
-    } else {
+    } 
+    else {
       newMeal.calories = newMeal.foods.map(food => parseInt(food.calories) * parseInt(food.quantity)).reduce((acc, calories) => acc + calories, 0);
       fetch('http://localhost:3001/api/meals', {
         method: 'POST',
