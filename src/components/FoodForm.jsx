@@ -1,6 +1,6 @@
 import React, {  useState } from 'react';
-import Grid from '@mui/material/Grid';
 import { TextField, Button, Modal, Box, } from '@mui/material';
+import { useSnackbar } from 'notistack';
 
 const initialFoodState = {
   name: '',
@@ -9,12 +9,13 @@ const initialFoodState = {
 };
 
 const FoodForm = ({open,setOpen}) => {
+
+  const { enqueueSnackbar } = useSnackbar();
+
   const [newFood, setNewFood] = useState(initialFoodState);
-  const [errorMessage, setErrorMessage] = useState(false);
 
   const closeModal = () => {
     setOpen(false);
-    setErrorMessage(false)
     setNewFood(initialFoodState);
   };
 
@@ -38,9 +39,9 @@ const FoodForm = ({open,setOpen}) => {
 
   const handleAddFood = () => {
     if ( newFood.name === ''|| newFood.calories === '' || newFood.weight === '' ) { //ACA DEBERIA SER
-      setErrorMessage(true);
+      enqueueSnackbar('Please complete all the fields.', { variant: 'error' });
       return;
-  } else{
+    } else{
       fetch('http://localhost:3001/api/foods', {
           method: 'POST',
           headers: {
@@ -50,16 +51,14 @@ const FoodForm = ({open,setOpen}) => {
           body: JSON.stringify(newFood)
       }).then(function(response) {
           if(response.status === 200){
-              console.log("Se creo el alimento")
-              closeModal();
-              
+            enqueueSnackbar('The food was created successfully.', { variant: 'success' });
+            closeModal();
           }
           else{
-              setErrorMessage(true);
-              console.log("Hubo un error creando el alimento")
+            enqueueSnackbar('An error occurred while creating the food.', { variant: 'error' });
           } 
       });
-  } 
+    } 
   };
 
   return (
@@ -118,11 +117,6 @@ const FoodForm = ({open,setOpen}) => {
         value={newFood.weight}
         onChange={(e) => handleWeightInputChange(e)}
       />
-
-      <Grid container justifyContent="center">
-              {errorMessage && <p style={{color: 'red', fontSize: '14px', justifyContent: 'center', textAlign: 'center'}}>
-                Please review your input. There are errors in one or more fields.</p>}
-      </Grid>
 
       <Button
         variant="contained"

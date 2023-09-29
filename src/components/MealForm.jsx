@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { TextField, Button, Modal, Box, IconButton, Grid, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
 import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
+import { useSnackbar } from 'notistack';
 
 const initialMealState = {
   name: '',
@@ -13,9 +14,11 @@ const initialMealState = {
 };
 
 const MealForm = ({ open, setOpen }) => {
+
   const [newMeal, setNewMeal] = useState(initialMealState);
-  const [errorMessage, setErrorMessage] = useState(false);
-  const [foodOptions, setFoodOptions] = useState([]); // Lista de opciones de alimentos
+  const [foodOptions, setFoodOptions] = useState([]);
+
+  const { enqueueSnackbar } = useSnackbar();
 
   const getFoods = async () => {
     const response = await fetch('http://localhost:3001/api/foods/', {
@@ -34,7 +37,6 @@ const MealForm = ({ open, setOpen }) => {
 
   const closeModal = () => {
     setOpen(false);
-    setErrorMessage(false)
     setNewMeal({
       name: '',
       date: '',
@@ -82,7 +84,7 @@ const MealForm = ({ open, setOpen }) => {
     if (newMeal.name === '' || newMeal.date === '' || newMeal.hour === '' || !(newMeal.foods.every(food => 
       food.name !== '' && food.quantity !== '')))
     {
-      setErrorMessage(true);
+      enqueueSnackbar('Please complete all the fields.', { variant: 'error' });
       return;
     } 
     else {
@@ -97,16 +99,14 @@ const MealForm = ({ open, setOpen }) => {
       })
         .then(function (response) {
           if (response.status === 200) {
-            console.log('Se creó la comida');
+            enqueueSnackbar('The meal was created successfully.', { variant: 'success' });
             closeModal();
           } else {
-            setErrorMessage(true);
-            console.log('Hubo un error creando la comida');
+            enqueueSnackbar('An error occurred while creating the meal.', { variant: 'error' });
           }
         })
         .catch(function (error) {
-          console.error('Error:', error);
-          setErrorMessage(true);
+          enqueueSnackbar('An error occurred while creating the meal.', { variant: 'error' });
         });
     }
   };
@@ -227,10 +227,6 @@ const MealForm = ({ open, setOpen }) => {
               )}
             </Grid>
           ))}
-           <Grid container justifyContent="center">
-              {errorMessage && <p style={{color: 'red', fontSize: '14px', justifyContent: 'center', textAlign: 'center'}}>
-                Please review your input. There are errors in one or more fields.</p>}
-        </Grid>
 
           <Button
             variant="contained"

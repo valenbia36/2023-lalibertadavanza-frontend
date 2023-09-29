@@ -66,14 +66,14 @@ const Login = () => {
         });
   
         if (response.status === 200) {
-          enqueueSnackbar('An email with the link to recover your password has been sent."', { variant: 'success' });
+          enqueueSnackbar('An email with the link to recover your password has been sent.', { variant: 'success' });
           setRecoveryEmail('');
           closeModal();
         } else{
-          enqueueSnackbar('There was an issue with sending the email."', { variant: 'success' });
+          enqueueSnackbar('There was an issue with sending the email.', { variant: 'success' });
         }
       } catch (error) {
-        console.error("Error:", error);
+        enqueueSnackbar('There was an issue with sending the email.', { variant: 'success' });
       }
     }
   };  
