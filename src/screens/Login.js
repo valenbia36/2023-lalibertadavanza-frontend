@@ -34,38 +34,34 @@ const Login = () => {
     setIsModalOpen(false);
   };
 
-  const generateSecretToken = async (email) => {
-
-    const response = await fetch('http://localhost:3001/api/auth/users/email/' + email, {
-        method: 'GET',
-        headers: {
-            "Content-Type": "application/json"
-        }
-    })
-    const data = await response.json();
-    const userId = data.data._id
-
-    return userId;
-  }
-
   const handleRecoverClick = async () => {
     if (recoveryEmail === '') {
       return;
     } else {
       try {
-        const token = await generateSecretToken(recoveryEmail);
-        const response = await fetch('http://localhost:3001/api/notifications/sendEmail', {
+        const response = await fetch('http://localhost:3001/api/auth/users/email/' + recoveryEmail, {
+            method: 'GET',
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        const data = await response.json();
+        const token = data.data._id;
+        const userName = data.data.firstName + ' ' + data.data.lastName;
+
+        const response1 = await fetch('http://localhost:3001/api/notifications/sendEmail', {
           method: 'POST',
           headers: {
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
             "email": recoveryEmail,
-            "token": token
+            "token": token,
+            "userName": userName
           })
         });
   
-        if (response.status === 200) {
+        if (response1.status === 200) {
           enqueueSnackbar('An email with the link to recover your password has been sent.', { variant: 'success' });
           setRecoveryEmail('');
           closeModal();
