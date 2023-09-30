@@ -96,6 +96,11 @@ const FoodForm = ({ open, setOpen }) => {
             margin="normal"
             value={newFood.name}
             onChange={(e) => setNewFood({ ...newFood, name: e.target.value })}
+            onKeyPress={(event) => {
+              if (event.key === "Enter") {
+                handleAddFood();
+              }
+            }}
           />
 
           <TextField
@@ -109,12 +114,17 @@ const FoodForm = ({ open, setOpen }) => {
             value={newFood.weight}
             onChange={(e) => handleWeightInputChange(e)}
             style={{ marginBottom: "7px" }}
+            onKeyPress={(event) => {
+              if (event.key === "Enter") {
+                handleAddFood();
+              }
+            }}
           />
 
           <TextField
             InputProps={{
               inputProps: {
-                step: 1, // Establece el incremento/decremento en 1
+                step: 1,
               },
             }}
             label={`Calories`}
@@ -123,6 +133,11 @@ const FoodForm = ({ open, setOpen }) => {
             fullWidth
             value={newFood.calories}
             onChange={(e) => handleCaloriesInputChange(e)}
+            onKeyPress={(event) => {
+              if (event.key === "Enter") {
+                handleAddFood();
+              }
+            }}
           />
 
           <TextField
@@ -134,6 +149,11 @@ const FoodForm = ({ open, setOpen }) => {
             onChange={(e) =>
               setNewFood({ ...newFood, category: e.target.value })
             }
+            onKeyPress={(event) => {
+              if (event.key === "Enter") {
+                handleAddFood();
+              }
+            }}
           />
 
           <Button
