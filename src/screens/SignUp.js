@@ -11,11 +11,11 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import {
-  Checkbox,
   FormControl,
   FormControlLabel,
-  FormGroup,
   FormLabel,
+  Radio,
+  RadioGroup,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 
@@ -34,6 +34,10 @@ const SignUp = () => {
     height: "",
     weight: "",
   });
+
+  const handleSexChange = (event) => {
+    setUser({ ...user, sex: event.target.value });
+  };
 
   const handleRegister = () => {
     if (
@@ -197,7 +201,8 @@ const SignUp = () => {
                     style: { color: "black" },
                   }}
                   InputProps={{
-                    style: { color: "black", min: 0 },
+                    style: { color: "black"},
+                    inputProps: { min: 1 } 
                   }}
                   onChange={(e) => setUser({ ...user, age: e.target.value })}
                   onKeyPress={(event) => {
@@ -208,37 +213,29 @@ const SignUp = () => {
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <FormControl>
-                  <FormLabel style={{ color: "black" }}>Sex</FormLabel>
-                  <FormGroup row>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          name="sex"
-                          value="male"
-                          color="primary"
-                          style={{ color: "black" }}
-                          onChange={(e) => setUser({ ...user, sex: "male" })}
-                        />
-                      }
-                      label="Male"
-                      style={{ color: "black" }}
-                    />
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          name="sex"
-                          value="female"
-                          color="primary"
-                          style={{ color: "black" }}
-                          onChange={(e) => setUser({ ...user, sex: "female" })}
-                        />
-                      }
-                      label="Female"
-                      style={{ color: "black" }}
-                    />
-                  </FormGroup>
-                </FormControl>
+              <FormControl component="fieldset">
+                <FormLabel style={{ color: "black" }}>Sex</FormLabel>
+                <RadioGroup
+                  row
+                  aria-label="sex"
+                  name="sex"
+                  value={user.sex}
+                  onChange={handleSexChange}
+                >
+                  <FormControlLabel
+                    value="male"
+                    control={<Radio style={{ color: "black" }} />}
+                    label="Male"
+                    style={{ color: "black" }}
+                  />
+                  <FormControlLabel
+                    value="female"
+                    control={<Radio style={{ color: "black" }} />}
+                    label="Female"
+                    style={{ color: "black" }}
+                  />
+                </RadioGroup>
+              </FormControl>
               </Grid>
               <Grid item xs={6} sm={6}>
                 <TextField
@@ -253,9 +250,9 @@ const SignUp = () => {
                   }}
                   InputProps={{
                     style: {
-                      color: "black",
-                      min: 0,
+                      color: "black"
                     },
+                    inputProps: { min: 1 }               
                   }}
                   onChange={(e) => setUser({ ...user, height: e.target.value })}
                   onKeyPress={(event) => {
@@ -278,9 +275,9 @@ const SignUp = () => {
                   }}
                   InputProps={{
                     style: {
-                      color: "black",
-                      min: 0,
+                      color: "black"
                     },
+                    inputProps: { min: 1 }    
                   }}
                   onChange={(e) => setUser({ ...user, weight: e.target.value })}
                   onKeyPress={(event) => {
