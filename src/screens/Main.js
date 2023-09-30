@@ -1,12 +1,12 @@
-import React from 'react';
-import Drawer from '../components/Drawer';
-import MealList from '../components/MealList';
-import FoodList from '../components/FoodList';
+import React from "react";
+import Drawer from "../components/Drawer";
+import MealList from "../components/MealList";
+import FoodList from "../components/FoodList";
 
 const Main = () => {
   return (
     <div className="container">
-      <Drawer user={localStorage.getItem('username')} />
+      <Drawer user={localStorage.getItem("username")} />
       <div className="row justify-content-center align-items-center">
         <div className="col-md-10 justify-content-center">
           <div className="row justify-content-center">
@@ -21,6 +21,6 @@ const Main = () => {
       </div>
     </div>
   );
-}
+};
 
 export default Main;

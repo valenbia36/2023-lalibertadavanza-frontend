@@ -1,30 +1,29 @@
-import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import Modal from '@mui/material/Modal';
-import { useSnackbar } from 'notistack';
+import * as React from "react";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import CssBaseline from "@mui/material/CssBaseline";
+import TextField from "@mui/material/TextField";
+import Link from "@mui/material/Link";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import Typography from "@mui/material/Typography";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Modal from "@mui/material/Modal";
+import { useSnackbar } from "notistack";
 
 const defaultTheme = createTheme();
 
 const Login = () => {
-
   const { enqueueSnackbar } = useSnackbar();
 
   const [user, setUser] = React.useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
 
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [recoveryEmail, setRecoveryEmail] = React.useState('');
+  const [recoveryEmail, setRecoveryEmail] = React.useState("");
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -35,77 +34,92 @@ const Login = () => {
   };
 
   const handleRecoverClick = async () => {
-    if (recoveryEmail === '') {
+    if (recoveryEmail === "") {
       return;
     } else {
       try {
-        const response = await fetch('http://localhost:3001/api/auth/users/email/' + recoveryEmail, {
-            method: 'GET',
+        const response = await fetch(
+          "http://localhost:3001/api/auth/users/email/" + recoveryEmail,
+          {
+            method: "GET",
             headers: {
-                "Content-Type": "application/json"
-            }
-        })
+              "Content-Type": "application/json",
+            },
+          }
+        );
         const data = await response.json();
         const token = data.data._id;
-        const userName = data.data.firstName + ' ' + data.data.lastName;
+        const userName = data.data.firstName + " " + data.data.lastName;
 
-        const response1 = await fetch('http://localhost:3001/api/notifications/sendEmail', {
-          method: 'POST',
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            "email": recoveryEmail,
-            "token": token,
-            "userName": userName
-          })
-        });
-  
+        const response1 = await fetch(
+          "http://localhost:3001/api/notifications/sendEmail",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: recoveryEmail,
+              token: token,
+              userName: userName,
+            }),
+          }
+        );
+
         if (response1.status === 200) {
-          enqueueSnackbar('An email with the link to recover your password has been sent.', { variant: 'success' });
-          setRecoveryEmail('');
+          enqueueSnackbar(
+            "An email with the link to recover your password has been sent.",
+            { variant: "success" }
+          );
+          setRecoveryEmail("");
           closeModal();
-        } else{
-          enqueueSnackbar('There was an issue with sending the email.', { variant: 'success' });
+        } else {
+          enqueueSnackbar("There was an issue with sending the email.", {
+            variant: "success",
+          });
         }
       } catch (error) {
-        enqueueSnackbar('There was an issue with sending the email.', { variant: 'success' });
+        enqueueSnackbar("There was an issue with sending the email.", {
+          variant: "success",
+        });
       }
     }
-  };  
+  };
 
-  const handleLogin= () => {
-    if ( user.email === '' || user.password === '' ) {
-      enqueueSnackbar('Email or password is empty.', { variant: 'error' });
+  const handleLogin = () => {
+    if (user.email === "" || user.password === "") {
+      enqueueSnackbar("Email or password is empty.", { variant: "error" });
       return;
-    } else{
-      fetch('http://localhost:3001/api/auth/login', {
-        method: 'POST',
+    } else {
+      fetch("http://localhost:3001/api/auth/login", {
+        method: "POST",
         headers: {
-            "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(user)
+        body: JSON.stringify(user),
       })
-      .then(response => response.json())
-      .then(data => {
-        if(data.status === 200){
-          enqueueSnackbar('Successful login.', { variant: 'success' });
-          localStorage.setItem('token', data.token);
-          localStorage.setItem('userId', data.user._id);
-          localStorage.setItem('username', data.user.firstName  + ' ' + data.user.lastName);
-          localStorage.setItem('roles', data.user.role[0]);
-          window.location.replace('/main');
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.status === 200) {
+            enqueueSnackbar("Successful login.", { variant: "success" });
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("userId", data.user._id);
+            localStorage.setItem(
+              "username",
+              data.user.firstName + " " + data.user.lastName
+            );
+            localStorage.setItem("roles", data.user.role[0]);
+            window.location.replace("/main");
+          } else {
+            enqueueSnackbar("Wrong Email or Password.", { variant: "error" });
           }
-        else{
-          enqueueSnackbar('Wrong Email or Password.', { variant: 'error' });
-        }
-      })
+        });
     }
-  }
+  };
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Grid container component="main" sx={{ height: '100vh' }}>
+      <Grid container component="main" sx={{ height: "100vh" }}>
         <CssBaseline />
         <Grid
           item
@@ -113,16 +127,34 @@ const Login = () => {
           sm={4}
           md={7}
           sx={{
-            backgroundImage: 'url(https://img.freepik.com/foto-gratis/lay-flat-delicioso-concepto-comida-sana_23-2148648502.jpg?w=1380&t=st=1694729010~exp=1694729610~hmac=8f6349b5b92090526d1bd3acdd7e87d04fcd5b2bb1ab6d30f326c790dc75de66)',
-            backgroundRepeat: 'no-repeat',
+            backgroundImage:
+              "url(https://img.freepik.com/foto-gratis/lay-flat-delicioso-concepto-comida-sana_23-2148648502.jpg?w=1380&t=st=1694729010~exp=1694729610~hmac=8f6349b5b92090526d1bd3acdd7e87d04fcd5b2bb1ab6d30f326c790dc75de66)",
+            backgroundRepeat: "no-repeat",
             backgroundColor: (t) =>
-              t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
+              t.palette.mode === "light"
+                ? t.palette.grey[50]
+                : t.palette.grey[900],
+            backgroundSize: "cover",
+            backgroundPosition: "center",
           }}
         />
-        <Grid item xs={12} sm={8} md={5} style={{ backgroundColor: '#CAD2C5' }} elevation={6} square="true">
-          <div style={{ justifyContent: 'center', textAlign: 'center', color: 'black', marginTop: '10%' }}>
+        <Grid
+          item
+          xs={12}
+          sm={8}
+          md={5}
+          style={{ backgroundColor: "#CAD2C5" }}
+          elevation={6}
+          square="true"
+        >
+          <div
+            style={{
+              justifyContent: "center",
+              textAlign: "center",
+              color: "black",
+              marginTop: "10%",
+            }}
+          >
             <Typography variant="h3" color="inherit" noWrap>
               HELIAPP
             </Typography>
@@ -131,15 +163,19 @@ const Login = () => {
             sx={{
               my: 8,
               mx: 4,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
             }}
           >
-            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
               <LockOutlinedIcon />
             </Avatar>
-            <Typography component="h1" variant="h5" style={{ color: 'black', fontWeight: 'bold' }}>
+            <Typography
+              component="h1"
+              variant="h5"
+              style={{ color: "black", fontWeight: "bold" }}
+            >
               Sign in
             </Typography>
             <Box sx={{ mt: 1 }}>
@@ -153,13 +189,17 @@ const Login = () => {
                 autoComplete="email"
                 autoFocus
                 InputLabelProps={{
-                  style: { color: 'black' },
+                  style: { color: "black" },
                 }}
                 InputProps={{
-                  style: { color: 'color', min: 0 },
+                  style: { color: "color", min: 0 },
                 }}
                 onChange={(e) => setUser({ ...user, email: e.target.value })}
-                onKeyPress={(event) => { if (event.key === 'Enter') { handleLogin() } }}
+                onKeyPress={(event) => {
+                  if (event.key === "Enter") {
+                    handleLogin();
+                  }
+                }}
               />
               <TextField
                 margin="normal"
@@ -171,19 +211,29 @@ const Login = () => {
                 id="password"
                 autoComplete="current-password"
                 InputLabelProps={{
-                  style: { color: 'black' },
+                  style: { color: "black" },
                 }}
                 InputProps={{
-                  style: { color: 'black', min: 0 },
+                  style: { color: "black", min: 0 },
                 }}
                 onChange={(e) => setUser({ ...user, password: e.target.value })}
-                onKeyPress={(event) => { if (event.key === 'Enter') { handleLogin() } }}
+                onKeyPress={(event) => {
+                  if (event.key === "Enter") {
+                    handleLogin();
+                  }
+                }}
               />
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
-                sx={{ mt: 3, mb: 2, backgroundColor: '#373D20', '&:hover': { backgroundColor: '#373D20' }, fontWeight: 'bold' }}
+                sx={{
+                  mt: 3,
+                  mb: 2,
+                  backgroundColor: "#373D20",
+                  "&:hover": { backgroundColor: "#373D20" },
+                  fontWeight: "bold",
+                }}
                 onClick={() => handleLogin()}
               >
                 Sign In
@@ -191,12 +241,24 @@ const Login = () => {
               <Grid container justifyContent="center">
                 <Grid container>
                   <Grid item xs>
-                    <span onClick={openModal} style={{ color: 'black', textDecoration: 'underline', fontSize: '14px', cursor: 'pointer' }}>
+                    <span
+                      onClick={openModal}
+                      style={{
+                        color: "black",
+                        textDecoration: "underline",
+                        fontSize: "14px",
+                        cursor: "pointer",
+                      }}
+                    >
                       Forgot password?
                     </span>
                   </Grid>
-                  <Grid item style={{ justifyContent: 'center' }}>
-                    <Link href="/SignUp" variant="body2" sx={{ color: 'black', textDecorationColor: 'black' }}>
+                  <Grid item style={{ justifyContent: "center" }}>
+                    <Link
+                      href="/SignUp"
+                      variant="body2"
+                      sx={{ color: "black", textDecorationColor: "black" }}
+                    >
                       {"Don't have an account? Sign Up"}
                     </Link>
                   </Grid>
@@ -215,20 +277,20 @@ const Login = () => {
       >
         <Box
           sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
             width: 500,
-            bgcolor: '#CAD2C5',
+            bgcolor: "#CAD2C5",
             boxShadow: 24,
             p: 4,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            borderColor: 'black',
-            borderStyle: 'solid',
-            borderRadius: '2%'
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            borderColor: "black",
+            borderStyle: "solid",
+            borderRadius: "2%",
           }}
         >
           <h2>Reset Password</h2>
@@ -243,22 +305,26 @@ const Login = () => {
             id="email"
             autoComplete="email"
             InputLabelProps={{
-              style: { color: 'black' },
+              style: { color: "black" },
             }}
             InputProps={{
-              style: { color: 'black', min: 0 },
+              style: { color: "black", min: 0 },
             }}
             onChange={(e) => setRecoveryEmail(e.target.value)}
-            onKeyPress={(event) => { if (event.key === 'Enter') { handleRecoverClick() } }}
-            style={{ width: '100%', marginBottom: '1rem' }} // Estilo para el campo de entrada
+            onKeyPress={(event) => {
+              if (event.key === "Enter") {
+                handleRecoverClick();
+              }
+            }}
+            style={{ width: "100%", marginBottom: "1rem" }} // Estilo para el campo de entrada
           />
           <Button
             variant="contained"
             sx={{
-              backgroundColor: '#373D20',
-              '&:hover': { backgroundColor: '#373D20' },
-              fontWeight: 'bold',
-              width: '100%'
+              backgroundColor: "#373D20",
+              "&:hover": { backgroundColor: "#373D20" },
+              fontWeight: "bold",
+              width: "100%",
             }}
             onClick={handleRecoverClick}
           >

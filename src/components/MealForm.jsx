@@ -1,36 +1,46 @@
-import React, { useEffect, useState } from 'react';
-import { TextField, Button, Modal, Box, IconButton, Grid, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
-import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
-import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
-import { useSnackbar } from 'notistack';
+import React, { useEffect, useState } from "react";
+import {
+  TextField,
+  Button,
+  Modal,
+  Box,
+  IconButton,
+  Grid,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+} from "@mui/material";
+import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
+import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
+import { useSnackbar } from "notistack";
 
 const initialMealState = {
-  name: '',
-  date: '',
-  hour: '',
+  name: "",
+  date: "",
+  hour: "",
   calories: 0,
-  foods: [{ name: '', calories: '', quantity: '' }],
-  userId: localStorage.getItem('userId')
+  foods: [{ name: "", calories: "", quantity: "" }],
+  userId: localStorage.getItem("userId"),
 };
 
 const MealForm = ({ open, setOpen }) => {
-
   const [newMeal, setNewMeal] = useState(initialMealState);
   const [foodOptions, setFoodOptions] = useState([]);
 
   const { enqueueSnackbar } = useSnackbar();
 
   const getFoods = async () => {
-    const response = await fetch('http://localhost:3001/api/foods/', {
-      method: 'GET',
+    const response = await fetch("http://localhost:3001/api/foods/", {
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer " + localStorage.getItem('token')
-      }
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
     });
     const data = await response.json();
     setFoodOptions(data.data);
-  }
+  };
   useEffect(() => {
     getFoods();
   }, [foodOptions]);
@@ -38,17 +48,20 @@ const MealForm = ({ open, setOpen }) => {
   const closeModal = () => {
     setOpen(false);
     setNewMeal({
-      name: '',
-      date: '',
-      hour: '',
+      name: "",
+      date: "",
+      hour: "",
       calories: 0,
-      foods: [{ name: '', calories: '', quantity: '' }],
-      userId: localStorage.getItem('userId')
+      foods: [{ name: "", calories: "", quantity: "" }],
+      userId: localStorage.getItem("userId"),
     });
   };
 
   const handleAddFoodInput = () => {
-    const updatedFoods = [...newMeal.foods, { name: '',calories:'' ,quantity: '' }];
+    const updatedFoods = [
+      ...newMeal.foods,
+      { name: "", calories: "", quantity: "" },
+    ];
     setNewMeal({ ...newMeal, foods: updatedFoods });
   };
 
@@ -61,7 +74,7 @@ const MealForm = ({ open, setOpen }) => {
   const handleFoodInputChange = (event, index) => {
     const updatedFoods = [...newMeal.foods];
     updatedFoods[index].name = event.target.value;
-    let result = (foodOptions.filter(item => item.name === event.target.value))
+    let result = foodOptions.filter((item) => item.name === event.target.value);
     updatedFoods[index].calories = result[0].calories;
     console.log(updatedFoods[index].calories);
     setNewMeal({ ...newMeal, foods: updatedFoods });
@@ -70,43 +83,53 @@ const MealForm = ({ open, setOpen }) => {
   const handleQuantityInputChange = (e, index) => {
     const inputValue = Number(e.target.value);
     if (!isNaN(inputValue) && inputValue >= 1) {
-      const updatedFoods = [...newMeal.foods]; 
+      const updatedFoods = [...newMeal.foods];
       updatedFoods[index].quantity = inputValue;
       setNewMeal({ ...newMeal, foods: updatedFoods });
-    }else{
-      const updatedFoods = [...newMeal.foods]; 
-      updatedFoods[index].quantity = '';
+    } else {
+      const updatedFoods = [...newMeal.foods];
+      updatedFoods[index].quantity = "";
       setNewMeal({ ...newMeal, foods: updatedFoods });
     }
   };
 
   const handleAddMeal = () => {
-    if (newMeal.name === '' || newMeal.date === '' || newMeal.hour === '' || !(newMeal.foods.every(food => 
-      food.name !== '' && food.quantity !== '')))
-    {
-      enqueueSnackbar('Please complete all the fields.', { variant: 'error' });
+    if (
+      newMeal.name === "" ||
+      newMeal.date === "" ||
+      newMeal.hour === "" ||
+      !newMeal.foods.every((food) => food.name !== "" && food.quantity !== "")
+    ) {
+      enqueueSnackbar("Please complete all the fields.", { variant: "error" });
       return;
-    } 
-    else {
-      newMeal.calories = newMeal.foods.map(food => parseInt(food.calories) * parseInt(food.quantity)).reduce((acc, calories) => acc + calories, 0);
-      fetch('http://localhost:3001/api/meals', {
-        method: 'POST',
+    } else {
+      newMeal.calories = newMeal.foods
+        .map((food) => parseInt(food.calories) * parseInt(food.quantity))
+        .reduce((acc, calories) => acc + calories, 0);
+      fetch("http://localhost:3001/api/meals", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem('token'),
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
         },
         body: JSON.stringify(newMeal),
       })
         .then(function (response) {
           if (response.status === 200) {
-            enqueueSnackbar('The meal was created successfully.', { variant: 'success' });
+            enqueueSnackbar("The meal was created successfully.", {
+              variant: "success",
+            });
             closeModal();
           } else {
-            enqueueSnackbar('An error occurred while creating the meal.', { variant: 'error' });
+            enqueueSnackbar("An error occurred while creating the meal.", {
+              variant: "error",
+            });
           }
         })
         .catch(function (error) {
-          enqueueSnackbar('An error occurred while creating the meal.', { variant: 'error' });
+          enqueueSnackbar("An error occurred while creating the meal.", {
+            variant: "error",
+          });
         });
     }
   };
@@ -120,12 +143,12 @@ const MealForm = ({ open, setOpen }) => {
     >
       <Box
         sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
           width: 500,
-          bgcolor: 'background.paper',
+          bgcolor: "background.paper",
           boxShadow: 24,
           p: 4,
         }}
@@ -140,12 +163,12 @@ const MealForm = ({ open, setOpen }) => {
             onChange={(e) => setNewMeal({ ...newMeal, name: e.target.value })}
           />
           <TextField
-            InputLabelProps={{shrink:true}}
+            InputLabelProps={{ shrink: true }}
             label="Date"
             variant="outlined"
             fullWidth
             margin="normal"
-            type='date'
+            type="date"
             value={newMeal.date}
             onChange={(e) => setNewMeal({ ...newMeal, date: e.target.value })}
           />
@@ -153,7 +176,7 @@ const MealForm = ({ open, setOpen }) => {
             label="Hour (MM:HH)"
             variant="outlined"
             fullWidth
-            type = 'time'
+            type="time"
             margin="normal"
             InputLabelProps={{
               shrink: true, // Shrink the label to prevent overlapping
@@ -161,16 +184,20 @@ const MealForm = ({ open, setOpen }) => {
             inputProps={{
               step: 60, // Set the step to 60 to represent time in minutes (HH:MM)
             }}
-
             value={newMeal.hour}
             onChange={(e) => setNewMeal({ ...newMeal, hour: e.target.value })}
           />
 
           {newMeal.foods.map((food, index) => (
-            <Grid container spacing={1} alignItems="center" key={index} sx={{marginTop: "2%"}}>
+            <Grid
+              container
+              spacing={1}
+              alignItems="center"
+              key={index}
+              sx={{ marginTop: "2%" }}
+            >
               <Grid item xs={7}>
                 <FormControl fullWidth>
-                
                   <InputLabel id="demo-simple-select-label">Food</InputLabel>
                   <Select
                     labelId="demo-simple-select-label"
@@ -179,26 +206,25 @@ const MealForm = ({ open, setOpen }) => {
                     label="Food"
                     onChange={(e) => handleFoodInputChange(e, index)}
                   >
-                  {Array.isArray(foodOptions) && foodOptions.length > 0 ? (
-                    foodOptions.map((option) => (
-                      <MenuItem key={option.id} value={option.name}>
-                        {option.name}
-                      </MenuItem>
-                    ))
-                  ) : (
-                    <MenuItem value="">No hay alimentos disponibles</MenuItem>
-                  )}
-                  
+                    {Array.isArray(foodOptions) && foodOptions.length > 0 ? (
+                      foodOptions.map((option) => (
+                        <MenuItem key={option.id} value={option.name}>
+                          {option.name}
+                        </MenuItem>
+                      ))
+                    ) : (
+                      <MenuItem value="">No hay alimentos disponibles</MenuItem>
+                    )}
                   </Select>
                 </FormControl>
               </Grid>
               <Grid item xs={3}>
                 <TextField
                   InputProps={{
-                    inputProps: { min: 1 }
+                    inputProps: { min: 1 },
                   }}
                   label={`Quantity`}
-                  type='number'
+                  type="number"
                   variant="outlined"
                   fullWidth
                   value={food.quantity}
@@ -207,10 +233,7 @@ const MealForm = ({ open, setOpen }) => {
               </Grid>
               {index === 0 && (
                 <Grid item xs={2}>
-                  <IconButton
-                    color="primary"
-                    onClick={handleAddFoodInput}
-                  >
+                  <IconButton color="primary" onClick={handleAddFoodInput}>
                     <AddCircleRoundedIcon />
                   </IconButton>
                 </Grid>
@@ -235,9 +258,9 @@ const MealForm = ({ open, setOpen }) => {
             sx={{
               mt: 3,
               mb: 2,
-              backgroundColor: '#373D20',
-              '&:hover': { backgroundColor: '#373D20' },
-              fontWeight: 'bold',
+              backgroundColor: "#373D20",
+              "&:hover": { backgroundColor: "#373D20" },
+              fontWeight: "bold",
             }}
             fullWidth
           >
