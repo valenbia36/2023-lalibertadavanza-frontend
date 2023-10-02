@@ -23,22 +23,24 @@ const Statistics = () => {
     );
     const data = await response.json();
     const groupedFoods = {};
-    data.data.forEach((item) => {
-      item.foods.forEach((food) => {
-        const { name, quantity, category } = food;
-        // Verificar si ya existe un registro para este alimento
-        if (groupedFoods[name]) {
-          // Si existe, sumar el quantity al registro existente
-          groupedFoods[name].value += quantity;
-        } else {
-          // Si no existe, crear un nuevo registro
-          groupedFoods[name] = { id: category, value: quantity, label: name };
-        }
+    if (data.data && data.data.length > 0) {
+      data.data.forEach((item) => {
+        item.foods.forEach((food) => {
+          const { name, quantity, category } = food;
+          if (groupedFoods[name]) {
+            groupedFoods[name].value += quantity;
+          } else {
+            groupedFoods[name] = { id: category, value: quantity, label: name };
+          }
+        });
       });
       const groupedFoodsArray = Object.values(groupedFoods);
       console.log(groupedFoodsArray);
       setData(groupedFoodsArray);
-    });
+    } else {
+      // Manejar el caso en el que no hay alimentos disponibles para el día seleccionado
+      setData([]); // Puedes establecer un array vacío o null, según tus necesidades
+    }
   };
   useEffect(() => {
     getMealsByUserIdAndDay();
@@ -46,7 +48,8 @@ const Statistics = () => {
   return (
     <div>
       <Drawer user={localStorage.getItem("username")} />
-      <div style={{ width: "500px", height: "500px" }}>
+      <div style={{ textAlign: "center", color: "black" }}>
+      <h2>Foods by Day</h2>
         <TextField
           InputLabelProps={{ shrink: true }}
           label="Date"
@@ -57,7 +60,11 @@ const Statistics = () => {
           value={date}
           onChange={(e) => setDate(e.target.value)}
         />
-        {data && <MyResponsivePie data={data} />}
+        {(data && data.length > 0) ? (
+          <MyResponsivePie data={data} />
+        ) : (
+          <div>No foods to show</div>
+        )}
       </div>
     </div>
   );
