@@ -52,7 +52,7 @@ const MealForm = ({ open, setOpen }) => {
       date: "",
       hour: "",
       calories: 0,
-      foods: [{ name: "", calories: "", quantity: "" }],
+      foods: [{ name: "", calories: "", quantity: "", category: "" }],
       userId: localStorage.getItem("userId"),
     });
   };
@@ -60,7 +60,7 @@ const MealForm = ({ open, setOpen }) => {
   const handleAddFoodInput = () => {
     const updatedFoods = [
       ...newMeal.foods,
-      { name: "", calories: "", quantity: "" },
+      { name: "", calories: "", quantity: "", category: "" },
     ];
     setNewMeal({ ...newMeal, foods: updatedFoods });
   };
@@ -76,7 +76,7 @@ const MealForm = ({ open, setOpen }) => {
     updatedFoods[index].name = event.target.value;
     let result = foodOptions.filter((item) => item.name === event.target.value);
     updatedFoods[index].calories = result[0].calories;
-    console.log(updatedFoods[index].calories);
+    updatedFoods[index].category = result[0].category;
     setNewMeal({ ...newMeal, foods: updatedFoods });
   };
 

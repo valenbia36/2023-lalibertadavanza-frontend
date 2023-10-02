@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import { TextField, Button, Modal, Box } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { TextField, Button, Modal, Box, Select, MenuItem,InputLabel,Grid,FormControl, IconButton,} from "@mui/material";
 import { useSnackbar } from "notistack";
-
+import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
+import CategoryForm from "./CategoryForm";
 const initialFoodState = {
   name: "",
   calories: "",
@@ -11,7 +12,7 @@ const initialFoodState = {
 
 const FoodForm = ({ open, setOpen }) => {
   const { enqueueSnackbar } = useSnackbar();
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [newFood, setNewFood] = useState(initialFoodState);
 
   const closeModal = () => {
@@ -68,6 +69,22 @@ const FoodForm = ({ open, setOpen }) => {
       });
     }
   };
+  const [categoriesOptions, setCategoriesOptions] = useState([]);
+  const getCategories = async () => {
+    const response = await fetch("http://localhost:3001/api/category/", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    });
+    const data = await response.json();
+    setCategoriesOptions(data.data);
+  };
+  useEffect(() => {
+    getCategories();
+  }, [categoriesOptions]);
+
 
   return (
     <Modal
@@ -140,21 +157,42 @@ const FoodForm = ({ open, setOpen }) => {
             }}
           />
 
-          <TextField
-            label="Category"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            value={newFood.category}
-            onChange={(e) =>
-              setNewFood({ ...newFood, category: e.target.value })
-            }
-            onKeyPress={(event) => {
-              if (event.key === "Enter") {
-                handleAddFood();
-              }
-            }}
-          />
+          <Grid
+              container
+              spacing={1}
+              alignItems="center"
+              sx={{ marginTop: "2%" }}
+            >
+            <Grid item xs={10}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Category</InputLabel>
+                  <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      label="Category"
+                      onChange={(e) => setNewFood({ ...newFood, category: e.target.value })}
+                  >
+                  {Array.isArray(categoriesOptions) && categoriesOptions.length > 0 ? (
+                    categoriesOptions.map((option) => (
+                        <MenuItem key={option.id} value={option.name}>
+                        {option.name}
+                        </MenuItem>
+                        ))
+                      ) : (
+                    <MenuItem value="">No hay categorias disponibles</MenuItem>
+                  )}
+                  </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={2}>
+                  <IconButton color="primary" onClick={() => {setIsModalOpen(true);}} >
+                  <AddCircleRoundedIcon />
+                  </IconButton>
+            </Grid>
+            <React.Fragment>
+              <CategoryForm open={isModalOpen} setOpen={setIsModalOpen} />
+            </React.Fragment>
+          </Grid>
 
           <Button
             variant="contained"
