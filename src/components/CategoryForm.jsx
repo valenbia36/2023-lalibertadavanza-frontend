@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { TextField, Button, Modal, Box, Select, MenuItem,InputLabel,Grid,FormControl, IconButton,} from "@mui/material";
+import React, { useState } from "react";
+import { TextField, Button, Modal, Box } from "@mui/material";
 import { useSnackbar } from "notistack";
 const initialCategoryState = {
   name: "",

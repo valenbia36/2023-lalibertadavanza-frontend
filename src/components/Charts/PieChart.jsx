@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { PieChart } from "@mui/x-charts/PieChart";
 
 export default function BasicPie({ data }) {

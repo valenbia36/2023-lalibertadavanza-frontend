@@ -13,7 +13,7 @@ const Main = () => {
             <div className="col-md-4">
               <FoodList />
             </div>
-            <div className="col-md-7">
+            <div className="col-md-8">
               <MealList />
             </div>
           </div>

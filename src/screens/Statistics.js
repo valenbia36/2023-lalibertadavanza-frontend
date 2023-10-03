@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Drawer from "../components/Drawer";
 import MyResponsivePie from "../components/Charts/PieChart";
-import { Grid, Paper, TextField } from "@mui/material";
+import { TextField } from "@mui/material";
 import { format } from "date-fns";
 
 const Statistics = () => {

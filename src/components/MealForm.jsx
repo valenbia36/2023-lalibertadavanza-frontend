@@ -24,11 +24,19 @@ const initialMealState = {
   userId: localStorage.getItem("userId"),
 };
 
-const MealForm = ({ open, setOpen }) => {
-  const [newMeal, setNewMeal] = useState(initialMealState);
+const MealForm = ({ open, setOpen, initialData }) => {
+  const [mealData, setMealData] = useState(initialMealState);
   const [foodOptions, setFoodOptions] = useState([]);
-
   const { enqueueSnackbar } = useSnackbar();
+
+  // Si initialData se proporciona, establece mealData en esos valores
+  useEffect(() => {
+    if (initialData) {
+      setMealData(initialData);
+    } else {
+      setMealData(initialMealState);
+    }
+  }, [initialData]);
 
   const getFoods = async () => {
     const response = await fetch("http://localhost:3001/api/foods/", {
@@ -41,93 +49,85 @@ const MealForm = ({ open, setOpen }) => {
     const data = await response.json();
     setFoodOptions(data.data);
   };
+
   useEffect(() => {
     getFoods();
-  }, [foodOptions]);
+  }, []);
 
   const closeModal = () => {
     setOpen(false);
-    setNewMeal({
-      name: "",
-      date: "",
-      hour: "",
-      calories: 0,
-      foods: [{ name: "", calories: "", quantity: "", category: "" }],
-      userId: localStorage.getItem("userId"),
-    });
+    setMealData(initialMealState);
   };
 
   const handleAddFoodInput = () => {
     const updatedFoods = [
-      ...newMeal.foods,
-      { name: "", calories: "", quantity: "", category: "" },
+      ...mealData.foods,
+      { name: "", calories: "", quantity: "" },
     ];
-    setNewMeal({ ...newMeal, foods: updatedFoods });
+    setMealData({ ...mealData, foods: updatedFoods });
   };
 
   const handleRemoveFoodInput = (index) => {
-    const updatedFoods = [...newMeal.foods];
+    const updatedFoods = [...mealData.foods];
     updatedFoods.splice(index, 1);
-    setNewMeal({ ...newMeal, foods: updatedFoods });
+    setMealData({ ...mealData, foods: updatedFoods });
   };
 
   const handleFoodInputChange = (event, index) => {
-    const updatedFoods = [...newMeal.foods];
+    const updatedFoods = [...mealData.foods];
     updatedFoods[index].name = event.target.value;
-    let result = foodOptions.filter((item) => item.name === event.target.value);
-    updatedFoods[index].calories = result[0].calories;
-    updatedFoods[index].category = result[0].category;
-    setNewMeal({ ...newMeal, foods: updatedFoods });
+    let result = foodOptions.find((item) => item.name === event.target.value);
+    updatedFoods[index].calories = result ? result.calories : "";
+    setMealData({ ...mealData, foods: updatedFoods });
   };
 
   const handleQuantityInputChange = (e, index) => {
     const inputValue = Number(e.target.value);
     if (!isNaN(inputValue) && inputValue >= 1) {
-      const updatedFoods = [...newMeal.foods];
+      const updatedFoods = [...mealData.foods];
       updatedFoods[index].quantity = inputValue;
-      setNewMeal({ ...newMeal, foods: updatedFoods });
+      setMealData({ ...mealData, foods: updatedFoods });
     } else {
-      const updatedFoods = [...newMeal.foods];
+      const updatedFoods = [...mealData.foods];
       updatedFoods[index].quantity = "";
-      setNewMeal({ ...newMeal, foods: updatedFoods });
+      setMealData({ ...mealData, foods: updatedFoods });
     }
   };
 
   const handleAddMeal = () => {
-    if (
-      newMeal.name === "" ||
-      newMeal.date === "" ||
-      newMeal.hour === "" ||
-      !newMeal.foods.every((food) => food.name !== "" && food.quantity !== "")
-    ) {
+    if ( mealData.name === "" || mealData.date === "" || mealData.hour === "" || !mealData.foods.every((food) => food.name !== "" && food.quantity !== "")) {
       enqueueSnackbar("Please complete all the fields.", { variant: "error" });
       return;
     } else {
-      newMeal.calories = newMeal.foods
+      mealData.calories = mealData.foods
         .map((food) => parseInt(food.calories) * parseInt(food.quantity))
         .reduce((acc, calories) => acc + calories, 0);
-      fetch("http://localhost:3001/api/meals", {
-        method: "POST",
+
+      const url = initialData ? `http://localhost:3001/api/meals/${initialData._id}` : "http://localhost:3001/api/meals";
+      const method = initialData ? "PUT" : "POST";
+
+      fetch(url, {
+        method: method,
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
-        body: JSON.stringify(newMeal),
+        body: JSON.stringify(mealData),
       })
         .then(function (response) {
           if (response.status === 200) {
-            enqueueSnackbar("The meal was created successfully.", {
+            enqueueSnackbar(initialData ? "The meal was updated successfully." : "The meal was created successfully.", {
               variant: "success",
             });
             closeModal();
           } else {
-            enqueueSnackbar("An error occurred while creating the meal.", {
+            enqueueSnackbar("An error occurred while saving the meal.", {
               variant: "error",
             });
           }
         })
         .catch(function (error) {
-          enqueueSnackbar("An error occurred while creating the meal.", {
+          enqueueSnackbar("An error occurred while saving the meal.", {
             variant: "error",
           });
         });
@@ -159,8 +159,10 @@ const MealForm = ({ open, setOpen }) => {
             variant="outlined"
             fullWidth
             margin="normal"
-            value={newMeal.name}
-            onChange={(e) => setNewMeal({ ...newMeal, name: e.target.value })}
+            value={mealData.name}
+            onChange={(e) =>
+              setMealData({ ...mealData, name: e.target.value })
+            }
           />
           <TextField
             InputLabelProps={{ shrink: true }}
@@ -169,8 +171,10 @@ const MealForm = ({ open, setOpen }) => {
             fullWidth
             margin="normal"
             type="date"
-            value={newMeal.date}
-            onChange={(e) => setNewMeal({ ...newMeal, date: e.target.value })}
+            value={mealData.date}
+            onChange={(e) =>
+              setMealData({ ...mealData, date: e.target.value })
+            }
           />
           <TextField
             label="Hour (MM:HH)"
@@ -179,16 +183,18 @@ const MealForm = ({ open, setOpen }) => {
             type="time"
             margin="normal"
             InputLabelProps={{
-              shrink: true, // Shrink the label to prevent overlapping
+              shrink: true,
             }}
             inputProps={{
-              step: 60, // Set the step to 60 to represent time in minutes (HH:MM)
+              step: 60,
             }}
-            value={newMeal.hour}
-            onChange={(e) => setNewMeal({ ...newMeal, hour: e.target.value })}
+            value={mealData.hour}
+            onChange={(e) =>
+              setMealData({ ...mealData, hour: e.target.value })
+            }
           />
 
-          {newMeal.foods.map((food, index) => (
+          {mealData.foods.map((food, index) => (
             <Grid
               container
               spacing={1}
@@ -264,7 +270,7 @@ const MealForm = ({ open, setOpen }) => {
             }}
             fullWidth
           >
-            Add Meal
+            {initialData ? "Update Meal" : "Add Meal"}
           </Button>
         </div>
       </Box>

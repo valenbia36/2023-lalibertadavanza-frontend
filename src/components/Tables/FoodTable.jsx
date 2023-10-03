@@ -11,7 +11,6 @@ import IconButton from "@mui/material/IconButton";
 import { TableHead } from "@mui/material";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import FilterSearchComponent from "./FilterBar";
 
 function TablePaginationActions(props) {
