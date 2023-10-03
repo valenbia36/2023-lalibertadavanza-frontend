@@ -116,11 +116,10 @@ export default function MiniDrawer({ user }) {
 
   useEffect(() => {
     function handleResize() {
-      // Check the screen width to determine if it's a mobile screen
       setIsMobile(window.innerWidth <= theme.breakpoints.values.sm);
     }
     window.addEventListener("resize", handleResize);
-    handleResize(); // Initialize isMobile
+    handleResize();
     return () => {
       window.removeEventListener("resize", handleResize);
     };
@@ -134,8 +133,6 @@ export default function MiniDrawer({ user }) {
     setOpen(false);
   };
 
-  const icons = [<AccountBoxIcon />, <SettingsIcon />];
-
   const handleLogout = () => {
     localStorage.removeItem("token");
     window.location.replace("/");
@@ -148,6 +145,14 @@ export default function MiniDrawer({ user }) {
     navigate("/main", { replace: true });
   };
 
+  const navigateToMyProfileScreen = () =>{
+    //...
+  }
+
+  const navigateToSettingsScreen = () =>{
+    //...
+  }
+  
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -210,29 +215,6 @@ export default function MiniDrawer({ user }) {
               <ListItemText primary="Home" sx={{ opacity: open ? 1 : 0 }} />
             </ListItemButton>
           </ListItem>
-          {["My Profile", "Settings"].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: "block" }}>
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  {icons[index]}
-                </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-          {/*Statistics Button */}
           <ListItem disablePadding sx={{ display: "block" }}>
             <ListItemButton
               sx={{
@@ -257,7 +239,54 @@ export default function MiniDrawer({ user }) {
               />
             </ListItemButton>
           </ListItem>
-          {/* Logout button */}
+          <ListItem disablePadding sx={{ display: "block" }}>
+            <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: open ? "initial" : "center",
+                px: 2.5,
+              }}
+              onClick={navigateToMyProfileScreen}
+            >
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: open ? 3 : "auto",
+                  justifyContent: "center",
+                }}
+              >
+                <AccountBoxIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary="My Profile"
+                sx={{ opacity: open ? 1 : 0 }}
+              />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding sx={{ display: "block" }}>
+            <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: open ? "initial" : "center",
+                px: 2.5,
+              }}
+              onClick={navigateToSettingsScreen}
+            >
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: open ? 3 : "auto",
+                  justifyContent: "center",
+                }}
+              >
+                <SettingsIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary="Settings"
+                sx={{ opacity: open ? 1 : 0 }}
+              />
+            </ListItemButton>
+          </ListItem>
           <ListItem disablePadding sx={{ display: "block" }}>
             <ListItemButton
               sx={{
