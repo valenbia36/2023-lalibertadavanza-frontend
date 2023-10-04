@@ -17,10 +17,11 @@ import { useSnackbar } from "notistack";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers";
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 const initialMealState = {
   name: "",
-  date: "",
+  date: new Date(),
   hour: new Date(),
   calories: 0,
   foods: [{ name: "", calories: "", quantity: "" }],
@@ -35,12 +36,21 @@ const MealForm = ({ open, setOpen, initialData }) => {
   useEffect(() => {
     if (initialData) {
       const initialTime = new Date(`2023-01-01T${initialData.hour}`);
+      const initialDate = new Date(initialData.date + "T10:00:00Z");
       setMealData({
         ...initialData,
         hour: initialTime,
+        date: initialDate
       });
     } else {
-      setMealData(initialMealState);
+      setMealData({
+        name: "",
+        date: new Date(),
+        hour: new Date(),
+        calories: 0,
+        foods: [{ name: "", calories: "", quantity: "" }],
+        userId: localStorage.getItem("userId"),
+      });
     }
   }, [initialData]);
 
@@ -125,6 +135,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
         .reduce((acc, calories) => acc + calories, 0);
       
       mealData.hour = mealData.hour.toTimeString().slice(0, 5);
+      mealData.date = mealData.date.toISOString().substring(0, 10);
 
       const url = initialData
         ? `http://localhost:3001/api/meals/${initialData._id}`
@@ -185,66 +196,74 @@ const MealForm = ({ open, setOpen, initialData }) => {
           p: 4,
         }}
       >
-        <div>
-          <TextField
-            label="Name"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            value={mealData.name}
-            onChange={(e) =>
-              setMealData({ ...mealData, name: e.target.value })
-            }
-          />
-          <TextField
-            InputLabelProps={{ shrink: true }}
-            label="Date"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            type="date"
-            value={mealData.date}
-            onChange={(e) =>
-              setMealData({ ...mealData, date: e.target.value })
-            }
-          />
-          <FormControl fullWidth>
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <TimePicker
-              label="Hour (HH:mm)" // Cambia la etiqueta para reflejar el formato
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <TextField
+              label="Name"
               variant="outlined"
               fullWidth
               margin="normal"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              inputProps={{
-                step: 60,
-              }}
-              value={mealData.hour}
-              onChange={(newTime) =>
-                setMealData({
-                  ...mealData,
-                  hour: newTime
-                })
+              value={mealData.name}
+              onChange={(e) =>
+                setMealData({ ...mealData, name: e.target.value })
               }
             />
-          </LocalizationProvider>
-          </FormControl>
+          </Grid>
+          <Grid item xs={12}>
+            <FormControl fullWidth>
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DatePicker
+                  label="Date"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  inputProps={{
+                    step: 60,
+                  }}
+                  value={mealData.date}
+                  onChange={(e) =>
+                    setMealData({ ...mealData, date: e.target.value })
+                  }
+                />
+              </LocalizationProvider>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12}>
+            <FormControl fullWidth>
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <TimePicker
+                  label="Hour"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  inputProps={{
+                    step: 60,
+                  }}
+                  value={mealData.hour}
+                  onChange={(newTime) =>
+                    setMealData({
+                      ...mealData,
+                      hour: newTime
+                    })
+                  }
+                />
+              </LocalizationProvider>
+            </FormControl>
+          </Grid>
           {mealData.foods.map((food, index) => (
-            <Grid
-              container
-              spacing={1}
-              alignItems="center"
-              key={index}
-              sx={{ marginTop: "2%" }}
-            >
-              <Grid item xs={7}>
+            <React.Fragment key={index}>
+              <Grid item xs={6}>
                 <FormControl fullWidth>
-                  <InputLabel id="demo-simple-select-label">Food</InputLabel>
+                  <InputLabel id={`food-label-${index}`}>Food</InputLabel>
                   <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
+                    labelId={`food-label-${index}`}
+                    id={`food-select-${index}`}
                     value={food.name}
                     label="Food"
                     onChange={(e) => handleFoodInputChange(e, index)}
@@ -261,7 +280,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid item xs={3}>
+              <Grid item xs={4}>
                 <TextField
                   InputProps={{
                     inputProps: { min: 1 },
@@ -275,7 +294,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
                 />
               </Grid>
               {index === 0 && (
-                <Grid item xs={2}>
+                <Grid item xs={2} sx={{ display: 'flex', alignItems: 'center' }}>
                   <IconButton color="primary" onClick={handleAddFoodInput}>
                     <AddCircleRoundedIcon />
                   </IconButton>
@@ -291,24 +310,26 @@ const MealForm = ({ open, setOpen, initialData }) => {
                   </IconButton>
                 </Grid>
               )}
-            </Grid>
+            </React.Fragment>
           ))}
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleAddMeal}
-            sx={{
-              mt: 3,
-              mb: 2,
-              backgroundColor: "#373D20",
-              "&:hover": { backgroundColor: "#373D20" },
-              fontWeight: "bold",
-            }}
-            fullWidth
-          >
-            {initialData ? "Update Meal" : "Add Meal"}
-          </Button>
-        </div>
+          <Grid item xs={12}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleAddMeal}
+              sx={{
+                mt: 3,
+                mb: 2,
+                backgroundColor: "#373D20",
+                "&:hover": { backgroundColor: "#373D20" },
+                fontWeight: "bold",
+              }}
+              fullWidth
+            >
+              {initialData ? "Update Meal" : "Add Meal"}
+            </Button>
+          </Grid>
+        </Grid>
       </Box>
     </Modal>
   );
