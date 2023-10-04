@@ -7,10 +7,16 @@ export default function BasicPie({ data }) {
       series={[
         {
           data: data,
+          innerRadius: 30,
+          outerRadius: 100,
+          paddingAngle: 5,
+          cornerRadius: 5,
+          startAngle: 0,
+          endAngle: 360,
         },
       ]}
       width={400}
-      height={200}
+      height={200}   
     />
   );
 }

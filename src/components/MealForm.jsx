@@ -14,11 +14,14 @@ import {
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
 import { useSnackbar } from "notistack";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { LocalizationProvider } from "@mui/x-date-pickers";
 
 const initialMealState = {
   name: "",
   date: "",
-  hour: "",
+  hour: new Date(),
   calories: 0,
   foods: [{ name: "", calories: "", quantity: "" }],
   userId: localStorage.getItem("userId"),
@@ -29,10 +32,13 @@ const MealForm = ({ open, setOpen, initialData }) => {
   const [foodOptions, setFoodOptions] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
 
-  // Si initialData se proporciona, establece mealData en esos valores
   useEffect(() => {
     if (initialData) {
-      setMealData(initialData);
+      const initialTime = new Date(`2023-01-01T${initialData.hour}`);
+      setMealData({
+        ...initialData,
+        hour: initialTime,
+      });
     } else {
       setMealData(initialMealState);
     }
@@ -56,7 +62,15 @@ const MealForm = ({ open, setOpen, initialData }) => {
 
   const closeModal = () => {
     setOpen(false);
-    setMealData(initialMealState);
+    setMealData({
+      name: "",
+      date: "",
+      hour: new Date(),
+      calories: 0,
+      foods: [{ name: "", calories: "", quantity: "" }],
+      userId: localStorage.getItem("userId"),
+    });
+
   };
 
   const handleAddFoodInput = () => {
@@ -95,16 +109,29 @@ const MealForm = ({ open, setOpen, initialData }) => {
   };
 
   const handleAddMeal = () => {
-    if ( mealData.name === "" || mealData.date === "" || mealData.hour === "" || !mealData.foods.every((food) => food.name !== "" && food.quantity !== "")) {
-      enqueueSnackbar("Please complete all the fields.", { variant: "error" });
+    if (
+      mealData.name === "" ||
+      mealData.date === "" ||
+      mealData.hour === "" ||
+      !mealData.foods.every((food) => food.name !== "" && food.quantity !== "")
+    ) {
+      enqueueSnackbar("Please complete all the fields.", {
+        variant: "error",
+      });
       return;
     } else {
       mealData.calories = mealData.foods
         .map((food) => parseInt(food.calories) * parseInt(food.quantity))
         .reduce((acc, calories) => acc + calories, 0);
+      
+      mealData.hour = mealData.hour.toTimeString().slice(0, 5);
 
-      const url = initialData ? `http://localhost:3001/api/meals/${initialData._id}` : "http://localhost:3001/api/meals";
+      const url = initialData
+        ? `http://localhost:3001/api/meals/${initialData._id}`
+        : "http://localhost:3001/api/meals";
       const method = initialData ? "PUT" : "POST";
+
+      console.log(JSON.stringify(mealData))
 
       fetch(url, {
         method: method,
@@ -116,9 +143,14 @@ const MealForm = ({ open, setOpen, initialData }) => {
       })
         .then(function (response) {
           if (response.status === 200) {
-            enqueueSnackbar(initialData ? "The meal was updated successfully." : "The meal was created successfully.", {
-              variant: "success",
-            });
+            enqueueSnackbar(
+              initialData
+                ? "The meal was updated successfully."
+                : "The meal was created successfully.",
+              {
+                variant: "success",
+              }
+            );
             closeModal();
           } else {
             enqueueSnackbar("An error occurred while saving the meal.", {
@@ -176,24 +208,29 @@ const MealForm = ({ open, setOpen, initialData }) => {
               setMealData({ ...mealData, date: e.target.value })
             }
           />
-          <TextField
-            label="Hour (MM:HH)"
-            variant="outlined"
-            fullWidth
-            type="time"
-            margin="normal"
-            InputLabelProps={{
-              shrink: true,
-            }}
-            inputProps={{
-              step: 60,
-            }}
-            value={mealData.hour}
-            onChange={(e) =>
-              setMealData({ ...mealData, hour: e.target.value })
-            }
-          />
-
+          <FormControl fullWidth>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <TimePicker
+              label="Hour (HH:mm)" // Cambia la etiqueta para reflejar el formato
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              inputProps={{
+                step: 60,
+              }}
+              value={mealData.hour}
+              onChange={(newTime) =>
+                setMealData({
+                  ...mealData,
+                  hour: newTime
+                })
+              }
+            />
+          </LocalizationProvider>
+          </FormControl>
           {mealData.foods.map((food, index) => (
             <Grid
               container
@@ -256,7 +293,6 @@ const MealForm = ({ open, setOpen, initialData }) => {
               )}
             </Grid>
           ))}
-
           <Button
             variant="contained"
             color="primary"
