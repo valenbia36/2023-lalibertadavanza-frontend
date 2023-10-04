@@ -1,13 +1,20 @@
 import React, { useState, useEffect } from "react";
 import Drawer from "../components/Drawer";
 import MyResponsivePie from "../components/Charts/PieChart";
-import { TextField } from "@mui/material";
+import { TextField, Grid, IconButton } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { format } from "date-fns";
+import CategorySelect from "../components/CategorySelect";
 
 const Statistics = () => {
   const [data, setData] = useState();
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [date, setDate] = useState(format(new Date(), "yyyy-MM-dd"));
+  const handleCategoryChange = (selectedCategory) => {
+    setSelectedCategory(selectedCategory);
+  };
   const getMealsByUserIdAndDay = async () => {
+    setData("")
     const response = await fetch(
       "http://localhost:3001/api/meals/user/" +
         localStorage.getItem("userId") +
@@ -35,8 +42,13 @@ const Statistics = () => {
         });
       });
       const groupedFoodsArray = Object.values(groupedFoods);
-      console.log(groupedFoodsArray);
-      setData(groupedFoodsArray);
+      
+      if(selectedCategory)
+      {
+        setData(groupedFoodsArray.filter(item => item.id === selectedCategory))
+      }
+      else{setData(groupedFoodsArray);}
+
     } else {
       // Manejar el caso en el que no hay alimentos disponibles para el día seleccionado
       setData([]); // Puedes establecer un array vacío o null, según tus necesidades
@@ -44,7 +56,7 @@ const Statistics = () => {
   };
   useEffect(() => {
     getMealsByUserIdAndDay();
-  }, [date]);
+  }, [date,selectedCategory]);
   return (
     <div>
       <Drawer user={localStorage.getItem("username")} />
@@ -60,6 +72,25 @@ const Statistics = () => {
           value={date}
           onChange={(e) => setDate(e.target.value)}
         />
+         <Grid
+              container
+              spacing={1}
+              alignItems="center"
+              sx={{ marginTop: "2%" }}
+            >
+            <Grid item xs={10}>
+            <CategorySelect selectedCategory={selectedCategory} onCategoryChange={handleCategoryChange} />
+            </Grid>
+            <Grid item xs={2}>
+                <IconButton
+                aria-label="delete row"
+                size="small"
+                onClick={() => setSelectedCategory("")}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Grid>
+        </Grid>
         {(data && data.length > 0) ? (
           <MyResponsivePie data={data} />
         ) : (

@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { TextField, Button, Modal, Box, Select, MenuItem,InputLabel,Grid,FormControl, IconButton,} from "@mui/material";
+import React, { useState} from "react";
+import { TextField, Button, Modal, Box,Grid, IconButton,} from "@mui/material";
 import { useSnackbar } from "notistack";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import CategoryForm from "./CategoryForm";
+import CategorySelect from "./CategorySelect"
 const initialFoodState = {
   name: "",
   calories: "",
@@ -38,6 +39,10 @@ const FoodForm = ({ open, setOpen }) => {
     }
   };
 
+  const handleCategoryChange = (selectedCategory) => {
+    setNewFood({ ...newFood, category: selectedCategory });
+  };
+
   const handleAddFood = () => {
     if (
       newFood.name === "" ||
@@ -69,21 +74,7 @@ const FoodForm = ({ open, setOpen }) => {
       });
     }
   };
-  const [categoriesOptions, setCategoriesOptions] = useState([]);
-  const getCategories = async () => {
-    const response = await fetch("http://localhost:3001/api/category/", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-    });
-    const data = await response.json();
-    setCategoriesOptions(data.data);
-  };
-  useEffect(() => {
-    getCategories();
-  }, [categoriesOptions]);
+
 
 
   return (
@@ -164,25 +155,7 @@ const FoodForm = ({ open, setOpen }) => {
               sx={{ marginTop: "2%" }}
             >
             <Grid item xs={10}>
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Category</InputLabel>
-                  <Select
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      label="Category"
-                      onChange={(e) => setNewFood({ ...newFood, category: e.target.value })}
-                  >
-                  {Array.isArray(categoriesOptions) && categoriesOptions.length > 0 ? (
-                    categoriesOptions.map((option) => (
-                        <MenuItem key={option.id} value={option.name}>
-                        {option.name}
-                        </MenuItem>
-                        ))
-                      ) : (
-                    <MenuItem value="">No hay categorias disponibles</MenuItem>
-                  )}
-                  </Select>
-              </FormControl>
+              <CategorySelect selectedCategory={newFood.category} onCategoryChange={handleCategoryChange} />
             </Grid>
             <Grid item xs={2}>
                   <IconButton color="primary" onClick={() => {setIsModalOpen(true);}} >
