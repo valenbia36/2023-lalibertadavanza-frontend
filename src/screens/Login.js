@@ -11,6 +11,11 @@ import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Modal from "@mui/material/Modal";
 import { useSnackbar } from "notistack";
+import carousel1 from '../images/carousel1.jpg';
+import carousel2 from '../images/carousel2.jpg';
+import carousel3 from '../images/carousel3.jpg';
+import carousel4 from '../images/carousel4.jpg';
+import Slideshow from "../components/Slideshow";
 
 const defaultTheme = createTheme();
 
@@ -24,6 +29,13 @@ const Login = () => {
 
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [recoveryEmail, setRecoveryEmail] = React.useState("");
+
+  const images = [
+    carousel1,
+    carousel2,
+    carousel3,
+    carousel4
+  ];
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -121,23 +133,7 @@ const Login = () => {
     <ThemeProvider theme={defaultTheme}>
       <Grid container component="main" sx={{ height: "100vh" }}>
         <CssBaseline />
-        <Grid
-          item
-          xs={false}
-          sm={4}
-          md={7}
-          sx={{
-            backgroundImage:
-              "url(https://img.freepik.com/foto-gratis/lay-flat-delicioso-concepto-comida-sana_23-2148648502.jpg?w=1380&t=st=1694729010~exp=1694729610~hmac=8f6349b5b92090526d1bd3acdd7e87d04fcd5b2bb1ab6d30f326c790dc75de66)",
-            backgroundRepeat: "no-repeat",
-            backgroundColor: (t) =>
-              t.palette.mode === "light"
-                ? t.palette.grey[50]
-                : t.palette.grey[900],
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        />
+        <Slideshow images={images} interval={2000} />
         <Grid
           item
           xs={12}

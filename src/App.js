@@ -10,7 +10,7 @@ import { SnackbarProvider } from "notistack";
 
 export default function App() {
   return (
-    <div className="Home-header" style={{ backgroundColor: "#CAD2C5" }}>
+    <div className="Home-header">
       <SnackbarProvider>
         <Routes>
           <Route path="/" element={<Login />} />
