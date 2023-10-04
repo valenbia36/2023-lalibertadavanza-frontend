@@ -91,8 +91,9 @@ const Statistics = () => {
               </IconButton>
             </Grid>
         </Grid>
+        <br/>
         {(data && data.length > 0) ? (
-          <MyResponsivePie data={data} />
+          <MyResponsivePie data={data}/>
         ) : (
           <div>No foods to show</div>
         )}

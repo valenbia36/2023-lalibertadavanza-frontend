@@ -11,7 +11,7 @@ import IconButton from "@mui/material/IconButton";
 import { TableHead } from "@mui/material";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import FilterSearchComponent from "./FilterBar";
+import CategorySelect from "../CategorySelect";
 
 function TablePaginationActions(props) {
   const theme = useTheme();
@@ -53,9 +53,14 @@ function TablePaginationActions(props) {
   );
 }
 
-export default function FoodTable() {
+export default function FoodTable({filterOpen}) {
+  
   const [foods, setFoods] = useState([]);
-  const [totalItems, setTotalItems] = useState(0); // Track the total number of items
+  const [totalItems, setTotalItems] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState(""); // Agrega estado para la categoría seleccionada
+  const [page, setPage] = React.useState(0);
+  const [noResults, setNoResults] = useState(false); // Nuevo estado para controlar si no se encuentran resultados
+
   const getFoods = async () => {
     const response = await fetch("http://localhost:3001/api/foods/", {
       method: "GET",
@@ -66,23 +71,26 @@ export default function FoodTable() {
     });
     const data = await response.json();
     setFoods(data.data);
-    setTotalItems(data.data.length); // Update the total number of items
+    setTotalItems(data.data.length);
   };
 
   useEffect(() => {
-    getFoodByCategory();
-  }, [foods]);
-
-  const [page, setPage] = React.useState(0);
+    getFoods();
+  }, []); // Ejecuta getFoods al cargar el componente
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-  const [searchText, setSearchText] = useState("");
+  
+
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+  };
+
   const getFoodByCategory = async () => {
-    if (searchText != "") {
+    if (selectedCategory !== "") {
       const response = await fetch(
-        "http://localhost:3001/api/foods/category/" + searchText,
+        "http://localhost:3001/api/foods/category/" + selectedCategory,
         {
           method: "GET",
           headers: {
@@ -92,61 +100,89 @@ export default function FoodTable() {
         }
       );
       const data = await response.json();
-      setFoods(data.data);
+      if (data.data.length === 0) {
+        setNoResults(true);
+      } else {
+        setNoResults(false);
+        setFoods(data.data);
+        setTotalItems(data.data.length);
+      }
     } else {
       getFoods();
     }
   };
 
+  useEffect(() => {
+    getFoodByCategory();
+  }, [selectedCategory]);
+
+  useEffect(() => {
+    if(filterOpen == false){
+      setSelectedCategory('');
+      getFoods();
+    }
+  }, [filterOpen])
+
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 200 }} aria-label="custom pagination table">
-        <TableHead sx={{ fontWeight: "bold" }}>
-          <TableRow sx={{ fontWeight: "bold" }}>
-            <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
-              Name (gr/ml)
-            </TableCell>
-            <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
-              Calories
-            </TableCell>
-            <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
-              Category
-            </TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {(5 > 0 ? foods.slice(page * 5, page * 5 + 5) : foods).map((row) => (
-            <TableRow key={row.name}>
-              <TableCell
-                component="th"
-                scope="row"
-                style={{ width: 160 }}
-                align="center"
-              >
-                {row.name + " " + row.weight + "(gr/ml)"}
+    <div>
+      {filterOpen && (
+        <CategorySelect
+          selectedCategory={selectedCategory}
+          onCategoryChange={handleCategoryChange}
+        />
+      )}
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 200 }} aria-label="custom pagination table">
+          <TableHead sx={{ fontWeight: "bold" }}>
+            <TableRow sx={{ fontWeight: "bold" }}>
+              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
+                Name (gr/ml)
               </TableCell>
-              <TableCell style={{ width: 160 }} align="center">
-                {row.calories}
+              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
+                Calories
               </TableCell>
-              <TableCell style={{ width: 160 }} align="center">
-                {row.category}
+              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
+                Category
               </TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <Box sx={{ display: "flex", justifyContent: "center" }}>
-        <TablePaginationActions
-          count={totalItems} // Use the total number of items as the count
-          page={page}
-          onPageChange={handleChangePage}
-        />
-
-        <FilterSearchComponent
-          setSearchText={setSearchText}
-          searchText={searchText}
-        />
-      </Box>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {noResults ? (
+              <TableRow>
+                <TableCell colSpan={3} align="center">No results found. </TableCell>
+              </TableRow>
+            ) : (
+              (5 > 0 ? foods.slice(page * 5, page * 5 + 5) : foods).map(
+                (row) => (
+                  <TableRow key={row.name}>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      style={{ width: 160 }}
+                      align="center"
+                    >
+                      {row.name + " " + row.weight + "(gr/ml)"}
+                    </TableCell>
+                    <TableCell style={{ width: 160 }} align="center">
+                      {row.calories}
+                    </TableCell>
+                    <TableCell style={{ width: 160 }} align="center">
+                      {row.category}
+                    </TableCell>
+                  </TableRow>
+                )
+              )
+            )}
+          </TableBody>
+        </Table>
+        <Box sx={{ display: 'flex', justifyContent: "center" }}>
+          <TablePaginationActions
+            count={totalItems}
+            page={page}
+            onPageChange={handleChangePage}
+          />
+        </Box>
+      </TableContainer>
+    </div>
   );
 }
