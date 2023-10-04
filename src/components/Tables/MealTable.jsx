@@ -14,11 +14,43 @@ import Collapse from '@mui/material/Collapse';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import EditIcon from "@mui/icons-material/Edit";
-import MealForm from "../MealForm"; // Importa el componente MealForm
+import MealForm from "../MealForm";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useSnackbar } from "notistack";
 
 function Row(props) {
-  const { row, onEditClick } = props; // Agrega la prop onEditClick
+  
+  const { row, onEditClick } = props;
   const [open, setOpen] = React.useState(false);
+
+  const { enqueueSnackbar } = useSnackbar();
+
+  const handleDeleteClick = (meal) => {
+    try {
+      fetch("http://localhost:3001/api/meals/" + meal._id, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + localStorage.getItem('token'),
+        },
+      }).then(function (response) {
+        if (response.status === 200) {
+          enqueueSnackbar("The meal was deleted successfully.", {
+            variant: "success",
+          });
+        } else {
+          enqueueSnackbar("An error occurred while deleting the meal.", {
+            variant: "error",
+          });
+        }
+      })
+
+    } catch (error) {
+      enqueueSnackbar("An error occurred while deleting the meal.", {
+        variant: "error",
+      });
+    }
+  }
 
   return (
     <React.Fragment>
@@ -42,9 +74,16 @@ function Row(props) {
           <IconButton
             aria-label="edit row"
             size="small"
-            onClick={() => onEditClick(row)} // Llama a la función onEditClick con la fila
+            onClick={() => onEditClick(row)}
           >
             <EditIcon />
+          </IconButton>
+          <IconButton
+            aria-label="delete row"
+            size="small"
+            onClick={() => handleDeleteClick(row)}
+          >
+            <DeleteIcon />
           </IconButton>
         </TableCell>
       </TableRow>
