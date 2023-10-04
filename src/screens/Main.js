@@ -5,20 +5,16 @@ import FoodList from "../components/FoodList";
 
 const Main = () => {
   return (
-    <div className="container-fluid">
-      <div className="row">
-        <div className="col-md-1">
-          <Drawer user={localStorage.getItem("username")} />
-        </div>
-        <div className="col-md-11">
-          <div className="d-flex justify-content-center">
-            <div className="row">
-              <div className="col-md-4">
-                <FoodList />
-              </div>
-              <div className="col-md-8">
-                <MealList />
-              </div>
+    <div className="container">
+      <Drawer user={localStorage.getItem("username")} />
+      <div className="row justify-content-center">
+        <div className="col-lg-10">
+          <div className="row justify-content-center">
+            <div className="col-lg-4 col-md-6">
+              <FoodList />
+            </div>
+            <div className="col-lg-8 col-md-6">
+              <MealList />
             </div>
           </div>
         </div>
