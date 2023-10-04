@@ -47,6 +47,9 @@ const Login = () => {
 
   const handleRecoverClick = async () => {
     if (recoveryEmail === "") {
+      enqueueSnackbar("Please enter your email address to reset your password.", {
+        variant: "error",
+      });
       return;
     } else {
       try {
@@ -87,12 +90,12 @@ const Login = () => {
           closeModal();
         } else {
           enqueueSnackbar("There was an issue with sending the email.", {
-            variant: "success",
+            variant: "error",
           });
         }
       } catch (error) {
         enqueueSnackbar("There was an issue with sending the email.", {
-          variant: "success",
+          variant: "error",
         });
       }
     }
