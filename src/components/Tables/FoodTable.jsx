@@ -57,9 +57,9 @@ export default function FoodTable({filterOpen}) {
   
   const [foods, setFoods] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
-  const [selectedCategory, setSelectedCategory] = useState(""); // Agrega estado para la categoría seleccionada
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [page, setPage] = React.useState(0);
-  const [noResults, setNoResults] = useState(false); // Nuevo estado para controlar si no se encuentran resultados
+  const [noResults, setNoResults] = useState(false);
 
   const getFoods = async () => {
     const response = await fetch("http://localhost:3001/api/foods/", {
@@ -76,7 +76,7 @@ export default function FoodTable({filterOpen}) {
 
   useEffect(() => {
     getFoods();
-  }, []); // Ejecuta getFoods al cargar el componente
+  }, []);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -117,7 +117,7 @@ export default function FoodTable({filterOpen}) {
   }, [selectedCategory]);
 
   useEffect(() => {
-    if(filterOpen == false){
+    if(filterOpen === false){
       setSelectedCategory('');
       getFoods();
     }

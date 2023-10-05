@@ -146,7 +146,7 @@ export default function MiniDrawer({ user }) {
   };
 
   const navigateToMyProfileScreen = () =>{
-    //...
+    navigate("/myProfile", { replace: true });
   }
 
   const navigateToSettingsScreen = () =>{

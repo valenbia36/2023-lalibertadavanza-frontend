@@ -5,6 +5,7 @@ import SignUp from "./screens/SignUp";
 import Main from "./screens/Main";
 import ResetPassword from "./screens/ResetPassword";
 import Statistics from "./screens/Statistics";
+import MyProfile from './screens/MyProfile'
 import "./styles/Home.css";
 import { SnackbarProvider } from "notistack";
 
@@ -18,6 +19,7 @@ export default function App() {
           <Route path="main" element={<Main />} />
           <Route path="resetPassword" element={<ResetPassword />} />
           <Route path="statistics" element={<Statistics />} />
+          <Route path="myProfile" element={<MyProfile />} />
         </Routes>
       </SnackbarProvider>
     </div>
