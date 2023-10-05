@@ -119,13 +119,13 @@ function Row(props) {
   );
 }
 
-const rowsPerPage = 5; // Number of rows per page
+const rowsPerPage = 5;
 
 export default function MealTable() {
   const [page, setPage] = useState(0);
   const [meals, setMeals] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Agrega estado para controlar la apertura del modal
-  const [editMeal, setEditMeal] = useState(null); // Agrega estado para datos de comida en modo edición
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editMeal, setEditMeal] = useState(null);
 
   const getMeals = async () => {
     const response = await fetch('http://localhost:3001/api/meals/user/' + localStorage.getItem('userId'), {
@@ -136,8 +136,16 @@ export default function MealTable() {
       }
     });
     const data = await response.json();
-    setMeals(data.data);
-  }
+  
+    const mealsWithShortenedDates = data.data.map((meal) => {
+      return {
+        ...meal,
+        date: meal.date.substring(0, 10),
+      };
+    });
+  
+    setMeals(mealsWithShortenedDates);
+  }  
 
   useEffect(() => {
     getMeals();

@@ -26,7 +26,6 @@ const ResetPassword = () => {
         }
       );
 
-      console.log(response);
       if (response.status === 200) {
         enqueueSnackbar("The password was changed successfully.", {
           variant: "success",

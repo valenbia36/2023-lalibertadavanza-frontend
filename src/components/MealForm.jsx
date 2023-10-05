@@ -1,16 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  TextField,
-  Button,
-  Modal,
-  Box,
-  IconButton,
-  Grid,
-  Select,
-  MenuItem,
-  InputLabel,
-  FormControl,
-} from "@mui/material";
+import { TextField, Button, Modal, Box, IconButton, Grid, Select, MenuItem, InputLabel, FormControl } from "@mui/material";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
 import { useSnackbar } from "notistack";
@@ -48,7 +37,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
         date: new Date(),
         hour: new Date(),
         calories: 0,
-        foods: [{ name: "", calories: "", quantity: "" }],
+        foods: [{ name: "", calories: "", quantity: "", category:"" }],
         userId: localStorage.getItem("userId"),
       });
     }
@@ -74,19 +63,18 @@ const MealForm = ({ open, setOpen, initialData }) => {
     setOpen(false);
     setMealData({
       name: "",
-      date: "",
+      date: new Date(),
       hour: new Date(),
       calories: 0,
       foods: [{ name: "", calories: "", quantity: "", category:"" }],
       userId: localStorage.getItem("userId"),
     });
-
   };
 
   const handleAddFoodInput = () => {
     const updatedFoods = [
       ...mealData.foods,
-      { name: "", calories: "", quantity: "" },
+      { name: "", calories: "", quantity: "", category: "" },
     ];
     setMealData({ ...mealData, foods: updatedFoods });
   };
@@ -136,14 +124,11 @@ const MealForm = ({ open, setOpen, initialData }) => {
         .reduce((acc, calories) => acc + calories, 0);
       
       mealData.hour = mealData.hour.toTimeString().slice(0, 5);
-      mealData.date = mealData.date.toISOString().substring(0, 10);
 
       const url = initialData
         ? `http://localhost:3001/api/meals/${initialData._id}`
         : "http://localhost:3001/api/meals";
       const method = initialData ? "PUT" : "POST";
-
-      console.log(JSON.stringify(mealData))
 
       fetch(url, {
         method: method,
@@ -225,8 +210,8 @@ const MealForm = ({ open, setOpen, initialData }) => {
                     step: 60,
                   }}
                   value={mealData.date}
-                  onChange={(e) =>
-                    setMealData({ ...mealData, date: e.target.value })
+                  onChange={(newDate) =>
+                    setMealData({ ...mealData, date: newDate })
                   }
                 />
               </LocalizationProvider>

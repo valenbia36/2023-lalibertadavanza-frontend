@@ -13,7 +13,6 @@ const FilterSearchComponent = ({ setSearchText, searchText }) => {
     setSearchVisible(!searchVisible);
   };
   const handleSearch = () => {
-    console.log(searchValue);
     setSearchText(searchValue);
   };
   return (
