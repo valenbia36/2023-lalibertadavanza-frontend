@@ -24,7 +24,7 @@ const initialMealState = {
   date: new Date(),
   hour: new Date(),
   calories: 0,
-  foods: [{ name: "", calories: "", quantity: "" }],
+  foods: [{ name: "", calories: "", quantity: "", category:"" }],
   userId: localStorage.getItem("userId"),
 };
 
@@ -77,7 +77,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
       date: "",
       hour: new Date(),
       calories: 0,
-      foods: [{ name: "", calories: "", quantity: "" }],
+      foods: [{ name: "", calories: "", quantity: "", category:"" }],
       userId: localStorage.getItem("userId"),
     });
 
@@ -102,6 +102,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
     updatedFoods[index].name = event.target.value;
     let result = foodOptions.find((item) => item.name === event.target.value);
     updatedFoods[index].calories = result ? result.calories : "";
+    updatedFoods[index].category = result ? result.category : "";
     setMealData({ ...mealData, foods: updatedFoods });
   };
 
