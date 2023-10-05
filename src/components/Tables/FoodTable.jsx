@@ -121,7 +121,7 @@ export default function FoodTable({filterOpen}) {
       setSelectedCategory('');
       getFoods();
     }
-  }, [filterOpen])
+  }, [filterOpen, foods])
 
   return (
     <div>

@@ -50,8 +50,7 @@ const Statistics = () => {
       else{setData(groupedFoodsArray);}
 
     } else {
-      // Manejar el caso en el que no hay alimentos disponibles para el día seleccionado
-      setData([]); // Puedes establecer un array vacío o null, según tus necesidades
+      setData([]);
     }
   };
   useEffect(() => {

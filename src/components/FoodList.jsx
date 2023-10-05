@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { IconButton } from "@mui/material";
+import { IconButton, Typography } from "@mui/material";
 import FoodForm from "./FoodForm";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import FilterAltRoundedIcon from '@mui/icons-material/FilterAltRounded';
@@ -12,7 +12,7 @@ const FoodList = () => {
 
   return (
     <div style={{ textAlign: "center", color: "black" }}>
-      <h2>Foods Table</h2>
+      <Typography variant="h5" fontWeight="bold" align='center' marginBottom='2%'>Foods Table</Typography>
       <div
         style={{
           display: "flex",
