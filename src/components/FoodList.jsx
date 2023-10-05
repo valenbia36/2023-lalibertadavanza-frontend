@@ -12,7 +12,7 @@ const FoodList = () => {
 
   return (
     <div style={{ textAlign: "center", color: "black" }}>
-      <Typography variant="h5" fontWeight="bold" align='center' marginBottom='2%'>Foods Table</Typography>
+      <Typography variant="h5" fontWeight="bold" align='center' marginBottom='2%'>FOODS TABLE</Typography>
       <div
         style={{
           display: "flex",

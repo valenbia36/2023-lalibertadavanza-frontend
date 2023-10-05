@@ -177,7 +177,9 @@ export default function MiniDrawer({ user }) {
             </IconButton>
           )}
           <Typography variant="h6" noWrap component="div">
-            {"Hi " + user + "!"}
+            {"Hi "}
+            <span style={{ fontWeight: 'bold' }}>{user}</span>
+            {"!"}
           </Typography>
         </Toolbar>
       </AppBar>
@@ -193,7 +195,6 @@ export default function MiniDrawer({ user }) {
         </DrawerHeader>
         <Divider />
         <List>
-          {/*Home Button */}
           <ListItem disablePadding sx={{ display: "block" }}>
             <ListItemButton
               sx={{
