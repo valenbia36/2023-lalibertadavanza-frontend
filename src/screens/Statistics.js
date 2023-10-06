@@ -2,21 +2,36 @@ import React, { useState, useEffect } from "react";
 import Drawer from "../components/Drawer";
 import MyResponsivePie from "../components/Charts/PieChart";
 import { TextField, Grid, IconButton } from "@mui/material";
+import { styled, useTheme } from "@mui/material/styles";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { format } from "date-fns";
 import CategorySelect from "../components/CategorySelect";
+import LineChart from "../components/Charts/LineChart";
+import LabelBottomNavigation from "../components/BottomMenu";
 
 const Statistics = () => {
   const [data, setData] = useState();
   const [selectedCategory, setSelectedCategory] = useState("");
   const [date, setDate] = useState(format(new Date(), "yyyy-MM-dd"));
+  const theme = useTheme();
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    function handleResize() {
+      setIsMobile(window.innerWidth <= theme.breakpoints.values.sm);
+    }
+    window.addEventListener("resize", handleResize);
+    handleResize();
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [theme]);
 
   useEffect(() => {
     getMealsByUserIdAndDay();
   }, [date, selectedCategory]);
 
   const getMealsByUserIdAndDay = async () => {
-    setData("")
+    setData("");
     const response = await fetch(
       "http://localhost:3001/api/meals/user/" +
         localStorage.getItem("userId") +
@@ -44,13 +59,14 @@ const Statistics = () => {
         });
       });
       const groupedFoodsArray = Object.values(groupedFoods);
-      
-      if(selectedCategory)
-      {
-        setData(groupedFoodsArray.filter(item => item.id === selectedCategory))
-      }
-      else{setData(groupedFoodsArray);}
 
+      if (selectedCategory) {
+        setData(
+          groupedFoodsArray.filter((item) => item.id === selectedCategory)
+        );
+      } else {
+        setData(groupedFoodsArray);
+      }
     } else {
       setData([]);
     }
@@ -62,9 +78,20 @@ const Statistics = () => {
 
   return (
     <div>
-      <Drawer user={localStorage.getItem("username")} />
-      <div style={{ textAlign: "center", color: "black" }}>
-      <h2>Foods by Day</h2>
+      {!isMobile ? (
+        <Drawer user={localStorage.getItem("username")} />
+      ) : (
+        <LabelBottomNavigation />
+      )}
+      <div
+        style={{
+          textAlign: "center",
+          color: "black",
+          //minHeight: "500px",
+          //minWidth: "500px",
+        }}
+      >
+        <h2>Foods by Day</h2>
         <TextField
           InputLabelProps={{ shrink: true }}
           label="Date"
@@ -75,32 +102,36 @@ const Statistics = () => {
           value={date}
           onChange={(e) => setDate(e.target.value)}
         />
-         <Grid
-              container
-              spacing={1}
-              alignItems="center"
-              sx={{ marginTop: "2%" }}
+        <Grid
+          container
+          spacing={1}
+          alignItems="center"
+          sx={{ marginTop: "2%" }}
+        >
+          <Grid item xs={10}>
+            <CategorySelect
+              selectedCategory={selectedCategory}
+              onCategoryChange={handleCategoryChange}
+            />
+          </Grid>
+          <Grid item xs={2}>
+            <IconButton
+              aria-label="delete row"
+              size="small"
+              onClick={() => setSelectedCategory("")}
             >
-            <Grid item xs={10}>
-            <CategorySelect selectedCategory={selectedCategory} onCategoryChange={handleCategoryChange} />
-            </Grid>
-            <Grid item xs={2}>
-                <IconButton
-                aria-label="delete row"
-                size="small"
-                onClick={() => setSelectedCategory("")}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </Grid>
+              <DeleteIcon />
+            </IconButton>
+          </Grid>
         </Grid>
-        <br/>
-        {(data && data.length > 0) ? (
-          <MyResponsivePie data={data}/>
+        <br />
+        {data && data.length > 0 ? (
+          <MyResponsivePie data={data} />
         ) : (
           <div>No foods to show</div>
         )}
       </div>
+      <LineChart />
     </div>
   );
 };

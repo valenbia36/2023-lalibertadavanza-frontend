@@ -145,14 +145,14 @@ export default function MiniDrawer({ user }) {
     navigate("/main", { replace: true });
   };
 
-  const navigateToMyProfileScreen = () =>{
+  const navigateToMyProfileScreen = () => {
     navigate("/myProfile", { replace: true });
-  }
+  };
 
-  const navigateToSettingsScreen = () =>{
+  const navigateToSettingsScreen = () => {
     //...
-  }
-  
+  };
+
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -178,7 +178,7 @@ export default function MiniDrawer({ user }) {
           )}
           <Typography variant="h6" noWrap component="div">
             {"Hi "}
-            <span style={{ fontWeight: 'bold' }}>{user}</span>
+            <span style={{ fontWeight: "bold" }}>{user}</span>
             {"!"}
           </Typography>
         </Toolbar>
@@ -282,10 +282,7 @@ export default function MiniDrawer({ user }) {
               >
                 <SettingsIcon />
               </ListItemIcon>
-              <ListItemText
-                primary="Settings"
-                sx={{ opacity: open ? 1 : 0 }}
-              />
+              <ListItemText primary="Settings" sx={{ opacity: open ? 1 : 0 }} />
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding sx={{ display: "block" }}>

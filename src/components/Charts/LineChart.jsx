@@ -1,10 +1,13 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import { LineChart } from "@mui/x-charts/LineChart";
 import { Paper } from "@mui/material";
 
 export default function BasicLineChart() {
+  const [data, setData] = useState();
+
+  useEffect(() => {}, []);
   return (
-    <Paper>
+    <div>
       <LineChart
         xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
         series={[
@@ -15,6 +18,6 @@ export default function BasicLineChart() {
         width={200}
         height={300}
       />
-    </Paper>
+    </div>
   );
 }

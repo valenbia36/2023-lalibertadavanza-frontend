@@ -1,24 +1,35 @@
 import React, { useEffect, useState } from "react";
-import { TextField, Button, Modal, Box, IconButton, Grid, Select, MenuItem, InputLabel, FormControl } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Modal,
+  Box,
+  IconButton,
+  Grid,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+} from "@mui/material";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
 import { useSnackbar } from "notistack";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers";
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import CloseIcon from "@mui/icons-material/Close";
 
 const initialMealState = {
   name: "",
   date: new Date(),
   hour: new Date(),
   calories: 0,
-  foods: [{ name: "", calories: "", quantity: "", category:"" }],
+  foods: [{ name: "", calories: "", quantity: "", category: "" }],
   userId: localStorage.getItem("userId"),
 };
 
 const MealForm = ({ open, setOpen, initialData }) => {
-
   const [mealData, setMealData] = useState(initialMealState);
   const [foodOptions, setFoodOptions] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
@@ -30,7 +41,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
       setMealData({
         ...initialData,
         hour: initialTime,
-        date: initialDate
+        date: initialDate,
       });
     } else {
       setMealData({
@@ -38,7 +49,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
         date: new Date(),
         hour: new Date(),
         calories: 0,
-        foods: [{ name: "", calories: "", quantity: "", category:"" }],
+        foods: [{ name: "", calories: "", quantity: "", category: "" }],
         userId: localStorage.getItem("userId"),
       });
     }
@@ -75,7 +86,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
       mealData.calories = mealData.foods
         .map((food) => parseInt(food.calories) * parseInt(food.quantity))
         .reduce((acc, calories) => acc + calories, 0);
-      
+
       mealData.hour = mealData.hour.toTimeString().slice(0, 5);
 
       const url = initialData
@@ -123,7 +134,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
       date: new Date(),
       hour: new Date(),
       calories: 0,
-      foods: [{ name: "", calories: "", quantity: "", category:"" }],
+      foods: [{ name: "", calories: "", quantity: "", category: "" }],
       userId: localStorage.getItem("userId"),
     });
   };
@@ -184,6 +195,18 @@ const MealForm = ({ open, setOpen, initialData }) => {
           p: 4,
         }}
       >
+        <IconButton
+          aria-label="Close"
+          onClick={closeModal}
+          sx={{
+            position: "absolute",
+            top: "3%",
+            right: "10px",
+            zIndex: 2, // Ensure it's above the content
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <TextField
@@ -237,7 +260,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
                   onChange={(newTime) =>
                     setMealData({
                       ...mealData,
-                      hour: newTime
+                      hour: newTime,
                     })
                   }
                 />
@@ -259,7 +282,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
                     {Array.isArray(foodOptions) && foodOptions.length > 0 ? (
                       foodOptions.map((option) => (
                         <MenuItem key={option.id} value={option.name}>
-                          {option.name}
+                          {option.name + " (" + option.weight + " grs)"}
                         </MenuItem>
                       ))
                     ) : (
@@ -282,7 +305,11 @@ const MealForm = ({ open, setOpen, initialData }) => {
                 />
               </Grid>
               {index === 0 && (
-                <Grid item xs={2} sx={{ display: 'flex', alignItems: 'center' }}>
+                <Grid
+                  item
+                  xs={2}
+                  sx={{ display: "flex", alignItems: "center" }}
+                >
                   <IconButton color="primary" onClick={handleAddFoodInput}>
                     <AddCircleRoundedIcon />
                   </IconButton>

@@ -1,9 +1,10 @@
-import React, { useState} from "react";
-import { TextField, Button, Modal, Box,Grid, IconButton,} from "@mui/material";
+import React, { useState } from "react";
+import { TextField, Button, Modal, Box, Grid, IconButton } from "@mui/material";
 import { useSnackbar } from "notistack";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import CategoryForm from "./CategoryForm";
-import CategorySelect from "./CategorySelect"
+import CategorySelect from "./CategorySelect";
+import CloseIcon from "@mui/icons-material/Close";
 
 const initialFoodState = {
   name: "",
@@ -13,7 +14,6 @@ const initialFoodState = {
 };
 
 const FoodForm = ({ open, setOpen }) => {
-
   const { enqueueSnackbar } = useSnackbar();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newFood, setNewFood] = useState(initialFoodState);
@@ -97,6 +97,18 @@ const FoodForm = ({ open, setOpen }) => {
           p: 4,
         }}
       >
+        <IconButton
+          aria-label="Close"
+          onClick={closeModal}
+          sx={{
+            position: "absolute",
+            top: "3%",
+            right: "10px",
+            zIndex: 2, // Ensure it's above the content
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
         <div>
           <TextField
             label="Name"
@@ -150,18 +162,26 @@ const FoodForm = ({ open, setOpen }) => {
           />
 
           <Grid
-              container
-              spacing={1}
-              alignItems="center"
-              sx={{ marginTop: "2%" }}
-            >
+            container
+            spacing={1}
+            alignItems="center"
+            sx={{ marginTop: "2%" }}
+          >
             <Grid item xs={10}>
-              <CategorySelect selectedCategory={newFood.category} onCategoryChange={handleCategoryChange} />
+              <CategorySelect
+                selectedCategory={newFood.category}
+                onCategoryChange={handleCategoryChange}
+              />
             </Grid>
             <Grid item xs={2}>
-                  <IconButton color="primary" onClick={() => {setIsModalOpen(true);}} >
-                  <AddCircleRoundedIcon />
-                  </IconButton>
+              <IconButton
+                color="primary"
+                onClick={() => {
+                  setIsModalOpen(true);
+                }}
+              >
+                <AddCircleRoundedIcon />
+              </IconButton>
             </Grid>
             <React.Fragment>
               <CategoryForm open={isModalOpen} setOpen={setIsModalOpen} />
