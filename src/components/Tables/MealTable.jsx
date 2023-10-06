@@ -38,6 +38,16 @@ function Row(props) {
           enqueueSnackbar("The meal was deleted successfully.", {
             variant: "success",
           });
+
+          // Actualizamos la lista de comidas después de la eliminación
+          props.onDelete(meal);
+
+          // Verificamos si la página actual queda vacía
+          if (props.endIndex >= props.totalMeals - 1) {
+            // Si la página actual queda vacía, cambiamos a la página anterior o a la primera página
+            const newPage = props.page === 0 ? 0 : props.page - 1;
+            props.onPageChange(newPage);
+          }
         } else {
           enqueueSnackbar("An error occurred while deleting the meal.", {
             variant: "error",
@@ -126,6 +136,14 @@ export default function MealTable() {
   const [meals, setMeals] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editMeal, setEditMeal] = useState(null);
+  const [totalMeals, setTotalMeals] = useState(0);
+
+  const startIndex = page * rowsPerPage;
+  const endIndex = startIndex + rowsPerPage;
+
+  useEffect(() => {
+    getMeals();
+  }, [meals]);
 
   const getMeals = async () => {
     const response = await fetch('http://localhost:3001/api/meals/user/' + localStorage.getItem('userId'), {
@@ -145,22 +163,20 @@ export default function MealTable() {
     });
   
     setMeals(mealsWithShortenedDates);
-  }  
-
-  useEffect(() => {
-    getMeals();
-  }, [meals]);
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const startIndex = page * rowsPerPage;
-  const endIndex = startIndex + rowsPerPage;
+    setTotalMeals(mealsWithShortenedDates.length);
+  }
 
   const handleEditClick = (meal) => {
-    setEditMeal(meal); // Establece los datos de comida para editar
-    setIsModalOpen(true); // Abre el modal de edición
+    setEditMeal(meal);
+    setIsModalOpen(true);
+  }
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+  }
+
+  const handleDelete = (deletedMeal) => {
+    setMeals(meals.filter((meal) => meal._id !== deletedMeal._id));
   }
 
   return (
@@ -183,7 +199,12 @@ export default function MealTable() {
                 key={row.name}
                 row={row}
                 sx={{ textAlign: 'center' }}
-                onEditClick={handleEditClick} // Pasa la función de manejo de edición como prop
+                onEditClick={handleEditClick}
+                onDelete={handleDelete}
+                page={page}
+                endIndex={endIndex}
+                totalMeals={totalMeals}
+                onPageChange={handlePageChange}
               />
             ))
           ) : (
@@ -197,19 +218,18 @@ export default function MealTable() {
       </Table>
 
       <div>
-        <IconButton onClick={(e) => handleChangePage(e, page - 1)} disabled={page === 0}>
+        <IconButton onClick={(e) => handlePageChange(page - 1)} disabled={page === 0}>
           <ArrowBackIosIcon />
         </IconButton>
-        <IconButton onClick={(e) => handleChangePage(e, page + 1)} disabled={endIndex >= meals.length}>
+        <IconButton onClick={(e) => handlePageChange(page + 1)} disabled={endIndex >= totalMeals}>
           <ArrowForwardIosIcon />
         </IconButton>
       </div>
 
-      {/* Modal de edición */}
       <MealForm
         open={isModalOpen}
         setOpen={setIsModalOpen}
-        initialData={editMeal} // Pasa los datos de comida en modo edición al formulario
+        initialData={editMeal}
       />
     </TableContainer>
   );

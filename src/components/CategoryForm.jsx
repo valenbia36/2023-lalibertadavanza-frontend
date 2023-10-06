@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { TextField, Button, Modal, Box } from "@mui/material";
 import { useSnackbar } from "notistack";
+
 const initialCategoryState = {
   name: "",
 };
@@ -8,11 +9,6 @@ const initialCategoryState = {
 const CategoryForm = ({ open, setOpen }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [newCategory, setNewCategory] = useState(initialCategoryState);
-
-  const closeModal = () => {
-    setOpen(false);
-    setNewCategory(initialCategoryState);
-  };
 
   const handleAddCategory = () => {
     if (
@@ -43,6 +39,10 @@ const CategoryForm = ({ open, setOpen }) => {
     }
   };
 
+  const closeModal = () => {
+    setOpen(false);
+    setNewCategory(initialCategoryState);
+  };
 
   return (
     <Modal

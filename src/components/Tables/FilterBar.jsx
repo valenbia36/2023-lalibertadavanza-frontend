@@ -15,6 +15,7 @@ const FilterSearchComponent = ({ setSearchText, searchText }) => {
   const handleSearch = () => {
     setSearchText(searchValue);
   };
+  
   return (
     <div>
       <IconButton onClick={toggleSearchBar}>

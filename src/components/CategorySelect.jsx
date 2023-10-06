@@ -2,7 +2,13 @@ import React, { useState, useEffect } from "react";
 import {Select, MenuItem,InputLabel,FormControl,} from "@mui/material";
 
 const CategorySelect = ({selectedCategory,onCategoryChange }) => {
+
     const [categoriesOptions, setCategoriesOptions] = useState([]);
+
+    useEffect(() => {
+      getCategories();
+    }, [categoriesOptions]);
+
     const getCategories = async () => {
       const response = await fetch("http://localhost:3001/api/category/", {
         method: "GET",
@@ -14,9 +20,7 @@ const CategorySelect = ({selectedCategory,onCategoryChange }) => {
       const data = await response.json();
       setCategoriesOptions(data.data);
     };
-    useEffect(() => {
-      getCategories();
-    }, [categoriesOptions]);
+
   return (
     <FormControl fullWidth>
       <InputLabel id="category-select-label">Category</InputLabel>
@@ -34,7 +38,7 @@ const CategorySelect = ({selectedCategory,onCategoryChange }) => {
             </MenuItem>
           ))
         ) : (
-          <MenuItem value="">No hay categorías disponibles</MenuItem>
+          <MenuItem value="">There are no categories available</MenuItem>
         )}
       </Select>
     </FormControl>

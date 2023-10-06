@@ -20,15 +20,15 @@ import Slideshow from "../components/Slideshow";
 const defaultTheme = createTheme();
 
 const Login = () => {
-  const { enqueueSnackbar } = useSnackbar();
 
   const [user, setUser] = React.useState({
     email: "",
     password: "",
   });
-
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [recoveryEmail, setRecoveryEmail] = React.useState("");
+
+  const { enqueueSnackbar } = useSnackbar();
 
   const images = [
     carousel1,
@@ -36,14 +36,6 @@ const Login = () => {
     carousel3,
     carousel4
   ];
-
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
 
   const handleRecoverClick = async () => {
     if (recoveryEmail === "") {
@@ -130,6 +122,14 @@ const Login = () => {
           }
         });
     }
+  };
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
@@ -315,7 +315,7 @@ const Login = () => {
                 handleRecoverClick();
               }
             }}
-            style={{ width: "100%", marginBottom: "1rem" }} // Estilo para el campo de entrada
+            style={{ width: "100%", marginBottom: "1rem" }}
           />
           <Button
             variant="contained"

@@ -18,6 +18,7 @@ const initialMealState = {
 };
 
 const MealForm = ({ open, setOpen, initialData }) => {
+
   const [mealData, setMealData] = useState(initialMealState);
   const [foodOptions, setFoodOptions] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
@@ -43,6 +44,10 @@ const MealForm = ({ open, setOpen, initialData }) => {
     }
   }, [initialData]);
 
+  useEffect(() => {
+    getFoods();
+  }, []);
+
   const getFoods = async () => {
     const response = await fetch("http://localhost:3001/api/foods/", {
       method: "GET",
@@ -53,58 +58,6 @@ const MealForm = ({ open, setOpen, initialData }) => {
     });
     const data = await response.json();
     setFoodOptions(data.data);
-  };
-
-  useEffect(() => {
-    getFoods();
-  }, []);
-
-  const closeModal = () => {
-    setOpen(false);
-    setMealData({
-      name: "",
-      date: new Date(),
-      hour: new Date(),
-      calories: 0,
-      foods: [{ name: "", calories: "", quantity: "", category:"" }],
-      userId: localStorage.getItem("userId"),
-    });
-  };
-
-  const handleAddFoodInput = () => {
-    const updatedFoods = [
-      ...mealData.foods,
-      { name: "", calories: "", quantity: "", category: "" },
-    ];
-    setMealData({ ...mealData, foods: updatedFoods });
-  };
-
-  const handleRemoveFoodInput = (index) => {
-    const updatedFoods = [...mealData.foods];
-    updatedFoods.splice(index, 1);
-    setMealData({ ...mealData, foods: updatedFoods });
-  };
-
-  const handleFoodInputChange = (event, index) => {
-    const updatedFoods = [...mealData.foods];
-    updatedFoods[index].name = event.target.value;
-    let result = foodOptions.find((item) => item.name === event.target.value);
-    updatedFoods[index].calories = result ? result.calories : "";
-    updatedFoods[index].category = result ? result.category : "";
-    setMealData({ ...mealData, foods: updatedFoods });
-  };
-
-  const handleQuantityInputChange = (e, index) => {
-    const inputValue = Number(e.target.value);
-    if (!isNaN(inputValue) && inputValue >= 1) {
-      const updatedFoods = [...mealData.foods];
-      updatedFoods[index].quantity = inputValue;
-      setMealData({ ...mealData, foods: updatedFoods });
-    } else {
-      const updatedFoods = [...mealData.foods];
-      updatedFoods[index].quantity = "";
-      setMealData({ ...mealData, foods: updatedFoods });
-    }
   };
 
   const handleAddMeal = () => {
@@ -160,6 +113,54 @@ const MealForm = ({ open, setOpen, initialData }) => {
             variant: "error",
           });
         });
+    }
+  };
+
+  const closeModal = () => {
+    setOpen(false);
+    setMealData({
+      name: "",
+      date: new Date(),
+      hour: new Date(),
+      calories: 0,
+      foods: [{ name: "", calories: "", quantity: "", category:"" }],
+      userId: localStorage.getItem("userId"),
+    });
+  };
+
+  const handleAddFoodInput = () => {
+    const updatedFoods = [
+      ...mealData.foods,
+      { name: "", calories: "", quantity: "", category: "" },
+    ];
+    setMealData({ ...mealData, foods: updatedFoods });
+  };
+
+  const handleRemoveFoodInput = (index) => {
+    const updatedFoods = [...mealData.foods];
+    updatedFoods.splice(index, 1);
+    setMealData({ ...mealData, foods: updatedFoods });
+  };
+
+  const handleFoodInputChange = (event, index) => {
+    const updatedFoods = [...mealData.foods];
+    updatedFoods[index].name = event.target.value;
+    let result = foodOptions.find((item) => item.name === event.target.value);
+    updatedFoods[index].calories = result ? result.calories : "";
+    updatedFoods[index].category = result ? result.category : "";
+    setMealData({ ...mealData, foods: updatedFoods });
+  };
+
+  const handleQuantityInputChange = (e, index) => {
+    const inputValue = Number(e.target.value);
+    if (!isNaN(inputValue) && inputValue >= 1) {
+      const updatedFoods = [...mealData.foods];
+      updatedFoods[index].quantity = inputValue;
+      setMealData({ ...mealData, foods: updatedFoods });
+    } else {
+      const updatedFoods = [...mealData.foods];
+      updatedFoods[index].quantity = "";
+      setMealData({ ...mealData, foods: updatedFoods });
     }
   };
 

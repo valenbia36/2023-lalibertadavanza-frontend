@@ -24,7 +24,6 @@ const MealList = () => {
         <MealForm open={isModalOpen} setOpen={setIsModalOpen} />
       </React.Fragment>
       <IconButton
-        color="primary"
         onClick={() => {
           setIsModalOpen(true);
         }}

@@ -16,28 +16,28 @@ const Slideshow = ({ images, interval }) => {
 
   return (
     <Grid
-        item
-        xs={false}
-        sm={4}
-        md={7}
-        sx={{
-            width: "100vw",
-            height: "100vh",
-        }}
+      item
+      xs={false}
+      sm={4}
+      md={7}
+      sx={{
+          width: "100vw",
+          height: "100vh",
+      }}
         
     >
-        <img 
-            src={images[currentIndex]} 
-            alt={`Slide ${currentIndex}`} 
-            style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            top: 0,
-            left: 0,
-          
-            }}
-        />
+      <img 
+        src={images[currentIndex]} 
+        alt={`Slide ${currentIndex}`} 
+        style={{
+        width: "100%",
+        height: "100%",
+        objectFit: "cover",
+        top: 0,
+        left: 0,
+      
+        }}
+      />
     </Grid>
   );
 };

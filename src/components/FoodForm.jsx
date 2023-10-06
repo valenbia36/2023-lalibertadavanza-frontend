@@ -4,6 +4,7 @@ import { useSnackbar } from "notistack";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import CategoryForm from "./CategoryForm";
 import CategorySelect from "./CategorySelect"
+
 const initialFoodState = {
   name: "",
   calories: "",
@@ -12,36 +13,10 @@ const initialFoodState = {
 };
 
 const FoodForm = ({ open, setOpen }) => {
+
   const { enqueueSnackbar } = useSnackbar();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newFood, setNewFood] = useState(initialFoodState);
-
-  const closeModal = () => {
-    setOpen(false);
-    setNewFood(initialFoodState);
-  };
-
-  const handleCaloriesInputChange = (e, index) => {
-    const inputValue = Number(e.target.value);
-    if (!isNaN(inputValue) && inputValue >= 1) {
-      setNewFood({ ...newFood, calories: inputValue });
-    } else {
-      setNewFood({ ...newFood, calories: "" }); // Deja el campo de entrada vacío
-    }
-  };
-
-  const handleWeightInputChange = (e, index) => {
-    const inputValue = Number(e.target.value);
-    if (!isNaN(inputValue) && inputValue >= 1) {
-      setNewFood({ ...newFood, weight: inputValue });
-    } else {
-      setNewFood({ ...newFood, weight: "" }); // Deja el campo de entrada vacío
-    }
-  };
-
-  const handleCategoryChange = (selectedCategory) => {
-    setNewFood({ ...newFood, category: selectedCategory });
-  };
 
   const handleAddFood = () => {
     if (
@@ -75,7 +50,32 @@ const FoodForm = ({ open, setOpen }) => {
     }
   };
 
+  const closeModal = () => {
+    setOpen(false);
+    setNewFood(initialFoodState);
+  };
 
+  const handleCaloriesInputChange = (e, index) => {
+    const inputValue = Number(e.target.value);
+    if (!isNaN(inputValue) && inputValue >= 1) {
+      setNewFood({ ...newFood, calories: inputValue });
+    } else {
+      setNewFood({ ...newFood, calories: "" });
+    }
+  };
+
+  const handleWeightInputChange = (e, index) => {
+    const inputValue = Number(e.target.value);
+    if (!isNaN(inputValue) && inputValue >= 1) {
+      setNewFood({ ...newFood, weight: inputValue });
+    } else {
+      setNewFood({ ...newFood, weight: "" });
+    }
+  };
+
+  const handleCategoryChange = (selectedCategory) => {
+    setNewFood({ ...newFood, category: selectedCategory });
+  };
 
   return (
     <Modal

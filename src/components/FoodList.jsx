@@ -3,10 +3,10 @@ import { IconButton, Typography } from "@mui/material";
 import FoodForm from "./FoodForm";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import FilterAltRoundedIcon from '@mui/icons-material/FilterAltRounded';
-
 import FoodTable from "./Tables/FoodTable";
 
 const FoodList = () => {
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
 
@@ -27,7 +27,6 @@ const FoodList = () => {
       </React.Fragment>
 
       <IconButton
-        color="primary"
         onClick={() => {
           setIsModalOpen(true);
         }}
@@ -35,7 +34,6 @@ const FoodList = () => {
         <AddCircleRoundedIcon />
       </IconButton>
       <IconButton
-        color="primary"
         onClick={() => {
           setFilterOpen(!filterOpen);
         }}

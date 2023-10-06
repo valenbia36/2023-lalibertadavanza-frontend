@@ -61,6 +61,21 @@ export default function FoodTable({filterOpen}) {
   const [page, setPage] = React.useState(0);
   const [noResults, setNoResults] = useState(false);
 
+  useEffect(() => {
+    getFoodByCategory();
+  }, [selectedCategory]);
+
+  useEffect(() => {
+    if(filterOpen === false){
+      setSelectedCategory('');
+      getFoods();
+    }
+  }, [filterOpen, foods]);
+
+  useEffect(() => {
+    getFoods();
+  }, []);
+
   const getFoods = async () => {
     const response = await fetch("http://localhost:3001/api/foods/", {
       method: "GET",
@@ -72,19 +87,6 @@ export default function FoodTable({filterOpen}) {
     const data = await response.json();
     setFoods(data.data);
     setTotalItems(data.data.length);
-  };
-
-  useEffect(() => {
-    getFoods();
-  }, []);
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-  
-
-  const handleCategoryChange = (category) => {
-    setSelectedCategory(category);
   };
 
   const getFoodByCategory = async () => {
@@ -112,16 +114,13 @@ export default function FoodTable({filterOpen}) {
     }
   };
 
-  useEffect(() => {
-    getFoodByCategory();
-  }, [selectedCategory]);
-
-  useEffect(() => {
-    if(filterOpen === false){
-      setSelectedCategory('');
-      getFoods();
-    }
-  }, [filterOpen, foods])
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+  
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+  };
 
   return (
     <div>

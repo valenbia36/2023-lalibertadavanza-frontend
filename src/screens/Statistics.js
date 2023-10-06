@@ -10,9 +10,11 @@ const Statistics = () => {
   const [data, setData] = useState();
   const [selectedCategory, setSelectedCategory] = useState("");
   const [date, setDate] = useState(format(new Date(), "yyyy-MM-dd"));
-  const handleCategoryChange = (selectedCategory) => {
-    setSelectedCategory(selectedCategory);
-  };
+
+  useEffect(() => {
+    getMealsByUserIdAndDay();
+  }, [date, selectedCategory]);
+
   const getMealsByUserIdAndDay = async () => {
     setData("")
     const response = await fetch(
@@ -53,9 +55,11 @@ const Statistics = () => {
       setData([]);
     }
   };
-  useEffect(() => {
-    getMealsByUserIdAndDay();
-  }, [date,selectedCategory]);
+
+  const handleCategoryChange = (selectedCategory) => {
+    setSelectedCategory(selectedCategory);
+  };
+
   return (
     <div>
       <Drawer user={localStorage.getItem("username")} />

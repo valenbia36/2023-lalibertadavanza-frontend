@@ -52,7 +52,6 @@ const ResetPassword = () => {
       }
     );
     const data = await response.json();
-    console.log(JSON.stringify(data.data._id));
     if (data.data._id != null) {
       enqueueSnackbar("The token was validated.", { variant: "success" });
       setUserId(data.data._id);
