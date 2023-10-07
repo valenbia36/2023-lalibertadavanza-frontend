@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {Select, MenuItem,InputLabel,FormControl,} from "@mui/material";
 
-const CategorySelect = ({selectedCategory,onCategoryChange }) => {
+const CategorySelect = ({selectedCategory,onCategoryChange, customWidth }) => {
 
     const [categoriesOptions, setCategoriesOptions] = useState([]);
 
@@ -22,7 +22,7 @@ const CategorySelect = ({selectedCategory,onCategoryChange }) => {
     };
 
   return (
-    <FormControl fullWidth>
+    <FormControl style={{ width: customWidth || "100%", maxWidth: 500, minWidth:200 }}>
       <InputLabel id="category-select-label">Category</InputLabel>
       <Select
         labelId="category-select-label"

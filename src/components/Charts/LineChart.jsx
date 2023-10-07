@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { LineChart } from "@mui/x-charts/LineChart";
-import { Paper } from "@mui/material";
 
-export default function BasicLineChart() {
-  const [data, setData] = useState();
-
-  useEffect(() => {}, []);
+export default function BasicLineChart(data) {
+  const datesNumeric = (data.data).map(item => parseInt(item.date, 10));
+  console.log(datesNumeric)
+  const caloriasArray = (data.data).map(item => item.calorias);
+  console.log(caloriasArray);
   return (
     <div>
       <LineChart
-        xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
+        xAxis={[{ data: datesNumeric}]}
         series={[
           {
-            data: [2, 5.5, 2, 8.5, 1.5, 5],
+            data: caloriasArray,
           },
         ]}
-        width={200}
-        height={300}
+        width={450}
+        height={500}
       />
     </div>
   );
