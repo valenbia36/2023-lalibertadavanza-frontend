@@ -64,7 +64,6 @@ const MyProfile = () => {
     );
 
     const data = await response.json();
-    console.log(JSON.stringify(data));
     setUser(data.data);
   };
 

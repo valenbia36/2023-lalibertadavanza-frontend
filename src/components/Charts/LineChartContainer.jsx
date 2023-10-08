@@ -4,7 +4,6 @@ import MyResponsiveLine from "./LineChart"
 
 const getMealsByUserIdAndMonth = async (selectedMonth,setData) => {
   setData("");
-  console.log(selectedMonth)
   const response = await fetch(
     "http://localhost:3001/api/meals/user/" +
       localStorage.getItem("userId") +

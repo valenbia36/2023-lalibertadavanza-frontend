@@ -149,10 +149,6 @@ export default function MiniDrawer({ user }) {
     navigate("/myProfile", { replace: true });
   };
 
-  const navigateToSettingsScreen = () => {
-    //...
-  };
-
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -262,27 +258,6 @@ export default function MiniDrawer({ user }) {
                 primary="My Profile"
                 sx={{ opacity: open ? 1 : 0 }}
               />
-            </ListItemButton>
-          </ListItem>
-          <ListItem disablePadding sx={{ display: "block" }}>
-            <ListItemButton
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? "initial" : "center",
-                px: 2.5,
-              }}
-              onClick={navigateToSettingsScreen}
-            >
-              <ListItemIcon
-                sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : "auto",
-                  justifyContent: "center",
-                }}
-              >
-                <SettingsIcon />
-              </ListItemIcon>
-              <ListItemText primary="Settings" sx={{ opacity: open ? 1 : 0 }} />
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding sx={{ display: "block" }}>
