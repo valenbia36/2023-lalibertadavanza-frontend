@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { styled, useTheme } from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 import Drawer from "../components/Drawer";
 import MealList from "../components/MealList";
 import FoodList from "../components/FoodList";

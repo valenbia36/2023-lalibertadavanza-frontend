@@ -36,24 +36,24 @@ const LineChartContainer = () => {
             style={{
             textAlign: "center",
             color: "black",
+            maxWidth: 320
             }}
         >
         <h2>Calories By Day</h2>
         <TextField
-        style={{ width: "50%", minWidth:200 }}
-        InputLabelProps={{ shrink: true }}
-        label="Month"
-        variant="outlined"
-        margin="normal"
-        type="number"
-        value={selectedMonth}
-        onChange={(e) => setSelectedMonth(e.target.value)}
+          style={{ width: "50%", minWidth:200, zIndex: 2 }}
+          InputLabelProps={{ shrink: true }}
+          label="Month"
+          variant="outlined"
+          margin="normal"
+          type="number"
+          value={selectedMonth}
+          onChange={(e) => setSelectedMonth(e.target.value)}
         />
-        <br />
         {data && data.length > 0 ? (
-        <MyResponsiveLine data={data} />
+          <MyResponsiveLine data={data}/>
         ) : (
-        <div>No calories to show</div>
+         <div>No calories to show</div>
         )}
         </div>
     )

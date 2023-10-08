@@ -52,25 +52,26 @@ const PieChartContainer = () => {
     const [selectedCategory, setSelectedCategory] = useState("");
     const [date, setDate] = useState(format(new Date(), "yyyy-MM-dd"));
   
-    
-      useEffect(() => {
-        getMealsByUserIdAndDay(date,selectedCategory,setData);
-      }, [date, selectedCategory]);
-    
-    
-      const handleCategoryChange = (selectedCategory) => {
-        setSelectedCategory(selectedCategory);
-      };
+    useEffect(() => {
+      getMealsByUserIdAndDay(date,selectedCategory,setData);
+    }, [date, selectedCategory]);
+  
+  
+    const handleCategoryChange = (selectedCategory) => {
+      setSelectedCategory(selectedCategory);
+    };
+
     return(
         <div
             style={{
             textAlign: "center",
             color: "black",
+            maxWidth: 320
             }}
         >
         <h2>Foods by Day</h2>
         <TextField
-        style={{ width: "50%", minWidth:200 }}
+        style={{ width: "73%", minWidth:200 }}
         InputLabelProps={{ shrink: true }}
         label="Date"
         variant="outlined"
@@ -81,25 +82,25 @@ const PieChartContainer = () => {
         />
         <Grid >
             <CategorySelect
-            customWidth={"50%"}
-            selectedCategory={selectedCategory}
-            onCategoryChange={handleCategoryChange}
+              customWidth={"30%"}
+              selectedCategory={selectedCategory}
+              onCategoryChange={handleCategoryChange}
             />
-        </Grid>
-        <Grid >
-            <IconButton
-            aria-label="delete row"
-            size="small"
-            onClick={() => setSelectedCategory("")}
-            >
-            <DeleteIcon />
-            </IconButton>
+            { (selectedCategory !== '') && (
+              <IconButton
+                aria-label="delete row"
+                size="small"
+                onClick={() => setSelectedCategory("")}
+              >
+                <DeleteIcon />
+              </IconButton>
+            ) }
         </Grid>
         <br />
         {data && data.length > 0 ? (
         <MyResponsivePie data={data} />
         ) : (
-        <div>No foods to show</div>
+        <div style={{fontSize: '18px', width: 320}}>No foods to show</div>
         )}
         </div>
     )

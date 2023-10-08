@@ -7,7 +7,7 @@ export default function BasicLineChart(data) {
   const caloriasArray = (data.data).map(item => item.calorias);
   console.log(caloriasArray);
   return (
-    <div>
+    <div style={{marginTop: '-25%'}}>
       <LineChart
         xAxis={[{ data: datesNumeric}]}
         series={[
@@ -15,8 +15,8 @@ export default function BasicLineChart(data) {
             data: caloriasArray,
           },
         ]}
-        width={450}
-        height={500}
+        width={320}
+        height={450}
       />
     </div>
   );
