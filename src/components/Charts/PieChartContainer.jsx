@@ -32,11 +32,11 @@ const getMealsByUserIdAndDay = async (
   if (data.data && data.data.length > 0) {
     data.data.forEach((item) => {
       item.foods.forEach((food) => {
-        const { name, quantity, category } = food;
+        const { name, weightConsumed, category } = food;
         if (groupedFoods[name]) {
-          groupedFoods[name].value += quantity;
+          groupedFoods[name].value += weightConsumed;
         } else {
-          groupedFoods[name] = { id: category, value: quantity, label: name };
+          groupedFoods[name] = { id: category, value: weightConsumed, label: name };
         }
       });
     });

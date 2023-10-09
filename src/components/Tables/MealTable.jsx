@@ -104,7 +104,7 @@ function Row(props) {
                   <TableRow>
                     <TableCell align="center">Name</TableCell>
                     <TableCell align="center">Calories</TableCell>
-                    <TableCell align="center">Quantity</TableCell>
+                    <TableCell align="center">Weight (gr/ml)</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -113,8 +113,8 @@ function Row(props) {
                       <TableCell component="th" scope="row" align="center">
                         {foodRow.name}
                       </TableCell>
-                      <TableCell align="center">{foodRow.calories}</TableCell>
-                      <TableCell align="center">{foodRow.quantity}</TableCell>
+                      <TableCell align="center">{foodRow.totalCalories}</TableCell>
+                      <TableCell align="center">{foodRow.weightConsumed}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
