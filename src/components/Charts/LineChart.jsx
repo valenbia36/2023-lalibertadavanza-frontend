@@ -24,11 +24,11 @@ export default function LineChartWithCustomFontSize(data) {
       >
         <Legend verticalAlign="bottom" iconSize={25} layout="vertical" margin={{top: 1000}}/>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="date" label={{ value: "Fecha", position: 'bottom', fontSize: 14, fontWeight: 'bold' }} />
-        <YAxis label={{ value: "Calorías", angle: -90, position: "insideLeft", fontSize: 14, fontWeight: 'bold' }} />
+        <XAxis dataKey="date" label={{ value: "Date", position: 'bottom', fontSize: 14, fontWeight: 'bold' }} />
+        <YAxis label={{ value: "Calories", angle: -90, position: "insideLeft", fontSize: 14, fontWeight: 'bold' }} />
         <Legend verticalAlign="top" width={100} />
-        <Line type="monotone" dataKey="calorias" name="Calorías" stroke="#936639" strokeWidth={2} dot={false}/>
-        <Line type="monotone" dataKey="promedio" name={`Promedio de Calorías (${promedioCalorias.toFixed(2)})`} stroke="#6a994e" dot={false} strokeWidth={2} strokeDasharray="3 3"/>
+        <Line type="monotone" dataKey="calorias" name="Calories" stroke="#936639" strokeWidth={2} dot={false}/>
+        <Line type="monotone" dataKey="promedio" name={`Calories average (${promedioCalorias.toFixed(2)})`} stroke="#6a994e" dot={false} strokeWidth={2} strokeDasharray="3 3"/>
       </LineChart>
     </div>
   );

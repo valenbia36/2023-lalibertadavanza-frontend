@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { TextField } from "@mui/material";
 import MyResponsiveLine from "./LineChart"
+import MonthSelector from '../MonthSelector'
 
 const getMealsByUserIdAndMonth = async (selectedMonth,setData) => {
   setData("");
@@ -38,17 +38,8 @@ const LineChartContainer = () => {
             maxWidth: 320
             }}
         >
-        <h2>Calories By Day</h2>
-        <TextField
-          style={{ width: "50%", minWidth:200, zIndex: 2 }}
-          InputLabelProps={{ shrink: true }}
-          label="Month"
-          variant="outlined"
-          margin="normal"
-          type="number"
-          value={selectedMonth}
-          onChange={(e) => setSelectedMonth(e.target.value)}
-        />
+        <h2>Calories By Month</h2>
+        <MonthSelector setSelectedMonth={setSelectedMonth} selectedMonth={selectedMonth}/>
         {data && data.length > 0 ? (
           <MyResponsiveLine data={data}/>
         ) : (
