@@ -228,6 +228,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
                   variant="outlined"
                   fullWidth
                   margin="normal"
+                  disableFuture
                   InputLabelProps={{
                     shrink: true,
                   }}

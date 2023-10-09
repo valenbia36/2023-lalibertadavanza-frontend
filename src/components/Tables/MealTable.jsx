@@ -1,25 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import IconButton from '@mui/material/IconButton';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import Box from '@mui/material/Box';
-import Collapse from '@mui/material/Collapse';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import React, { useState, useEffect } from "react";
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import IconButton from "@mui/material/IconButton";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import Box from "@mui/material/Box";
+import Collapse from "@mui/material/Collapse";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import EditIcon from "@mui/icons-material/Edit";
 import MealForm from "../MealForm";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useSnackbar } from "notistack";
 
 function Row(props) {
-  
   const { row, onEditClick } = props;
   const [open, setOpen] = React.useState(false);
 
@@ -28,10 +27,10 @@ function Row(props) {
   const handleDeleteClick = (meal) => {
     try {
       fetch("http://localhost:3001/api/meals/" + meal._id, {
-        method: 'DELETE',
+        method: "DELETE",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem('token'),
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
         },
       }).then(function (response) {
         if (response.status === 200) {
@@ -53,18 +52,17 @@ function Row(props) {
             variant: "error",
           });
         }
-      })
-
+      });
     } catch (error) {
       enqueueSnackbar("An error occurred while deleting the meal.", {
         variant: "error",
       });
     }
-  }
+  };
 
   return (
     <React.Fragment>
-      <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
         <TableCell>
           <IconButton
             aria-label="expand row"
@@ -146,38 +144,41 @@ export default function MealTable() {
   }, [meals]);
 
   const getMeals = async () => {
-    const response = await fetch('http://localhost:3001/api/meals/user/' + localStorage.getItem('userId'), {
-      method: 'GET',
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + localStorage.getItem('token')
+    const response = await fetch(
+      "http://localhost:3001/api/meals/user/" + localStorage.getItem("userId"),
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
       }
-    });
+    );
     const data = await response.json();
-  
+
     const mealsWithShortenedDates = data.data.map((meal) => {
       return {
         ...meal,
         date: meal.date.substring(0, 10),
       };
     });
-  
+
     setMeals(mealsWithShortenedDates);
     setTotalMeals(mealsWithShortenedDates.length);
-  }
+  };
 
   const handleEditClick = (meal) => {
     setEditMeal(meal);
     setIsModalOpen(true);
-  }
+  };
 
   const handlePageChange = (newPage) => {
     setPage(newPage);
-  }
+  };
 
   const handleDelete = (deletedMeal) => {
     setMeals(meals.filter((meal) => meal._id !== deletedMeal._id));
-  }
+  };
 
   return (
     <TableContainer component={Paper}>
@@ -185,28 +186,40 @@ export default function MealTable() {
         <TableHead>
           <TableRow>
             <TableCell />
-            <TableCell sx={{ fontWeight: 'bold' }} align='center'>Name</TableCell>
-            <TableCell sx={{ fontWeight: 'bold' }} align="center">Total Calories</TableCell>
-            <TableCell sx={{ fontWeight: 'bold' }} align="center">Date&nbsp;</TableCell>
-            <TableCell sx={{ fontWeight: 'bold' }} align="center">Hours&nbsp;</TableCell>
-            <TableCell sx={{ fontWeight: 'bold' }} align="center">Actions&nbsp;</TableCell>
+            <TableCell sx={{ fontWeight: "bold" }} align="center">
+              Name
+            </TableCell>
+            <TableCell sx={{ fontWeight: "bold" }} align="center">
+              Total Calories
+            </TableCell>
+            <TableCell sx={{ fontWeight: "bold" }} align="center">
+              Date&nbsp;
+            </TableCell>
+            <TableCell sx={{ fontWeight: "bold" }} align="center">
+              Hours&nbsp;
+            </TableCell>
+            <TableCell sx={{ fontWeight: "bold" }} align="center">
+              Actions&nbsp;
+            </TableCell>
           </TableRow>
         </TableHead>
-        <TableBody sx={{ textAlign: 'center' }}>
-          {(meals.length > 0) ? (
-            meals.slice(startIndex, endIndex).map((row) => (
-              <Row
-                key={row.name}
-                row={row}
-                sx={{ textAlign: 'center' }}
-                onEditClick={handleEditClick}
-                onDelete={handleDelete}
-                page={page}
-                endIndex={endIndex}
-                totalMeals={totalMeals}
-                onPageChange={handlePageChange}
-              />
-            ))
+        <TableBody sx={{ textAlign: "center" }}>
+          {meals.length > 0 ? (
+            meals
+              .slice(startIndex, endIndex)
+              .map((row) => (
+                <Row
+                  key={row.name}
+                  row={row}
+                  sx={{ textAlign: "center" }}
+                  onEditClick={handleEditClick}
+                  onDelete={handleDelete}
+                  page={page}
+                  endIndex={endIndex}
+                  totalMeals={totalMeals}
+                  onPageChange={handlePageChange}
+                />
+              ))
           ) : (
             <TableRow>
               <TableCell colSpan={5} align="center">
@@ -218,10 +231,16 @@ export default function MealTable() {
       </Table>
 
       <div>
-        <IconButton onClick={(e) => handlePageChange(page - 1)} disabled={page === 0}>
+        <IconButton
+          onClick={(e) => handlePageChange(page - 1)}
+          disabled={page === 0}
+        >
           <ArrowBackIosIcon />
         </IconButton>
-        <IconButton onClick={(e) => handlePageChange(page + 1)} disabled={endIndex >= totalMeals}>
+        <IconButton
+          onClick={(e) => handlePageChange(page + 1)}
+          disabled={endIndex >= totalMeals}
+        >
           <ArrowForwardIosIcon />
         </IconButton>
       </div>
