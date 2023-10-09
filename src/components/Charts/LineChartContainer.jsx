@@ -1,26 +1,7 @@
 import React, { useState, useEffect } from "react";
 import MyResponsiveLine from "./LineChart";
 import MonthSelector from "../MonthSelector";
-import { CircularProgress, Box, Paper } from "@mui/material";
-
-const getMealsByUserIdAndMonth = async (selectedMonth, setData) => {
-  setData("");
-  const response = await fetch(
-    "http://localhost:3001/api/meals/user/" +
-      localStorage.getItem("userId") +
-      "/month/" +
-      selectedMonth,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-    }
-  );
-  const data = await response.json();
-  setData(data.resultWithAllDays);
-};
+import { CircularProgress, Paper } from "@mui/material";
 
 const LineChartContainer = () => {
   const [data, setData] = useState();

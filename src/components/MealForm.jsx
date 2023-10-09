@@ -57,9 +57,10 @@ const MealForm = ({ open, setOpen, initialData }) => {
 
   useEffect(() => {
     getFoods();
-  }, []);
+  }, [open]);
 
   const getFoods = async () => {
+    console.log("entra")
     const response = await fetch("http://localhost:3001/api/foods/", {
       method: "GET",
       headers: {
