@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { TextField, Grid, IconButton, Paper } from "@mui/material";
+import { TextField, Grid, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { format } from "date-fns";
 import MyResponsivePie from "./PieChart";
@@ -77,7 +77,7 @@ const PieChartContainer = () => {
         maxWidth: 320,
       }}
     >
-      <Paper sx={{ maxHeight: "450px", minWidth: "320px" }}>
+      <Grid sx={{ maxHeight: "450px", minWidth: "320px" }}>
         <h2>Foods by Day</h2>
         <TextField
           style={{ width: "73%", minWidth: 200 }}
@@ -116,7 +116,7 @@ const PieChartContainer = () => {
             </div>
           )}
         </div>
-      </Paper>
+      </Grid>
     </div>
   );
 };

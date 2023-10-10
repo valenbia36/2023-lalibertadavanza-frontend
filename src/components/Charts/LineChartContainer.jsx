@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import MyResponsiveLine from "./LineChart";
 import MonthSelector from "../MonthSelector";
-import { CircularProgress, Paper } from "@mui/material";
+import { CircularProgress, Grid } from "@mui/material";
 
 const LineChartContainer = () => {
   const [data, setData] = useState();
@@ -41,7 +41,7 @@ const LineChartContainer = () => {
         maxWidth: 320,
       }}
     >
-      <Paper sx={{ maxHeight: "520px", minWidth: "320px" }}>
+      <Grid sx={{ maxHeight: "520px", minWidth: "320px" }}>
         <h2>Calories By Month</h2>
         <MonthSelector
           setSelectedMonth={setSelectedMonth}
@@ -66,7 +66,7 @@ const LineChartContainer = () => {
             <div>No calories to show</div>
           )}
         </div>
-      </Paper>
+      </Grid>
     </div>
   );
 };
