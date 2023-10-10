@@ -4,7 +4,7 @@ import { Select, MenuItem, InputLabel, FormControl } from "@mui/material";
 const MonthSelector = ({selectedMonth, setSelectedMonth}) => {
 
   const handleMonthChange = (event) => {
-    setSelectedMonth(event.target.value); // Almacena el valor del mes seleccionado
+    setSelectedMonth(event.target.value);
   };
 
   return (

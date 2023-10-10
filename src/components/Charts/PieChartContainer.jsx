@@ -106,7 +106,7 @@ const PieChartContainer = () => {
           )}
         </Grid>
         <div style={{ position: "relative", minHeight: 320, marginTop: "10%" }}>
-          {loading ? ( // Display loading spinner when loading is true
+          {loading ? (
             <CircularProgress />
           ) : data && data.length > 0 ? (
             <MyResponsivePie data={data} />

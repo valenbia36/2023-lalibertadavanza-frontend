@@ -2,7 +2,6 @@ import React from "react";
 import { PieChart } from "@mui/x-charts/PieChart";
 
 export default function BasicPie({ data }) {
-  console.log(data)
   return (
     <PieChart
       series={[

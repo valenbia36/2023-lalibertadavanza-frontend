@@ -10,7 +10,7 @@ const LineChartContainer = () => {
 
   const getMeals = async (selectedMonth) => {
     setIsLoading(true);
-    setData(""); // Clear existing data when loading
+    setData("");
     const response = await fetch(
       "http://localhost:3001/api/meals/user/" +
         localStorage.getItem("userId") +
