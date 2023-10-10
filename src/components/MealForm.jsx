@@ -72,7 +72,6 @@ const MealForm = ({ open, setOpen, initialData }) => {
   };
 
   const handleAddMeal = () => {
-    console.log(JSON.stringify(mealData))
     if (
       mealData.name === "" ||
       mealData.date === "" ||
@@ -204,7 +203,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
             position: "absolute",
             top: "3%",
             right: "10px",
-            zIndex: 2, // Ensure it's above the content
+            zIndex: 2,
           }}
         >
           <CloseIcon />

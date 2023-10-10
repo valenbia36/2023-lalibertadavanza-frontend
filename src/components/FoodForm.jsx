@@ -104,7 +104,7 @@ const FoodForm = ({ open, setOpen }) => {
             position: "absolute",
             top: "3%",
             right: "10px",
-            zIndex: 2, // Ensure it's above the content
+            zIndex: 2,
           }}
         >
           <CloseIcon />
