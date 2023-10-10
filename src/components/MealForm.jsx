@@ -303,7 +303,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
                   type="number"
                   variant="outlined"
                   fullWidth
-                  value={food.weight}
+                  value={food.weightConsumed}
                   onChange={(e) => handleQuantityInputChange(e, index)}
                 />
               </Grid>
