@@ -47,7 +47,7 @@ const LineChartContainer = () => {
           setSelectedMonth={setSelectedMonth}
           selectedMonth={selectedMonth}
         />
-        <div style={{ position: "relative", minHeight: 450 }}>
+        <div style={{ position: "relative", minHeight: 450, marginTop: "10%" }}>
           {isLoading ? (
             <div
               style={{

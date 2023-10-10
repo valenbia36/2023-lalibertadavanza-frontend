@@ -72,13 +72,9 @@ const MealForm = ({ open, setOpen, initialData }) => {
   };
 
   const handleAddMeal = () => {
-    if (
-      mealData.name === "" ||
-      mealData.date === "" ||
-      mealData.hour === "" ||
-      !mealData.foods.every((food) => food.name !== "" && food.weight !== "")
-    ) {
-      enqueueSnackbar("Please complete all the fields.", {
+    console.log(JSON.stringify(mealData))
+    if ( mealData.name === "" || mealData.date === "" || mealData.hour === "" || !mealData.foods.every((food) => food.name !== "" && food.weight !== "" && Number(food.weightConsumed) > 0)) {
+      enqueueSnackbar("Please complete all the fields correctly.", {
         variant: "error",
       });
       return;
@@ -164,16 +160,10 @@ const MealForm = ({ open, setOpen, initialData }) => {
 
   const handleQuantityInputChange = (e, index) => {
     const inputValue = Number(e.target.value);
-    if (!isNaN(inputValue) && inputValue >= 1) {
       const updatedFoods = [...mealData.foods];
       updatedFoods[index].weightConsumed = inputValue;
       updatedFoods[index].totalCalories =  Math.round(inputValue * (updatedFoods[index].calories / updatedFoods[index].weight));
       setMealData({ ...mealData, foods: updatedFoods });
-    } else {
-      const updatedFoods = [...mealData.foods];
-      updatedFoods[index].weight = "";
-      setMealData({ ...mealData, foods: updatedFoods });
-    }
   };
 
   return (
@@ -194,6 +184,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
           bgcolor: "background.paper",
           boxShadow: 24,
           p: 4,
+          borderRadius: '2%'
         }}
       >
         <IconButton
