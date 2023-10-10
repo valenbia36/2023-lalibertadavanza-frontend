@@ -60,7 +60,6 @@ const MealForm = ({ open, setOpen, initialData }) => {
   }, [open]);
 
   const getFoods = async () => {
-    console.log("entra")
     const response = await fetch("http://localhost:3001/api/foods/", {
       method: "GET",
       headers: {
@@ -169,7 +168,6 @@ const MealForm = ({ open, setOpen, initialData }) => {
       const updatedFoods = [...mealData.foods];
       updatedFoods[index].weightConsumed = inputValue;
       updatedFoods[index].totalCalories =  Math.round(inputValue * (updatedFoods[index].calories / updatedFoods[index].weight));
-      console.log(updatedFoods[index].calories)
       setMealData({ ...mealData, foods: updatedFoods });
     } else {
       const updatedFoods = [...mealData.foods];
