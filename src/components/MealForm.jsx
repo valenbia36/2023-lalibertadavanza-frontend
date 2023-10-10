@@ -72,6 +72,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
   };
 
   const handleAddMeal = () => {
+    console.log(JSON.stringify(mealData))
     if (
       mealData.name === "" ||
       mealData.date === "" ||
@@ -302,7 +303,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
                   type="number"
                   variant="outlined"
                   fullWidth
-                  value={food.quantity}
+                  value={food.weight}
                   onChange={(e) => handleQuantityInputChange(e, index)}
                 />
               </Grid>
