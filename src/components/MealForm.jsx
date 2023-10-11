@@ -271,15 +271,17 @@ const MealForm = ({ open, setOpen, initialData }) => {
                     label="Food"
                     onChange={(e) => handleFoodInputChange(e, index)}
                   >
-                    {Array.isArray(foodOptions) && foodOptions.length > 0 ? (
-                      foodOptions.map((option) => (
-                        <MenuItem key={option._id} value={option.name}>
-                          {option.name}
-                        </MenuItem>
-                      ))
-                    ) : (
-                      <MenuItem value="">No hay alimentos disponibles</MenuItem>
-                    )}
+                    <Grid height={100}>
+                      {Array.isArray(foodOptions) && foodOptions.length > 0 ? (
+                        foodOptions.map((option) => (
+                          <MenuItem key={option._id} value={option.name}>
+                            {option.name}
+                          </MenuItem>
+                        ))
+                      ) : (
+                        <MenuItem value="">No hay alimentos disponibles</MenuItem>
+                      )}
+                    </Grid>
                   </Select>
                 </FormControl>
               </Grid>
