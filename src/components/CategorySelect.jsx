@@ -33,7 +33,7 @@ const CategorySelect = ({selectedCategory,onCategoryChange, customWidth }) => {
       >
         {Array.isArray(categoriesOptions) && categoriesOptions.length > 0 ? (
           categoriesOptions.map((option) => (
-            <MenuItem key={option.id} value={option.name}>
+            <MenuItem key={option._id} value={option.name}>
               {option.name}
             </MenuItem>
           ))

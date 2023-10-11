@@ -273,7 +273,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
                   >
                     {Array.isArray(foodOptions) && foodOptions.length > 0 ? (
                       foodOptions.map((option) => (
-                        <MenuItem key={option.id} value={option.name}>
+                        <MenuItem key={option._id} value={option.name}>
                           {option.name}
                         </MenuItem>
                       ))
