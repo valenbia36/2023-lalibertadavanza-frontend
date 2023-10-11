@@ -68,6 +68,12 @@ const Login = () => {
           }
         );
         const data = await response.json();
+        if(data.data == null){
+          enqueueSnackbar("Incorrect email.", {
+            variant: "error",
+          });
+          return;
+        }
         const token = data.data._id;
         const userName = data.data.firstName + " " + data.data.lastName;
 
@@ -319,7 +325,7 @@ const Login = () => {
           >
             <CloseIcon />
           </IconButton>
-          <h2>Reset Password</h2>
+          <h2 style={{textAlign: 'center'}}>Reset Password</h2>
           <p style={{textAlign: 'center'}}>Enter your email address to recover your password.</p>
           <TextField
             margin="normal"
