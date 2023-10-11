@@ -142,7 +142,7 @@ const MyProfile = () => {
       )}
       <div className="row justify-content-center"></div>
       <ThemeProvider theme={defaultTheme}>
-        <Container component="main" maxWidth="s" maxHeight="s">
+        <Container component="main" maxWidth="s" maxheight="s">
           <CssBaseline />
           <Box
             sx={{
