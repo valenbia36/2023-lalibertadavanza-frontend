@@ -30,8 +30,8 @@ const CategorySelect = ({selectedCategory,onCategoryChange, customWidth }) => {
         label="Category"
         value={selectedCategory}
         onChange={(e) => onCategoryChange(e.target.value)}
+        MenuProps={{ PaperProps: { style: { maxHeight: 110 } } }}
       >
-        <Grid height={100}>
         {Array.isArray(categoriesOptions) && categoriesOptions.length > 0 ? (
           categoriesOptions.map((option) => (
             <MenuItem key={option._id} value={option.name}>
@@ -41,7 +41,6 @@ const CategorySelect = ({selectedCategory,onCategoryChange, customWidth }) => {
         ) : (
           <MenuItem value="">There are no categories available</MenuItem>
         )}
-        </Grid>
       </Select>
     </FormControl>
   );

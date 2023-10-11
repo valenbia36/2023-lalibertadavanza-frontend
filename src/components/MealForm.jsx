@@ -270,18 +270,17 @@ const MealForm = ({ open, setOpen, initialData }) => {
                     value={food.name}
                     label="Food"
                     onChange={(e) => handleFoodInputChange(e, index)}
+                    MenuProps={{ PaperProps: { style: { maxHeight: 120 } } }}
                   >
-                    <Grid height={100}>
                       {Array.isArray(foodOptions) && foodOptions.length > 0 ? (
                         foodOptions.map((option) => (
-                          <MenuItem key={option._id} value={option.name}>
+                          <MenuItem key={option.id} value={option.name}>
                             {option.name}
                           </MenuItem>
                         ))
                       ) : (
-                        <MenuItem value="">No hay alimentos disponibles</MenuItem>
+                        <MenuItem value="">No foods available.</MenuItem>
                       )}
-                    </Grid>
                   </Select>
                 </FormControl>
               </Grid>
