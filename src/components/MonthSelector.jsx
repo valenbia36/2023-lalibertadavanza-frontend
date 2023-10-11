@@ -14,6 +14,7 @@ const MonthSelector = ({selectedMonth, setSelectedMonth}) => {
         label="Month"
         value={selectedMonth}
         onChange={handleMonthChange}
+        MenuProps={{ PaperProps: { style: { maxHeight: 200 } } }}
       >
         <MenuItem value={1}>January</MenuItem>
         <MenuItem value={2}>February</MenuItem>
