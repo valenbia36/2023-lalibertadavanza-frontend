@@ -19,8 +19,6 @@ const FoodForm = ({ open, setOpen }) => {
   const [newFood, setNewFood] = useState(initialFoodState);
 
   const handleAddFood = () => {
-    console.log(newFood)
-    console.log( Number(newFood.calories) > 0)
     if (
       newFood.name === "" ||
       newFood.calories === "" ||

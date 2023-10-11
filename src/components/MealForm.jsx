@@ -72,7 +72,6 @@ const MealForm = ({ open, setOpen, initialData }) => {
   };
 
   const handleAddMeal = () => {
-    console.log(JSON.stringify(mealData))
     if ( mealData.name === "" || mealData.date === "" || mealData.hour === "" || !mealData.foods.every((food) => food.name !== "" && food.weight !== "" && Number(food.weightConsumed) > 0)) {
       enqueueSnackbar("Please complete all the fields correctly.", {
         variant: "error",
