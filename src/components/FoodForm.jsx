@@ -96,7 +96,7 @@ const FoodForm = ({ open, setOpen }) => {
           maxWidth: 500,
           bgcolor: "background.paper",
           boxShadow: 24,
-          p: 4,
+          p: 5,
           borderRadius: '2%'
         }}
       >
@@ -144,7 +144,6 @@ const FoodForm = ({ open, setOpen }) => {
               }
             }}
           />
-
           <TextField
             InputProps={{
               inputProps: {
@@ -164,7 +163,6 @@ const FoodForm = ({ open, setOpen }) => {
               }
             }}
           />
-
           <Grid
             container
             spacing={1}
