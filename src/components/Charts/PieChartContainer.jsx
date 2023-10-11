@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { TextField, Grid, IconButton, Paper } from "@mui/material";
+import { TextField, Grid, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { format } from "date-fns";
 import MyResponsivePie from "./PieChart";
@@ -32,11 +32,11 @@ const getMealsByUserIdAndDay = async (
   if (data.data && data.data.length > 0) {
     data.data.forEach((item) => {
       item.foods.forEach((food) => {
-        const { name, quantity, category } = food;
+        const { name, weightConsumed, category } = food;
         if (groupedFoods[name]) {
-          groupedFoods[name].value += quantity;
+          groupedFoods[name].value += weightConsumed;
         } else {
-          groupedFoods[name] = { id: category, value: quantity, label: name };
+          groupedFoods[name] = { id: category, value: weightConsumed, label: name };
         }
       });
     });
@@ -77,7 +77,7 @@ const PieChartContainer = () => {
         maxWidth: 320,
       }}
     >
-      <Paper sx={{ maxHeight: "450px", minWidth: "320px" }}>
+      <Grid sx={{ maxHeight: "450px", minWidth: "320px" }}>
         <h2>Foods by Day</h2>
         <TextField
           style={{ width: "73%", minWidth: 200 }}
@@ -106,7 +106,7 @@ const PieChartContainer = () => {
           )}
         </Grid>
         <div style={{ position: "relative", minHeight: 320, marginTop: "10%" }}>
-          {loading ? ( // Display loading spinner when loading is true
+          {loading ? (
             <CircularProgress />
           ) : data && data.length > 0 ? (
             <MyResponsivePie data={data} />
@@ -116,7 +116,7 @@ const PieChartContainer = () => {
             </div>
           )}
         </div>
-      </Paper>
+      </Grid>
     </div>
   );
 };

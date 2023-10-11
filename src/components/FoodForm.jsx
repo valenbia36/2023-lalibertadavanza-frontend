@@ -23,9 +23,11 @@ const FoodForm = ({ open, setOpen }) => {
       newFood.name === "" ||
       newFood.calories === "" ||
       newFood.weight === "" ||
-      newFood.category === ""
+      newFood.category === "" ||
+      Number(newFood.calories) > 0 ||
+      Number(newFood.weight) > 0
     ) {
-      enqueueSnackbar("Please complete all the fields.", { variant: "error" });
+      enqueueSnackbar("Please complete all the fields correctly.", { variant: "error" });
       return;
     } else {
       fetch("http://localhost:3001/api/foods", {
@@ -95,6 +97,7 @@ const FoodForm = ({ open, setOpen }) => {
           bgcolor: "background.paper",
           boxShadow: 24,
           p: 4,
+          borderRadius: '2%'
         }}
       >
         <IconButton
@@ -104,7 +107,7 @@ const FoodForm = ({ open, setOpen }) => {
             position: "absolute",
             top: "3%",
             right: "10px",
-            zIndex: 2, // Ensure it's above the content
+            zIndex: 2,
           }}
         >
           <CloseIcon />
@@ -154,6 +157,7 @@ const FoodForm = ({ open, setOpen }) => {
             fullWidth
             value={newFood.calories}
             onChange={(e) => handleCaloriesInputChange(e)}
+            style={{ marginBottom: "7px" }}
             onKeyPress={(event) => {
               if (event.key === "Enter") {
                 handleAddFood();
@@ -165,7 +169,6 @@ const FoodForm = ({ open, setOpen }) => {
             container
             spacing={1}
             alignItems="center"
-            sx={{ marginTop: "2%" }}
           >
             <Grid item xs={10}>
               <CategorySelect

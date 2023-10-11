@@ -6,42 +6,55 @@ import TextField from "@mui/material/TextField";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
+import { useState, useEffect } from "react";
+import { useTheme } from "@mui/material/styles";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Modal from "@mui/material/Modal";
 import { useSnackbar } from "notistack";
-import carousel1 from '../images/carousel1.jpg';
-import carousel2 from '../images/carousel2.jpg';
-import carousel3 from '../images/carousel3.jpg';
-import carousel4 from '../images/carousel4.jpg';
+import carousel1 from "../images/carousel1.jpg";
+import carousel2 from "../images/carousel2.jpg";
+import carousel3 from "../images/carousel3.jpg";
+import carousel4 from "../images/carousel4.jpg";
 import Slideshow from "../components/Slideshow";
+import { IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 
 const defaultTheme = createTheme();
 
 const Login = () => {
-
   const [user, setUser] = React.useState({
     email: "",
     password: "",
   });
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [recoveryEmail, setRecoveryEmail] = React.useState("");
+  const theme = useTheme();
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    function handleResize() {
+      setIsMobile(window.innerWidth <= theme.breakpoints.values.sm);
+    }
+    window.addEventListener("resize", handleResize);
+    handleResize();
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [theme]);
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const images = [
-    carousel1,
-    carousel2,
-    carousel3,
-    carousel4
-  ];
+  const images = [carousel1, carousel2, carousel3, carousel4];
 
   const handleRecoverClick = async () => {
     if (recoveryEmail === "") {
-      enqueueSnackbar("Please enter your email address to reset your password.", {
-        variant: "error",
-      });
+      enqueueSnackbar(
+        "Please enter your email address to reset your password.",
+        {
+          variant: "error",
+        }
+      );
       return;
     } else {
       try {
@@ -136,7 +149,7 @@ const Login = () => {
     <ThemeProvider theme={defaultTheme}>
       <Grid container component="main" sx={{ height: "100vh" }}>
         <CssBaseline />
-        <Slideshow images={images} interval={2000} />
+        {!isMobile && <Slideshow images={images} interval={2000} />}
         <Grid
           item
           xs={12}
@@ -280,7 +293,8 @@ const Login = () => {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: 500,
+            width: "100%",
+            maxWidth: 300,
             bgcolor: "#CAD2C5",
             boxShadow: 24,
             p: 4,
@@ -290,10 +304,23 @@ const Login = () => {
             borderColor: "black",
             borderStyle: "solid",
             borderRadius: "2%",
+            
           }}
         >
+          <IconButton
+            aria-label="Close"
+            onClick={closeModal}
+            sx={{
+              position: "absolute",
+              top: "3%",
+              right: "10px",
+              zIndex: 2,
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
           <h2>Reset Password</h2>
-          <p>Enter your email address to recover your password.</p>
+          <p style={{textAlign: 'center'}}>Enter your email address to recover your password.</p>
           <TextField
             margin="normal"
             required

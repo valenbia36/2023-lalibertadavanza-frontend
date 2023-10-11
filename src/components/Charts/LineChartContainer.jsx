@@ -1,26 +1,7 @@
 import React, { useState, useEffect } from "react";
 import MyResponsiveLine from "./LineChart";
 import MonthSelector from "../MonthSelector";
-import { CircularProgress, Box, Paper } from "@mui/material";
-
-const getMealsByUserIdAndMonth = async (selectedMonth, setData) => {
-  setData("");
-  const response = await fetch(
-    "http://localhost:3001/api/meals/user/" +
-      localStorage.getItem("userId") +
-      "/month/" +
-      selectedMonth,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-    }
-  );
-  const data = await response.json();
-  setData(data.resultWithAllDays);
-};
+import { CircularProgress, Grid } from "@mui/material";
 
 const LineChartContainer = () => {
   const [data, setData] = useState();
@@ -29,7 +10,7 @@ const LineChartContainer = () => {
 
   const getMeals = async (selectedMonth) => {
     setIsLoading(true);
-    setData(""); // Clear existing data when loading
+    setData("");
     const response = await fetch(
       "http://localhost:3001/api/meals/user/" +
         localStorage.getItem("userId") +
@@ -60,13 +41,13 @@ const LineChartContainer = () => {
         maxWidth: 320,
       }}
     >
-      <Paper sx={{ maxHeight: "520px", minWidth: "320px" }}>
+      <Grid sx={{ maxHeight: "520px", minWidth: "320px" }}>
         <h2>Calories By Month</h2>
         <MonthSelector
           setSelectedMonth={setSelectedMonth}
           selectedMonth={selectedMonth}
         />
-        <div style={{ position: "relative", minHeight: 450 }}>
+        <div style={{ position: "relative", minHeight: 450, marginTop: "10%" }}>
           {isLoading ? (
             <div
               style={{
@@ -85,7 +66,7 @@ const LineChartContainer = () => {
             <div>No calories to show</div>
           )}
         </div>
-      </Paper>
+      </Grid>
     </div>
   );
 };

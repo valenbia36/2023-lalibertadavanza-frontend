@@ -38,12 +38,9 @@ function Row(props) {
             variant: "success",
           });
 
-          // Actualizamos la lista de comidas después de la eliminación
           props.onDelete(meal);
 
-          // Verificamos si la página actual queda vacía
           if (props.endIndex >= props.totalMeals - 1) {
-            // Si la página actual queda vacía, cambiamos a la página anterior o a la primera página
             const newPage = props.page === 0 ? 0 : props.page - 1;
             props.onPageChange(newPage);
           }
@@ -104,7 +101,7 @@ function Row(props) {
                   <TableRow>
                     <TableCell align="center">Name</TableCell>
                     <TableCell align="center">Calories</TableCell>
-                    <TableCell align="center">Quantity</TableCell>
+                    <TableCell align="center">Weight (gr/ml)</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -113,8 +110,8 @@ function Row(props) {
                       <TableCell component="th" scope="row" align="center">
                         {foodRow.name}
                       </TableCell>
-                      <TableCell align="center">{foodRow.calories}</TableCell>
-                      <TableCell align="center">{foodRow.quantity}</TableCell>
+                      <TableCell align="center">{foodRow.totalCalories}</TableCell>
+                      <TableCell align="center">{foodRow.weightConsumed}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

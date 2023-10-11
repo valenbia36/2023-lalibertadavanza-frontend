@@ -33,6 +33,33 @@ const SignUp = () => {
     setUser({ ...user, sex: event.target.value });
   };
 
+  const handleWeightInputChange = (e) => {
+    const inputValue = Number(e.target.value);
+    if (!isNaN(inputValue) && inputValue >= 1) {
+      setUser({ ...user, weight: e.target.value });
+    } else {
+      setUser({ ...user, weight: "" });
+    }
+  };
+
+  const handleHeightInputChange = (e) => {
+    const inputValue = Number(e.target.value);
+    if (!isNaN(inputValue) && inputValue >= 1) {
+      setUser({ ...user, height: e.target.value });
+    } else {
+      setUser({ ...user, height: "" });
+    }
+  };
+
+  const handleAgeInputChange = (e) => {
+    const inputValue = Number(e.target.value);
+    if (!isNaN(inputValue) && inputValue >= 1) {
+      setUser({ ...user, age: e.target.value });
+    } else {
+      setUser({ ...user, age: "" });
+    }
+  };
+
   const handleRegister = () => {
     if (
       user.firstName === "" ||
@@ -191,6 +218,7 @@ const SignUp = () => {
                   label="Age"
                   name="age"
                   type="number"
+                  value={user.age}
                   InputLabelProps={{
                     style: { color: "black" },
                   }}
@@ -198,7 +226,7 @@ const SignUp = () => {
                     style: { color: "black"},
                     inputProps: { min: 1 } 
                   }}
-                  onChange={(e) => setUser({ ...user, age: e.target.value })}
+                  onChange={(e) => handleAgeInputChange(e)}
                   onKeyPress={(event) => {
                     if (event.key === "Enter") {
                       handleRegister();
@@ -239,6 +267,7 @@ const SignUp = () => {
                   label="Height (cm)"
                   name="height"
                   type="number"
+                  value={user.height}
                   InputLabelProps={{
                     style: { color: "black" },
                   }}
@@ -248,7 +277,7 @@ const SignUp = () => {
                     },
                     inputProps: { min: 1 }               
                   }}
-                  onChange={(e) => setUser({ ...user, height: e.target.value })}
+                  onChange={(e) => handleHeightInputChange(e)}
                   onKeyPress={(event) => {
                     if (event.key === "Enter") {
                       handleRegister();
@@ -264,6 +293,7 @@ const SignUp = () => {
                   label="Weight (kg)"
                   name="weight"
                   type="number"
+                  value={user.weight}
                   InputLabelProps={{
                     style: { color: "black" },
                   }}
@@ -273,7 +303,7 @@ const SignUp = () => {
                     },
                     inputProps: { min: 1 }    
                   }}
-                  onChange={(e) => setUser({ ...user, weight: e.target.value })}
+                  onChange={(e) => handleWeightInputChange(e)}
                   onKeyPress={(event) => {
                     if (event.key === "Enter") {
                       handleRegister();

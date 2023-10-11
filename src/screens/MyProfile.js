@@ -1,6 +1,6 @@
 import Drawer from "../components/Drawer";
 import React, { useState, useEffect } from "react";
-import { styled, useTheme } from "@mui/material/styles";
+import {useTheme } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
@@ -65,6 +65,33 @@ const MyProfile = () => {
 
     const data = await response.json();
     setUser(data.data);
+  };
+
+  const handleWeightInputChange = (e) => {
+    const inputValue = Number(e.target.value);
+    if (!isNaN(inputValue) && inputValue >= 1) {
+      setUser({ ...user, weight: e.target.value });
+    } else {
+      setUser({ ...user, weight: "" });
+    }
+  };
+
+  const handleHeightInputChange = (e) => {
+    const inputValue = Number(e.target.value);
+    if (!isNaN(inputValue) && inputValue >= 1) {
+      setUser({ ...user, height: e.target.value });
+    } else {
+      setUser({ ...user, height: "" });
+    }
+  };
+
+  const handleAgeInputChange = (e) => {
+    const inputValue = Number(e.target.value);
+    if (!isNaN(inputValue) && inputValue >= 1) {
+      setUser({ ...user, age: e.target.value });
+    } else {
+      setUser({ ...user, age: "" });
+    }
   };
 
   const handleSexChange = (event) => {
@@ -203,7 +230,7 @@ const MyProfile = () => {
                       style: { color: "black" },
                       inputProps: { min: 1 },
                     }}
-                    onChange={(e) => setUser({ ...user, age: e.target.value })}
+                    onChange={(e) => handleAgeInputChange(e)}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -250,7 +277,7 @@ const MyProfile = () => {
                       inputProps: { min: 1 },
                     }}
                     onChange={(e) =>
-                      setUser({ ...user, height: e.target.value })
+                      handleHeightInputChange(e)
                     }
                   />
                 </Grid>
@@ -273,7 +300,7 @@ const MyProfile = () => {
                       inputProps: { min: 1 },
                     }}
                     onChange={(e) =>
-                      setUser({ ...user, weight: e.target.value })
+                      handleWeightInputChange(e)
                     }
                   />
                 </Grid>

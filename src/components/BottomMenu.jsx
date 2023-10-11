@@ -13,7 +13,6 @@ export default function LabelBottomNavigation() {
   const [value, setValue] = React.useState("home");
 
   React.useEffect(() => {
-    // Determine the current route and update the value accordingly
     switch (location.pathname) {
       case "/main":
         setValue("home");
@@ -25,7 +24,7 @@ export default function LabelBottomNavigation() {
         setValue("profile");
         break;
       default:
-        setValue("home"); // Default to "Home" if the route doesn't match
+        setValue("home");
         break;
     }
   }, [location.pathname]);
@@ -33,7 +32,6 @@ export default function LabelBottomNavigation() {
   const handleChange = (event, newValue) => {
     setValue(newValue);
 
-    // Navigate to the selected screen based on the value
     switch (newValue) {
       case "home":
         navigate("/main");
@@ -58,9 +56,9 @@ export default function LabelBottomNavigation() {
       sx={{
         width: "100%",
         position: "fixed",
-        bottom: 0, // To position it at the bottom
-        left: 0, // To stretch it to the full width
-        right: 0, // To stretch it to the full width,
+        bottom: 0,
+        left: 0,
+        right: 0,
         zIndex: 1000,
       }}
       value={value}

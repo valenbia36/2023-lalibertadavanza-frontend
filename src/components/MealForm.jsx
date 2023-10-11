@@ -25,7 +25,7 @@ const initialMealState = {
   date: new Date(),
   hour: new Date(),
   calories: 0,
-  foods: [{ name: "", calories: "", quantity: "", category: "" }],
+  foods: [{ name: "", calories: "", weight: "", category: "" }],
   userId: localStorage.getItem("userId"),
 };
 
@@ -49,7 +49,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
         date: new Date(),
         hour: new Date(),
         calories: 0,
-        foods: [{ name: "", calories: "", quantity: "", category: "" }],
+        foods: [{ name: "", calories: "", weight: "", category: "" }],
         userId: localStorage.getItem("userId"),
       });
     }
@@ -57,7 +57,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
 
   useEffect(() => {
     getFoods();
-  }, []);
+  }, [open]);
 
   const getFoods = async () => {
     const response = await fetch("http://localhost:3001/api/foods/", {
@@ -72,21 +72,16 @@ const MealForm = ({ open, setOpen, initialData }) => {
   };
 
   const handleAddMeal = () => {
-    if (
-      mealData.name === "" ||
-      mealData.date === "" ||
-      mealData.hour === "" ||
-      !mealData.foods.every((food) => food.name !== "" && food.quantity !== "")
-    ) {
-      enqueueSnackbar("Please complete all the fields.", {
+    console.log(JSON.stringify(mealData))
+    if ( mealData.name === "" || mealData.date === "" || mealData.hour === "" || !mealData.foods.every((food) => food.name !== "" && food.weight !== "" && Number(food.weightConsumed) > 0)) {
+      enqueueSnackbar("Please complete all the fields correctly.", {
         variant: "error",
       });
       return;
     } else {
       mealData.calories = mealData.foods
-        .map((food) => parseInt(food.calories) * parseInt(food.quantity))
+        .map((food) => parseInt(food.totalCalories))
         .reduce((acc, calories) => acc + calories, 0);
-
       mealData.hour = mealData.hour.toTimeString().slice(0, 5);
 
       const url = initialData
@@ -134,7 +129,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
       date: new Date(),
       hour: new Date(),
       calories: 0,
-      foods: [{ name: "", calories: "", quantity: "", category: "" }],
+      foods: [{ name: "", calories: "", weight: "", category: "" }],
       userId: localStorage.getItem("userId"),
     });
   };
@@ -142,7 +137,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
   const handleAddFoodInput = () => {
     const updatedFoods = [
       ...mealData.foods,
-      { name: "", calories: "", quantity: "", category: "" },
+      { name: "", calories: "", weight: "", category: "" },
     ];
     setMealData({ ...mealData, foods: updatedFoods });
   };
@@ -158,21 +153,17 @@ const MealForm = ({ open, setOpen, initialData }) => {
     updatedFoods[index].name = event.target.value;
     let result = foodOptions.find((item) => item.name === event.target.value);
     updatedFoods[index].calories = result ? result.calories : "";
+    updatedFoods[index].weight = result ? result.weight : "";
     updatedFoods[index].category = result ? result.category : "";
     setMealData({ ...mealData, foods: updatedFoods });
   };
 
   const handleQuantityInputChange = (e, index) => {
     const inputValue = Number(e.target.value);
-    if (!isNaN(inputValue) && inputValue >= 1) {
       const updatedFoods = [...mealData.foods];
-      updatedFoods[index].quantity = inputValue;
+      updatedFoods[index].weightConsumed = inputValue;
+      updatedFoods[index].totalCalories =  Math.round(inputValue * (updatedFoods[index].calories / updatedFoods[index].weight));
       setMealData({ ...mealData, foods: updatedFoods });
-    } else {
-      const updatedFoods = [...mealData.foods];
-      updatedFoods[index].quantity = "";
-      setMealData({ ...mealData, foods: updatedFoods });
-    }
   };
 
   return (
@@ -193,6 +184,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
           bgcolor: "background.paper",
           boxShadow: 24,
           p: 4,
+          borderRadius: '2%'
         }}
       >
         <IconButton
@@ -202,7 +194,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
             position: "absolute",
             top: "3%",
             right: "10px",
-            zIndex: 2, // Ensure it's above the content
+            zIndex: 2,
           }}
         >
           <CloseIcon />
@@ -283,7 +275,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
                     {Array.isArray(foodOptions) && foodOptions.length > 0 ? (
                       foodOptions.map((option) => (
                         <MenuItem key={option.id} value={option.name}>
-                          {option.name + " (" + option.weight + " grs)"}
+                          {option.name}
                         </MenuItem>
                       ))
                     ) : (
@@ -297,11 +289,11 @@ const MealForm = ({ open, setOpen, initialData }) => {
                   InputProps={{
                     inputProps: { min: 1 },
                   }}
-                  label={`Quantity`}
+                  label={`Weight (gr/ml)`}
                   type="number"
                   variant="outlined"
                   fullWidth
-                  value={food.quantity}
+                  value={food.weightConsumed}
                   onChange={(e) => handleQuantityInputChange(e, index)}
                 />
               </Grid>
