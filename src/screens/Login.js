@@ -18,6 +18,8 @@ import carousel2 from "../images/carousel2.jpg";
 import carousel3 from "../images/carousel3.jpg";
 import carousel4 from "../images/carousel4.jpg";
 import Slideshow from "../components/Slideshow";
+import { IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 
 const defaultTheme = createTheme();
 
@@ -291,7 +293,8 @@ const Login = () => {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: 500,
+            width: "100%",
+            maxWidth: 300,
             bgcolor: "#CAD2C5",
             boxShadow: 24,
             p: 4,
@@ -301,10 +304,23 @@ const Login = () => {
             borderColor: "black",
             borderStyle: "solid",
             borderRadius: "2%",
+            
           }}
         >
+          <IconButton
+            aria-label="Close"
+            onClick={closeModal}
+            sx={{
+              position: "absolute",
+              top: "3%",
+              right: "10px",
+              zIndex: 2,
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
           <h2>Reset Password</h2>
-          <p>Enter your email address to recover your password.</p>
+          <p style={{textAlign: 'center'}}>Enter your email address to recover your password.</p>
           <TextField
             margin="normal"
             required
