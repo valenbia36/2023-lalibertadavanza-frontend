@@ -215,7 +215,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
             <FormControl fullWidth>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
-                  label="Date"
+                  label="Date (MM/DD/AAAA)"
                   variant="outlined"
                   fullWidth
                   margin="normal"
