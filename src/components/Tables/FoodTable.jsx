@@ -120,6 +120,7 @@ export default function FoodTable({filterOpen}) {
   
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
+    setPage(0)
   };
 
   return (
