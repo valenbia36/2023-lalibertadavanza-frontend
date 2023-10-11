@@ -18,11 +18,18 @@ export default function LineChartWithCustomFontSize(data) {
       const filteredPayload = payload.filter((entry) => entry.dataKey !== "promedio");
   
       return (
-        <div className="custom-tooltip" style={{ background: 'white', border: '1px solid #ccc', padding: '5px' }}>
-          <p>Date: {label}</p>
+        <div className="custom-tooltip" style={{
+          background: '#f0f0f0', 
+          border: '1px solid #333', 
+          borderRadius: '5px', 
+          padding:  '10px 10px 3px 10px',
+          fontFamily: 'Arial, sans-serif',
+          boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)' ,
+        }}>
+          <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#666'}}>Date: {label}</p> 
           {filteredPayload.map((entry) => (
-            <p key={entry.dataKey}>
-              {entry.name}: {entry.value}
+            <p key={entry.dataKey} style={{ fontSize: '12px' , fontWeight: 'bold',}}>
+              <span style={{ color: entry.color, marginRight: '5px' }}>{entry.name}:</span> {entry.value}
             </p>
           ))}
         </div>

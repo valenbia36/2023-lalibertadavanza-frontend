@@ -19,13 +19,15 @@ const FoodForm = ({ open, setOpen }) => {
   const [newFood, setNewFood] = useState(initialFoodState);
 
   const handleAddFood = () => {
+    console.log(newFood)
+    console.log( Number(newFood.calories) > 0)
     if (
       newFood.name === "" ||
       newFood.calories === "" ||
       newFood.weight === "" ||
       newFood.category === "" ||
-      Number(newFood.calories) > 0 ||
-      Number(newFood.weight) > 0
+      Number(newFood.calories) < 1 ||
+      Number(newFood.weight) < 1
     ) {
       enqueueSnackbar("Please complete all the fields correctly.", { variant: "error" });
       return;

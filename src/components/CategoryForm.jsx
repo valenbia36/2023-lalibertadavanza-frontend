@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { TextField, Button, Modal, Box } from "@mui/material";
+import { TextField, Button, Modal, Box , IconButton,} from "@mui/material";
 import { useSnackbar } from "notistack";
+import CloseIcon from "@mui/icons-material/Close";
 
 const initialCategoryState = {
   name: "",
@@ -62,8 +63,21 @@ const CategoryForm = ({ open, setOpen }) => {
           bgcolor: "background.paper",
           boxShadow: 24,
           p: 4,
+          borderRadius: '4%'
         }}
       >
+         <IconButton
+          aria-label="Close"
+          onClick={closeModal}
+          sx={{
+            position: "absolute",
+            top: "3%",
+            right: "10px",
+            zIndex: 2,
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
         <div>
           <TextField
             label="Name"
