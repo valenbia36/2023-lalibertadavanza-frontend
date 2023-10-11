@@ -1,103 +1,168 @@
-import React, { useEffect, useState } from 'react';
-import { TextField, Button, Modal, Box, IconButton, Grid, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
-import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
-import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
+import React, { useEffect, useState } from "react";
+import {
+  TextField,
+  Button,
+  Modal,
+  Box,
+  IconButton,
+  Grid,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+} from "@mui/material";
+import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
+import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
+import { useSnackbar } from "notistack";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import CloseIcon from "@mui/icons-material/Close";
 
 const initialMealState = {
-  name: '',
-  date: '',
-  hour: '',
+  name: "",
+  date: new Date(),
+  hour: new Date(),
   calories: 0,
-  foods: [{ name: '', calories: '', quantity: '' }],
-  userId: localStorage.getItem('userId')
+  foods: [{ name: "", calories: "", weight: "", category: "" }],
+  userId: localStorage.getItem("userId"),
 };
 
-const MealForm = ({ open, setOpen }) => {
-  const [newMeal, setNewMeal] = useState(initialMealState);
-  const [errorMessage, setErrorMessage] = useState(false);
-  const [foodOptions, setFoodOptions] = useState([]); // Lista de opciones de alimentos
+const MealForm = ({ open, setOpen, initialData }) => {
+  const [mealData, setMealData] = useState(initialMealState);
+  const [foodOptions, setFoodOptions] = useState([]);
+  const { enqueueSnackbar } = useSnackbar();
+
+  useEffect(() => {
+    if (initialData) {
+      const initialTime = new Date(`2023-01-01T${initialData.hour}`);
+      const initialDate = new Date(initialData.date + "T10:00:00Z");
+      setMealData({
+        ...initialData,
+        hour: initialTime,
+        date: initialDate,
+      });
+    } else {
+      setMealData({
+        name: "",
+        date: new Date(),
+        hour: new Date(),
+        calories: 0,
+        foods: [{ name: "", calories: "", weight: "", category: "" }],
+        userId: localStorage.getItem("userId"),
+      });
+    }
+  }, [initialData]);
+
+  useEffect(() => {
+    getFoods();
+  }, [open]);
 
   const getFoods = async () => {
-    const response = await fetch('http://localhost:3001/api/foods/', {
-      method: 'GET',
+    const response = await fetch("http://localhost:3001/api/foods/", {
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer " + localStorage.getItem('token')
-      }
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
     });
     const data = await response.json();
     setFoodOptions(data.data);
-  }
-  useEffect(() => {
-    getFoods();
-  }, [foodOptions]);
+  };
+
+  const handleAddMeal = () => {
+    if ( mealData.name === "" || mealData.date === "" || mealData.hour === "" || !mealData.foods.every((food) => food.name !== "" && food.weight !== "" && Number(food.weightConsumed) > 0)) {
+      enqueueSnackbar("Please complete all the fields correctly.", {
+        variant: "error",
+      });
+      return;
+    } else {
+      mealData.calories = mealData.foods
+        .map((food) => parseInt(food.totalCalories))
+        .reduce((acc, calories) => acc + calories, 0);
+      mealData.hour = mealData.hour.toTimeString().slice(0, 5);
+
+      const url = initialData
+        ? `http://localhost:3001/api/meals/${initialData._id}`
+        : "http://localhost:3001/api/meals";
+      const method = initialData ? "PUT" : "POST";
+
+      fetch(url, {
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+        body: JSON.stringify(mealData),
+      })
+        .then(function (response) {
+          if (response.status === 200) {
+            enqueueSnackbar(
+              initialData
+                ? "The meal was updated successfully."
+                : "The meal was created successfully.",
+              {
+                variant: "success",
+              }
+            );
+            closeModal();
+          } else {
+            enqueueSnackbar("An error occurred while saving the meal.", {
+              variant: "error",
+            });
+          }
+        })
+        .catch(function (error) {
+          enqueueSnackbar("An error occurred while saving the meal.", {
+            variant: "error",
+          });
+        });
+    }
+  };
 
   const closeModal = () => {
     setOpen(false);
-    setNewMeal({
-      name: '',
-      date: '',
-      hour: '',
+    setMealData({
+      name: "",
+      date: new Date(),
+      hour: new Date(),
       calories: 0,
-      foods: [{ name: '', calories: '', quantity: '' }],
-      userId: localStorage.getItem('userId')
+      foods: [{ name: "", calories: "", weight: "", category: "" }],
+      userId: localStorage.getItem("userId"),
     });
   };
 
   const handleAddFoodInput = () => {
-    const updatedFoods = [...newMeal.foods, { name: '',calories:'' ,quantity: '' }];
-    setNewMeal({ ...newMeal, foods: updatedFoods });
+    const updatedFoods = [
+      ...mealData.foods,
+      { name: "", calories: "", weight: "", category: "" },
+    ];
+    setMealData({ ...mealData, foods: updatedFoods });
   };
 
   const handleRemoveFoodInput = (index) => {
-    const updatedFoods = [...newMeal.foods];
+    const updatedFoods = [...mealData.foods];
     updatedFoods.splice(index, 1);
-    setNewMeal({ ...newMeal, foods: updatedFoods });
+    setMealData({ ...mealData, foods: updatedFoods });
   };
 
   const handleFoodInputChange = (event, index) => {
-    const updatedFoods = [...newMeal.foods];
+    const updatedFoods = [...mealData.foods];
     updatedFoods[index].name = event.target.value;
-    let result = (foodOptions.filter(item => item.name === event.target.value))
-    updatedFoods[index].calories = result[0].calories;
-    console.log(updatedFoods[index].calories);
-    setNewMeal({ ...newMeal, foods: updatedFoods });
+    let result = foodOptions.find((item) => item.name === event.target.value);
+    updatedFoods[index].calories = result ? result.calories : "";
+    updatedFoods[index].weight = result ? result.weight : "";
+    updatedFoods[index].category = result ? result.category : "";
+    setMealData({ ...mealData, foods: updatedFoods });
   };
 
-  const handleQuantityInputChange = (event, index) => {
-    const updatedFoods = [...newMeal.foods];
-    updatedFoods[index].quantity = event.target.value;
-    setNewMeal({ ...newMeal, foods: updatedFoods });
-  };
-
-  const handleAddMeal = () => {
-    if (newMeal.name === '') {
-      setErrorMessage(true);
-      return;
-    } else {
-      newMeal.calories = newMeal.foods.map(food => parseInt(food.calories) * parseInt(food.quantity)).reduce((acc, calories) => acc + calories, 0);
-      fetch('http://localhost:3001/api/meals', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem('token'),
-        },
-        body: JSON.stringify(newMeal),
-      })
-        .then(function (response) {
-          if (response.status === 200) {
-            console.log('Se creó la comida');
-            closeModal();
-          } else {
-            setErrorMessage(true);
-            console.log('Hubo un error creando la comida');
-          }
-        })
-        .catch(function (error) {
-          console.error('Error:', error);
-          setErrorMessage(true);
-        });
-    }
+  const handleQuantityInputChange = (e, index) => {
+    const inputValue = Number(e.target.value);
+      const updatedFoods = [...mealData.foods];
+      updatedFoods[index].weightConsumed = inputValue;
+      updatedFoods[index].totalCalories =  Math.round(inputValue * (updatedFoods[index].calories / updatedFoods[index].weight));
+      setMealData({ ...mealData, foods: updatedFoods });
   };
 
   return (
@@ -109,94 +174,136 @@ const MealForm = ({ open, setOpen }) => {
     >
       <Box
         sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 500,
-          bgcolor: 'background.paper',
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: "100%",
+          maxWidth: 500,
+          bgcolor: "background.paper",
           boxShadow: 24,
           p: 4,
+          borderRadius: '2%'
         }}
       >
-        <div>
-          <TextField
-            label="Name"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            value={newMeal.name}
-            onChange={(e) => setNewMeal({ ...newMeal, name: e.target.value })}
-          />
-          <TextField
-            InputLabelProps={{shrink:true}}
-            label="Date"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            type='date'
-            value={newMeal.date}
-            onChange={(e) => setNewMeal({ ...newMeal, date: e.target.value })}
-          />
-          <TextField
-            label="Hour (MM:HH)"
-            variant="outlined"
-            fullWidth
-            type = 'time'
-            margin="normal"
-            InputLabelProps={{
-              shrink: true, // Shrink the label to prevent overlapping
-            }}
-            inputProps={{
-              step: 60, // Set the step to 60 to represent time in minutes (HH:MM)
-            }}
-
-            value={newMeal.hour}
-            onChange={(e) => setNewMeal({ ...newMeal, hour: e.target.value })}
-          />
-
-          {newMeal.foods.map((food, index) => (
-            <Grid container spacing={1} alignItems="center" key={index} sx={{marginTop: "2%"}}>
-              <Grid item xs={7}>
+        <IconButton
+          aria-label="Close"
+          onClick={closeModal}
+          sx={{
+            position: "absolute",
+            top: "3%",
+            right: "10px",
+            zIndex: 2,
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <TextField
+              label="Name"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              value={mealData.name}
+              onChange={(e) =>
+                setMealData({ ...mealData, name: e.target.value })
+              }
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <FormControl fullWidth>
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DatePicker
+                  label="Date (MM/DD/AAAA)"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  disableFuture
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  inputProps={{
+                    step: 60,
+                  }}
+                  value={mealData.date}
+                  onChange={(newDate) =>
+                    setMealData({ ...mealData, date: newDate })
+                  }
+                />
+              </LocalizationProvider>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12}>
+            <FormControl fullWidth>
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <TimePicker
+                  label="Hour"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  inputProps={{
+                    step: 60,
+                  }}
+                  value={mealData.hour}
+                  onChange={(newTime) =>
+                    setMealData({
+                      ...mealData,
+                      hour: newTime,
+                    })
+                  }
+                />
+              </LocalizationProvider>
+            </FormControl>
+          </Grid>
+          {mealData.foods.map((food, index) => (
+            <React.Fragment key={index}>
+              <Grid item xs={6}>
                 <FormControl fullWidth>
-                
-                  <InputLabel id="demo-simple-select-label">Food</InputLabel>
+                  <InputLabel id={`food-label-${index}`}>Food</InputLabel>
                   <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
+                    labelId={`food-label-${index}`}
+                    id={`food-select-${index}`}
                     value={food.name}
                     label="Food"
                     onChange={(e) => handleFoodInputChange(e, index)}
+                    MenuProps={{ PaperProps: { style: { maxHeight: 120 } } }}
                   >
-                  {Array.isArray(foodOptions) && foodOptions.length > 0 ? (
-                    foodOptions.map((option) => (
-                      <MenuItem key={option.id} value={option.name}>
-                        {option.name}
-                      </MenuItem>
-                    ))
-                  ) : (
-                    <MenuItem value="">No hay alimentos disponibles</MenuItem>
-                  )}
-                  
+                      {Array.isArray(foodOptions) && foodOptions.length > 0 ? (
+                        foodOptions.map((option) => (
+                          <MenuItem key={option.id} value={option.name}>
+                            {option.name}
+                          </MenuItem>
+                        ))
+                      ) : (
+                        <MenuItem value="">No foods available.</MenuItem>
+                      )}
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid item xs={3}>
+              <Grid item xs={4}>
                 <TextField
-                  label={`Quantity`}
-                  type='number'
+                  InputProps={{
+                    inputProps: { min: 1 },
+                  }}
+                  label={`Weight (gr/ml)`}
+                  type="number"
                   variant="outlined"
                   fullWidth
-                  value={food.quantity}
+                  value={food.weightConsumed}
                   onChange={(e) => handleQuantityInputChange(e, index)}
                 />
               </Grid>
               {index === 0 && (
-                <Grid item xs={2}>
-                  <IconButton
-                    color="primary"
-                    onClick={handleAddFoodInput}
-                  >
+                <Grid
+                  item
+                  xs={2}
+                  sx={{ display: "flex", alignItems: "center" }}
+                >
+                  <IconButton color="primary" onClick={handleAddFoodInput}>
                     <AddCircleRoundedIcon />
                   </IconButton>
                 </Grid>
@@ -211,25 +318,26 @@ const MealForm = ({ open, setOpen }) => {
                   </IconButton>
                 </Grid>
               )}
-            </Grid>
+            </React.Fragment>
           ))}
-
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleAddMeal}
-            sx={{
-              mt: 3,
-              mb: 2,
-              backgroundColor: '#373D20',
-              '&:hover': { backgroundColor: '#373D20' },
-              fontWeight: 'bold',
-            }}
-            fullWidth
-          >
-            Add Meal
-          </Button>
-        </div>
+          <Grid item xs={12}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleAddMeal}
+              sx={{
+                mt: 3,
+                mb: 2,
+                backgroundColor: "#373D20",
+                "&:hover": { backgroundColor: "#373D20" },
+                fontWeight: "bold",
+              }}
+              fullWidth
+            >
+              {initialData ? "Update Meal" : "Add Meal"}
+            </Button>
+          </Grid>
+        </Grid>
       </Box>
     </Modal>
   );
