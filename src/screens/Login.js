@@ -23,6 +23,10 @@ import CloseIcon from "@mui/icons-material/Close";
 
 const defaultTheme = createTheme();
 
+function getUID() {
+  return Date.now().toString(36);
+}
+
 const Login = () => {
   const [user, setUser] = React.useState({
     email: "",
@@ -74,7 +78,7 @@ const Login = () => {
           });
           return;
         }
-        const token = data.data._id;
+        const userId = data.data._id;
         const userName = data.data.firstName + " " + data.data.lastName;
 
         const response1 = await fetch(
@@ -86,8 +90,9 @@ const Login = () => {
             },
             body: JSON.stringify({
               email: recoveryEmail,
-              token: token,
+              token: getUID(),
               userName: userName,
+              userId: userId
             }),
           }
         );

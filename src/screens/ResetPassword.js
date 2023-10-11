@@ -43,7 +43,7 @@ const ResetPassword = () => {
 
   const validateToken = async () => {
     const response = await fetch(
-      "http://localhost:3001/api/auth/users/" + token,
+      "http://localhost:3001/api/notifications/validateToken/" + token,
       {
         method: "GET",
         headers: {
