@@ -1,5 +1,5 @@
 import React from 'react';
-import { CircularProgress, Typography, Box, Grid, Paper } from '@mui/material';
+import { CircularProgress, Typography, Box, Grid } from '@mui/material';
 
 const GoalProgress = ({ goal, progress }) => {
   const percentage = (progress / goal) * 100;
