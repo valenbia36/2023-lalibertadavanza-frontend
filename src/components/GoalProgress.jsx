@@ -18,7 +18,6 @@ const GoalProgress = ({ goal, progress }) => {
   return (
     <Grid color="black">
       <Typography variant="h5" fontWeight="bold" align='center' marginBottom='5%'>GOAL</Typography>
-      <Paper sx={{borderRadius: '50%'}}>
       <Box p={4} textAlign="center" sx={{position: 'relative'}}>
         <CircularProgress
           variant="determinate"
@@ -41,7 +40,6 @@ const GoalProgress = ({ goal, progress }) => {
         {`${Math.round(percentage)}%`}
         </Typography>
       </Box>
-      </Paper>
     </Grid>
   );
 };

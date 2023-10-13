@@ -8,6 +8,7 @@ import Statistics from "./screens/Statistics";
 import MyProfile from './screens/MyProfile'
 import "./styles/Home.css";
 import { SnackbarProvider } from "notistack";
+import Meals from "./screens/Meals";
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
           <Route path="/" element={<Login />} />
           <Route path="signUp" element={<SignUp />} />
           <Route path="main" element={<Main />} />
+          <Route path="meals" element={<Meals />} />
           <Route path="resetPassword" element={<ResetPassword />} />
           <Route path="statistics" element={<Statistics />} />
           <Route path="myProfile" element={<MyProfile />} />
