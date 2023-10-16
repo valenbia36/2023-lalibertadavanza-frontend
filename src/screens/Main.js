@@ -1,24 +1,34 @@
 import React, { useState, useEffect } from "react";
 import { useTheme } from "@mui/material/styles";
 import Drawer from "../components/Drawer";
-import GoalProgress from "../components/GoalProgress"
+import GoalProgress from "../components/GoalProgress";
 import LabelBottomNavigation from "../components/BottomMenu";
 import { useSnackbar } from "notistack";
+import BarChartComponent from "../components/Charts/BarChartComponent";
+import { IconButton, Typography } from "@mui/material";
+import Button from "@mui/material/Button";
+import GoalForm from "../components/GoalForm";
+import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
+import GoalSelect from "../components/GoalSelect";
 
 const Main = () => {
-
   const { enqueueSnackbar } = useSnackbar();
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedGoal, setSelectedGoal] = useState();
   const theme = useTheme();
   const [isMobile, setIsMobile] = useState(false);
   const [newGoal, setNewGoal] = useState({
-    name: '',
-    calories: '',
-    userId: localStorage.getItem('userId'),
-    startDate: '',
-    endDate: ''
+    name: "",
+    calories: "",
+    userId: localStorage.getItem("userId"),
+    startDate: "",
+    endDate: "",
   });
   const [goals, setGoals] = useState([]);
+
+  useEffect(() => {
+    handleGetGoals();
+  }, []);
 
   useEffect(() => {
     function handleResize() {
@@ -31,56 +41,21 @@ const Main = () => {
     };
   }, [theme]);
 
-  const handleAddGoal = () => {
-    if (
-      newGoal.name === "" ||
-      newGoal.calories === "" ||
-      newGoal.userId === "" ||
-      newGoal.startDate === "" ||
-      newGoal.endDate === ""
-    ) {
-      enqueueSnackbar("Please complete all the fields correctly.", { variant: "error" });
-      return;
-    } else {
-      fetch("http://localhost:3001/api/goals", {
-        method: "POST",
+  const handleGetGoals = async () => {
+    const response = await fetch(
+      "http://localhost:3001/api/goals/" + localStorage.getItem("userId"),
+      {
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
-        body: JSON.stringify(newGoal),
-      }).then(function (response) {
-        if (response.status === 200) {
-          enqueueSnackbar("The goal was created successfully.", {
-            variant: "success",
-          });
-          //closeModal();
-        } else {
-          enqueueSnackbar("An error occurred while creating the goal.", {
-            variant: "error",
-          });
-        }
-      });
-    }
-  };
-
-  const handleGetGoals = async () => {
-
-    const response = await fetch("http://localhost:3001/api/goals/" + localStorage.getItem('userId'), {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-    })
+      }
+    );
 
     const data = await response.json();
-    setGoals(data.data)    
+    setGoals(data.data);
   };
-
-  useEffect( () => {
-    handleGetGoals();
-  }, [])
 
   return (
     <div className="container">
@@ -89,8 +64,38 @@ const Main = () => {
       ) : (
         <LabelBottomNavigation />
       )}
-      <div className="row justify-content-center">
-        <GoalProgress goal={100} progress={80}/>
+      <GoalSelect
+        goals={goals}
+        selectedGoal={selectedGoal}
+        setSelectedGoal={setSelectedGoal}
+      />
+      <React.Fragment>
+        <GoalForm open={isModalOpen} setOpen={setIsModalOpen} />
+      </React.Fragment>
+      <IconButton
+        onClick={() => {
+          setIsModalOpen(true);
+        }}
+      >
+        <AddCircleRoundedIcon />
+      </IconButton>
+
+      <div className="col-md-6">
+        <div className="row">
+          <div className="col-12">
+            {selectedGoal ? (
+              (console.log(selectedGoal),
+              (<GoalProgress goal={selectedGoal.calories} progress={60} />))
+            ) : (
+              <p>Loading...</p>
+            )}
+          </div>
+        </div>
+        {/* <div className="row">
+          <div className="col-12">
+            <BarChartComponent />
+          </div>
+        </div> */}
       </div>
     </div>
   );
