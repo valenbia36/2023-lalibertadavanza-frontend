@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from "react";
 import { CircularProgress, Typography, Box, Grid } from '@mui/material';
 
 const GoalProgress = ({ goal, progress }) => {
@@ -17,14 +17,19 @@ const GoalProgress = ({ goal, progress }) => {
 
   return (
     <Grid color="black">
-      <Typography variant="h5" fontWeight="bold" align='center' marginBottom='5%'>GOAL</Typography>
       <Box p={4} textAlign="center" sx={{position: 'relative'}}>
         <CircularProgress
           variant="determinate"
           value={percentage}
           size={200}
           thickness={4}
-          sx={{ color: color, margin: '0 auto' }}
+          sx={{
+            color: color,
+            margin: '0 auto',
+            border: '2px solid black', // Agrega un borde alrededor del CircularProgress
+            borderRadius: '50%', // Hace que el borde sea circular
+            boxShadow: 'inset 0 0 10px black', // Agrega un borde interno
+          }}
         />
         <Typography
         variant="h6"

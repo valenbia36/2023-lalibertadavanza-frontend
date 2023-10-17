@@ -1,7 +1,29 @@
 import React, { useState, useEffect } from "react";
-import { Select, MenuItem, InputLabel, FormControl, Grid } from "@mui/material";
+import { Select, MenuItem, InputLabel, FormControl } from "@mui/material";
 
-const GoalSelect = ({ goals, setSelectedGoal, selectedGoal }) => {
+const GoalSelect = ({setSelectedGoal, selectedGoal }) => {
+  const [goals, setGoals] = useState([]);
+  const handleGetGoals = async () => {
+    const response = await fetch(
+      "http://localhost:3001/api/goals/" + localStorage.getItem("userId"),
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      }
+    );
+
+    const data = await response.json();
+    setGoals(data.data);
+    setSelectedGoal(data.data[0])
+  };
+
+  useEffect(() => {
+    handleGetGoals();
+  }, []);
+
   return (
     <FormControl style={{ width: "100%", maxWidth: 500, minWidth: 200 }}>
       <InputLabel id="category-select-label">Goal</InputLabel>
