@@ -6,6 +6,7 @@ import CategoryForm from "./CategoryForm";
 import CategorySelect from "./CategorySelect";
 import CloseIcon from "@mui/icons-material/Close";
 import getApiUrl from '../helpers/apiConfig';
+import CategoryAutocomplete from "./CategoryAutocomplete";
 
 const apiUrl = getApiUrl();
 
@@ -170,7 +171,7 @@ const FoodForm = ({ open, setOpen }) => {
           />
           <Grid container spacing={1} alignItems="center">
             <Grid item xs={10}>
-              <CategorySelect
+              <CategoryAutocomplete
                 selectedCategory={newFood.category}
                 onCategoryChange={handleCategoryChange}
               />

@@ -8,10 +8,10 @@ import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import IconButton from "@mui/material/IconButton";
-import { TableHead } from "@mui/material";
+import {  TableHead } from "@mui/material";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import CategorySelect from "../CategorySelect";
+import CategoryAutocomplete from "../CategoryAutocomplete";
 import getApiUrl from '../../helpers/apiConfig';
 
 const apiUrl = getApiUrl();
@@ -65,7 +65,7 @@ export default function FoodTable({filterOpen}) {
   const [noResults, setNoResults] = useState(false);
 
   useEffect(() => {
-    getFoodByCategory();
+    selectedCategory ?  getFoodByCategory() : getFoods();
   }, [selectedCategory]);
 
   useEffect(() => {
@@ -123,13 +123,14 @@ export default function FoodTable({filterOpen}) {
   
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
+    console.log(category)
     setPage(0)
   };
 
   return (
     <div>
       {filterOpen && (
-        <CategorySelect
+        <CategoryAutocomplete
           selectedCategory={selectedCategory}
           onCategoryChange={handleCategoryChange}
         />

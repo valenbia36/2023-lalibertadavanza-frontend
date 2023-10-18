@@ -6,6 +6,7 @@ import MyResponsivePie from "./PieChart";
 import CategorySelect from "../CategorySelect";
 import CircularProgress from "@mui/material/CircularProgress";
 import getApiUrl from '../../helpers/apiConfig';
+import CategoryAutocomplete from "./CategoryAutocomplete";
 
 const apiUrl = getApiUrl();
 
@@ -93,7 +94,7 @@ const PieChartContainer = () => {
           onChange={(e) => setDate(e.target.value)}
         />
         <Grid>
-          <CategorySelect
+          <CategoryAutocomplete
             customWidth={"30%"}
             selectedCategory={selectedCategory}
             onCategoryChange={handleCategoryChange}
