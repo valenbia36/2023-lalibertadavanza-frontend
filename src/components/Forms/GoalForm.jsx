@@ -13,7 +13,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import getApiUrl from '../helpers/apiConfig';
+import getApiUrl from '../../helpers/apiConfig';
 
 const apiUrl = getApiUrl();
 

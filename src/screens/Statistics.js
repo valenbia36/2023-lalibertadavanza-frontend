@@ -7,6 +7,7 @@ import PieChartContainer from "../components/Charts/PieChartContainer";
 import LineChartContainer from "../components/Charts/LineChartContainer";
 import { Col, Container, Row } from "react-bootstrap";
 
+
 const Statistics = () => {
   
   const theme = useTheme();
@@ -31,7 +32,7 @@ const Statistics = () => {
       )}
       <Row>
         <Col xs={12} md={6} className="d-flex align-items-center justify-content-center">
-          <div style={{marginBottom: '20%'}}>
+          <div style={{marginBottom: '30%'}}>
             <PieChartContainer/>
           </div>
         </Col>

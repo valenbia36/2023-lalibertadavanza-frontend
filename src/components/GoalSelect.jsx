@@ -19,8 +19,8 @@ const GoalSelect = ({setSelectedGoal, selectedGoal }) => {
     );
 
     const data = await response.json();
-    setGoals(data.data);
     setSelectedGoal(data.data[0])
+    setGoals(data.data);
   };
 
   useEffect(() => {

@@ -3,6 +3,7 @@ import { CircularProgress, Typography, Box, Grid } from '@mui/material';
 
 const GoalProgress = ({ goal, progress }) => {
   const percentage = (progress / goal) * 100;
+  console.log("goal: "+goal + " progreso: "+progress);
   let color = '';
 
   if (percentage <= 25) {
@@ -41,7 +42,7 @@ const GoalProgress = ({ goal, progress }) => {
             transform: 'translate(-50%, -50%)',
             fontWeight: 'bold'
         }}
-        >
+        > 
         {`${Math.round(percentage)}%`}
         </Typography>
       </Box>

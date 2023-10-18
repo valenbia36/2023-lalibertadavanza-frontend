@@ -14,7 +14,7 @@ import Collapse from "@mui/material/Collapse";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import EditIcon from "@mui/icons-material/Edit";
-import MealForm from "../MealForm";
+import MealForm from "../Forms/MealForm";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useSnackbar } from "notistack";
 import getApiUrl from '../../helpers/apiConfig';

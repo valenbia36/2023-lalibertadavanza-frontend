@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { TextField, Button, Modal, Box, IconButton } from "@mui/material";
 import { useSnackbar } from "notistack";
 import CloseIcon from "@mui/icons-material/Close";
-import getApiUrl from '../helpers/apiConfig';
+import getApiUrl from '../../helpers/apiConfig';
 
 const apiUrl = getApiUrl();
 
