@@ -27,7 +27,9 @@ const FoodForm = ({ open, setOpen }) => {
       Number(newFood.calories) < 1 ||
       Number(newFood.weight) < 1
     ) {
-      enqueueSnackbar("Please complete all the fields correctly.", { variant: "error" });
+      enqueueSnackbar("Please complete all the fields correctly.", {
+        variant: "error",
+      });
       return;
     } else {
       fetch("http://localhost:3001/api/foods", {
@@ -97,7 +99,7 @@ const FoodForm = ({ open, setOpen }) => {
           bgcolor: "background.paper",
           boxShadow: 24,
           p: 5,
-          borderRadius: '2%'
+          borderRadius: "2%",
         }}
       >
         <IconButton
@@ -163,11 +165,7 @@ const FoodForm = ({ open, setOpen }) => {
               }
             }}
           />
-          <Grid
-            container
-            spacing={1}
-            alignItems="center"
-          >
+          <Grid container spacing={1} alignItems="center">
             <Grid item xs={10}>
               <CategorySelect
                 selectedCategory={newFood.category}

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TextField, Button, Modal, Box , IconButton,} from "@mui/material";
+import { TextField, Button, Modal, Box, IconButton } from "@mui/material";
 import { useSnackbar } from "notistack";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -12,9 +12,7 @@ const CategoryForm = ({ open, setOpen }) => {
   const [newCategory, setNewCategory] = useState(initialCategoryState);
 
   const handleAddCategory = () => {
-    if (
-      newCategory.name === ""
-    ) {
+    if (newCategory.name === "") {
       enqueueSnackbar("Please complete all the fields.", { variant: "error" });
       return;
     } else {
@@ -63,10 +61,10 @@ const CategoryForm = ({ open, setOpen }) => {
           bgcolor: "background.paper",
           boxShadow: 24,
           p: 4,
-          borderRadius: '4%'
+          borderRadius: "4%",
         }}
       >
-         <IconButton
+        <IconButton
           aria-label="Close"
           onClick={closeModal}
           sx={{
@@ -85,7 +83,9 @@ const CategoryForm = ({ open, setOpen }) => {
             fullWidth
             margin="normal"
             value={newCategory.name}
-            onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
+            onChange={(e) =>
+              setNewCategory({ ...newCategory, name: e.target.value })
+            }
             onKeyPress={(event) => {
               if (event.key === "Enter") {
                 handleAddCategory();
