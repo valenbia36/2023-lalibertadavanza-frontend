@@ -15,7 +15,7 @@ const LineChartContainer = () => {
     setIsLoading(true);
     setData("");
     const response = await fetch(
-      apiUrl + "api/meals/user/" +
+      apiUrl + "/api/meals/user/" +
         localStorage.getItem("userId") +
         "/month/" +
         selectedMonth,

@@ -6,7 +6,7 @@ import MyResponsivePie from "./PieChart";
 import CategorySelect from "../CategorySelect";
 import CircularProgress from "@mui/material/CircularProgress";
 import getApiUrl from '../../helpers/apiConfig';
-import CategoryAutocomplete from "./CategoryAutocomplete";
+import CategoryAutocomplete from "../CategoryAutocomplete";
 
 const apiUrl = getApiUrl();
 
@@ -19,7 +19,7 @@ const getMealsByUserIdAndDay = async (
   setData("");
   setLoading(true);
   const response = await fetch(
-    apiUrl + "api/meals/user/" +
+    apiUrl + "/api/meals/user/" +
       localStorage.getItem("userId") +
       "/date/" +
       date,
