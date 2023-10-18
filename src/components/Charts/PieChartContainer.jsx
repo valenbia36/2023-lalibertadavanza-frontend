@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { TextField, Grid, IconButton } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { TextField, Grid } from "@mui/material";
 import { format } from "date-fns";
 import MyResponsivePie from "./PieChart";
-import CategorySelect from "../CategorySelect";
 import CircularProgress from "@mui/material/CircularProgress";
 import getApiUrl from '../../helpers/apiConfig';
 import CategoryAutocomplete from "../CategoryAutocomplete";
@@ -93,21 +91,11 @@ const PieChartContainer = () => {
           value={date}
           onChange={(e) => setDate(e.target.value)}
         />
-        <Grid>
+        <Grid >
           <CategoryAutocomplete
-            customWidth={"30%"}
             selectedCategory={selectedCategory}
             onCategoryChange={handleCategoryChange}
           />
-          {selectedCategory !== "" && (
-            <IconButton
-              aria-label="delete row"
-              size="small"
-              onClick={() => setSelectedCategory("")}
-            >
-              <DeleteIcon />
-            </IconButton>
-          )}
         </Grid>
         <div style={{ position: "relative", minHeight: 320, marginTop: "10%" }}>
           {loading ? (

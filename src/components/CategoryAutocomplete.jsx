@@ -5,7 +5,7 @@ import {
 } from "@mui/material";
 import getApiUrl from '../helpers/apiConfig';
 
-const CategoryAutocomplete = ({selectedCategory,onCategoryChange,customWidth,}) => {
+const CategoryAutocomplete = ({selectedCategory,onCategoryChange}) => {
     const [categoriesOptions, setCategoriesOptions] = useState([]);
 
     const apiUrl = getApiUrl();
@@ -29,7 +29,7 @@ const CategoryAutocomplete = ({selectedCategory,onCategoryChange,customWidth,}) 
 
   return (
     <Autocomplete
-      style={{ width: customWidth || "100%", maxWidth: 500, minWidth: 200 }}
+      style={{ width:  "100%", maxWidth: 400, minWidth: 200 }}
       value={selectedCategory}
       onChange={(event, newValue) => {
         onCategoryChange(newValue);

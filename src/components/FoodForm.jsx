@@ -3,7 +3,6 @@ import { TextField, Button, Modal, Box, Grid, IconButton } from "@mui/material";
 import { useSnackbar } from "notistack";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import CategoryForm from "./CategoryForm";
-import CategorySelect from "./CategorySelect";
 import CloseIcon from "@mui/icons-material/Close";
 import getApiUrl from '../helpers/apiConfig';
 import CategoryAutocomplete from "./CategoryAutocomplete";
