@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Select, MenuItem, InputLabel, FormControl } from "@mui/material";
+import getApiUrl from '../helpers/apiConfig';
+
+const apiUrl = getApiUrl();
 
 const GoalSelect = ({setSelectedGoal, selectedGoal }) => {
   const [goals, setGoals] = useState([]);
   const handleGetGoals = async () => {
     const response = await fetch(
-      "http://localhost:3001/api/goals/" + localStorage.getItem("userId"),
+      apiUrl + "/api/goals/" + localStorage.getItem("userId"),
       {
         method: "GET",
         headers: {

@@ -4,10 +4,11 @@ import {
   MenuItem,
   InputLabel,
   FormControl,
-  Grid,
-  Autocomplete,
-  TextField,
 } from "@mui/material";
+
+import getApiUrl from '../helpers/apiConfig';
+
+const apiUrl = getApiUrl();
 
 const CategorySelect = ({
   selectedCategory,
@@ -21,7 +22,7 @@ const CategorySelect = ({
   }, [categoriesOptions]);
 
   const getCategories = async () => {
-    const response = await fetch("http://localhost:3001/api/category/", {
+    const response = await fetch(apiUrl + "/api/category/", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

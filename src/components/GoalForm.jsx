@@ -9,13 +9,13 @@ import {
   FormControl,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
-import CategoryForm from "./CategoryForm";
-import CategorySelect from "./CategorySelect";
 import CloseIcon from "@mui/icons-material/Close";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import getApiUrl from '../helpers/apiConfig';
+
+const apiUrl = getApiUrl();
 
 const initialGoalState = {
   name: "",
@@ -50,7 +50,7 @@ const GoalForm = ({ open, setOpen }) => {
       });
       return;
     } else {
-      fetch("http://localhost:3001/api/goals", {
+      fetch(apiUrl + "/api/goals", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -1,6 +1,9 @@
 import { Button, Grid, TextField } from "@mui/material";
 import React from "react";
 import { useSnackbar } from "notistack";
+import getApiUrl from '../helpers/apiConfig';
+
+const apiUrl = getApiUrl();
 
 const ResetPassword = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -14,7 +17,7 @@ const ResetPassword = () => {
   const handleResetPassword = async () => {
     if (password === repeatPassword) {
       const response = await fetch(
-        "http://localhost:3001/api/auth/users/updatePassword/" + userId,
+        apiUrl + "/api/auth/users/updatePassword/" + userId,
         {
           method: "PUT",
           headers: {
@@ -46,7 +49,7 @@ const ResetPassword = () => {
       enqueueSnackbar("You need to enter the token.", { variant: "error" });
     }else{
       const response = await fetch(
-        "http://localhost:3001/api/notifications/validateToken/" + token,
+        apiUrl + "/api/notifications/validateToken/" + token,
         {
           method: "GET",
           headers: {

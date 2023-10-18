@@ -5,6 +5,9 @@ import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import CategoryForm from "./CategoryForm";
 import CategorySelect from "./CategorySelect";
 import CloseIcon from "@mui/icons-material/Close";
+import getApiUrl from '../helpers/apiConfig';
+
+const apiUrl = getApiUrl();
 
 const initialFoodState = {
   name: "",
@@ -32,7 +35,7 @@ const FoodForm = ({ open, setOpen }) => {
       });
       return;
     } else {
-      fetch("http://localhost:3001/api/foods", {
+      fetch(apiUrl + "/api/foods", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

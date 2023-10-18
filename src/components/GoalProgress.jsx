@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { CircularProgress, Typography, Box, Grid } from '@mui/material';
 
 const GoalProgress = ({ goal, progress }) => {

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import {
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
   TextField,
   Autocomplete,
 } from "@mui/material";
+
+import getApiUrl from '../helpers/apiConfig';
+
+const apiUrl = getApiUrl();
 
 const CategorySelect = ({
   selectedCategory,
@@ -22,7 +22,7 @@ const CategorySelect = ({
   }, [categoriesOptions, onCategoryChange, selectedCategory]);
 
   const getCategories = async () => {
-    const response = await fetch("http://localhost:3001/api/category/", {
+    const response = await fetch(apiUrl + "/api/category/", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

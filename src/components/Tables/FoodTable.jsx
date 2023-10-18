@@ -12,6 +12,9 @@ import { TableHead } from "@mui/material";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import CategorySelect from "../CategorySelect";
+import getApiUrl from '../../helpers/apiConfig';
+
+const apiUrl = getApiUrl();
 
 function TablePaginationActions(props) {
   const theme = useTheme();
@@ -77,7 +80,7 @@ export default function FoodTable({filterOpen}) {
   }, []);
 
   const getFoods = async () => {
-    const response = await fetch("http://localhost:3001/api/foods/", {
+    const response = await fetch(apiUrl + "/api/foods/", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -92,7 +95,7 @@ export default function FoodTable({filterOpen}) {
   const getFoodByCategory = async () => {
     if (selectedCategory !== "") {
       const response = await fetch(
-        "http://localhost:3001/api/foods/category/" + selectedCategory,
+        apiUrl + "/api/foods/category/" + selectedCategory,
         {
           method: "GET",
           headers: {

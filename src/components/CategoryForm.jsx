@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { TextField, Button, Modal, Box, IconButton } from "@mui/material";
 import { useSnackbar } from "notistack";
 import CloseIcon from "@mui/icons-material/Close";
+import getApiUrl from '../helpers/apiConfig';
+
+const apiUrl = getApiUrl();
 
 const initialCategoryState = {
   name: "",
@@ -16,7 +19,7 @@ const CategoryForm = ({ open, setOpen }) => {
       enqueueSnackbar("Please complete all the fields.", { variant: "error" });
       return;
     } else {
-      fetch("http://localhost:3001/api/category", {
+      fetch(apiUrl + "/api/category", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

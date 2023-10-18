@@ -3,14 +3,12 @@ import { useTheme } from "@mui/material/styles";
 import Drawer from "../components/Drawer";
 import GoalProgress from "../components/GoalProgress";
 import LabelBottomNavigation from "../components/BottomMenu";
-import { useSnackbar } from "notistack";
 import { IconButton, Typography } from "@mui/material";
 import GoalForm from "../components/GoalForm";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import GoalSelect from "../components/GoalSelect";
 
 const Main = () => {
-  const { enqueueSnackbar } = useSnackbar();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedGoal, setSelectedGoal] = useState();
   const theme = useTheme();

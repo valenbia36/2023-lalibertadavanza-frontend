@@ -19,6 +19,9 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import CloseIcon from "@mui/icons-material/Close";
+import getApiUrl from '../helpers/apiConfig';
+
+const apiUrl = getApiUrl();
 
 const initialMealState = {
   name: "",
@@ -60,7 +63,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
   }, [open]);
 
   const getFoods = async () => {
-    const response = await fetch("http://localhost:3001/api/foods/", {
+    const response = await fetch(apiUrl + "/api/foods/", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -84,8 +87,8 @@ const MealForm = ({ open, setOpen, initialData }) => {
       mealData.hour = mealData.hour.toTimeString().slice(0, 5);
 
       const url = initialData
-        ? `http://localhost:3001/api/meals/${initialData._id}`
-        : "http://localhost:3001/api/meals";
+        ? apiUrl + `/api/meals/${initialData._id}`
+        : apiUrl + "/api/meals";
       const method = initialData ? "PUT" : "POST";
 
       fetch(url, {

@@ -5,6 +5,9 @@ import { format } from "date-fns";
 import MyResponsivePie from "./PieChart";
 import CategorySelect from "../CategorySelect";
 import CircularProgress from "@mui/material/CircularProgress";
+import getApiUrl from '../../helpers/apiConfig';
+
+const apiUrl = getApiUrl();
 
 const getMealsByUserIdAndDay = async (
   date,
@@ -15,7 +18,7 @@ const getMealsByUserIdAndDay = async (
   setData("");
   setLoading(true);
   const response = await fetch(
-    "http://localhost:3001/api/meals/user/" +
+    apiUrl + "api/meals/user/" +
       localStorage.getItem("userId") +
       "/date/" +
       date,

@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import MyResponsiveLine from "./LineChart";
 import MonthSelector from "../MonthSelector";
 import { CircularProgress, Grid } from "@mui/material";
+import getApiUrl from '../../helpers/apiConfig';
+
+const apiUrl = getApiUrl();
 
 const LineChartContainer = () => {
   const [data, setData] = useState();
@@ -12,7 +15,7 @@ const LineChartContainer = () => {
     setIsLoading(true);
     setData("");
     const response = await fetch(
-      "http://localhost:3001/api/meals/user/" +
+      apiUrl + "api/meals/user/" +
         localStorage.getItem("userId") +
         "/month/" +
         selectedMonth,

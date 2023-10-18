@@ -20,6 +20,9 @@ import carousel4 from "../images/carousel4.jpg";
 import Slideshow from "../components/Slideshow";
 import { IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import getApiUrl from '../helpers/apiConfig';
+
+const apiUrl = getApiUrl();
 
 const defaultTheme = createTheme();
 
@@ -63,7 +66,7 @@ const Login = () => {
     } else {
       try {
         const response = await fetch(
-          "http://localhost:3001/api/auth/users/email/" + recoveryEmail,
+          apiUrl + "/api/auth/users/email/" + recoveryEmail,
           {
             method: "GET",
             headers: {
@@ -82,7 +85,7 @@ const Login = () => {
         const userName = data.data.firstName + " " + data.data.lastName;
 
         const response1 = await fetch(
-          "http://localhost:3001/api/notifications/sendEmail",
+          apiUrl + "/api/notifications/sendEmail",
           {
             method: "POST",
             headers: {
@@ -122,7 +125,7 @@ const Login = () => {
       enqueueSnackbar("Email or password is empty.", { variant: "error" });
       return;
     } else {
-      fetch("http://localhost:3001/api/auth/login", {
+      fetch(apiUrl + "/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
