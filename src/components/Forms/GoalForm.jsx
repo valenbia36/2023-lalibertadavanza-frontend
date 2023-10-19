@@ -25,9 +25,8 @@ const initialGoalState = {
   endDate: "",
 };
 
-const GoalForm = ({ open, setOpen }) => {
+const GoalForm = ({ open, setOpen, setGoalHasBeenAdd, goalHasBeenAdd }) => {
   const { enqueueSnackbar } = useSnackbar();
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [newGoal, setNewGoal] = useState({
     name: "",
     calories: "",
@@ -35,7 +34,6 @@ const GoalForm = ({ open, setOpen }) => {
     startDate: "",
     endDate: "",
   });
-  const [goals, setGoals] = useState([]);
 
   const handleAddGoal = () => {
     if (
@@ -62,6 +60,7 @@ const GoalForm = ({ open, setOpen }) => {
           enqueueSnackbar("The goal was created successfully.", {
             variant: "success",
           });
+          setGoalHasBeenAdd(!goalHasBeenAdd)
           closeModal();
         } else {
           enqueueSnackbar("An error occurred while creating the goal.", {

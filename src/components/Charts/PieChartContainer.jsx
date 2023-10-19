@@ -79,7 +79,7 @@ const PieChartContainer = () => {
         maxWidth: 320,
       }}
     >
-      <Grid sx={{ maxHeight: "450px", minWidth: "320px" }}>
+      <Grid sx={{ maxHeight: "450px", minWidth: "320px", alignContent: 'center', textAlign: 'center' }}>
         <h2>Foods by Day</h2>
         <TextField
           style={{ width: "73%", minWidth: 200 }}
@@ -91,7 +91,7 @@ const PieChartContainer = () => {
           value={date}
           onChange={(e) => setDate(e.target.value)}
         />
-        <Grid >
+        <Grid sx={{width: "73%", minWidth: 200, marginLeft: '13.5%' }}>
           <CategoryAutocomplete
             selectedCategory={selectedCategory}
             onCategoryChange={handleCategoryChange}

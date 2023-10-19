@@ -4,8 +4,17 @@ import getApiUrl from '../helpers/apiConfig';
 
 const apiUrl = getApiUrl();
 
-const GoalSelect = ({setSelectedGoal, selectedGoal }) => {
+const GoalSelect = ({setSelectedGoal, selectedGoal, goalHasBeenAdd }) => {
   const [goals, setGoals] = useState([]);
+
+  useEffect(() => {
+    handleGetGoals();
+  }, []);
+
+  useEffect(() => {
+    handleGetGoals();
+  }, [goalHasBeenAdd]);
+
   const handleGetGoals = async () => {
     const response = await fetch(
       apiUrl + "/api/goals/" + localStorage.getItem("userId"),
@@ -22,10 +31,6 @@ const GoalSelect = ({setSelectedGoal, selectedGoal }) => {
     setSelectedGoal(data.data[0])
     setGoals(data.data);
   };
-
-  useEffect(() => {
-    handleGetGoals();
-  }, []);
 
   return (
     <FormControl style={{ width: "100%", maxWidth: 500, minWidth: 200 }}>

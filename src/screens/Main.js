@@ -7,7 +7,8 @@ import { IconButton, Typography, Grid } from "@mui/material";
 import GoalForm from "../components/Forms/GoalForm";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import GoalSelect from "../components/GoalSelect";
-import getApiUrl from '../helpers/apiConfig';
+import getApiUrl from "../helpers/apiConfig";
+import GoalList from "../components/GoalList";
 
 const apiUrl = getApiUrl();
 
@@ -17,7 +18,7 @@ const Main = () => {
   const [progress, setProgress] = useState();
   const theme = useTheme();
   const [isMobile, setIsMobile] = useState(false);
-
+  const [goalHasBeenAdd, setGoalHasBeenAdd] = useState(false);
 
   useEffect(() => {
     function handleResize() {
@@ -30,66 +31,130 @@ const Main = () => {
     };
   }, [theme]);
 
-    const getCaloriesForGoal = async () => {
-      const response = await fetch(
-        apiUrl + "/api/meals/user/" + localStorage.getItem("userId")+"/startDate/"+selectedGoal.startDate+"/endDate/"+selectedGoal.endDate,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        }
-      );
-  
-      const data = await response.json();
-      setProgress(data.totalCalorias)
-    };
+  const getCaloriesForGoal = async () => {
+    const response = await fetch(
+      apiUrl +
+        "/api/meals/user/" +
+        localStorage.getItem("userId") +
+        "/startDate/" +
+        selectedGoal.startDate +
+        "/endDate/" +
+        selectedGoal.endDate,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      }
+    );
+
+    const data = await response.json();
+    setProgress(data.totalCalorias);
+  };
 
   useEffect(() => {
-    if (selectedGoal) {getCaloriesForGoal()} 
+    if (selectedGoal) {
+      getCaloriesForGoal();
+    }
   }, [selectedGoal]);
 
   return (
-    <div className="container" style={{display: 'flex',flexDirection: 'column',alignItems: 'center',justifyContent: 'center'}}>
+    <div
+      className="container"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
       {!isMobile ? (
         <Drawer user={localStorage.getItem("username")} />
       ) : (
         <LabelBottomNavigation />
       )}
-      <Typography variant="h5" fontWeight="bold" align='center' marginBottom='1%' style={{color:"black"}}>GOAL:</Typography>
-      <Grid container alignItems="center"  style={{width: "100%", maxWidth: 400,}}     >
-            <Grid item xs={11}>
-              <GoalSelect
-                selectedGoal={selectedGoal}
-                setSelectedGoal={setSelectedGoal}/>
-            </Grid>
-            <Grid item xs={1}>
-              <React.Fragment>
-                <GoalForm open={isModalOpen} setOpen={setIsModalOpen} />
-              </React.Fragment>
-              <IconButton
-                onClick={() => {
-                  setIsModalOpen(true);
-                }}
+      <div className="row justify-content-center">
+        <div className="col-lg-10">
+          <div className="row justify-content-center">
+            <div className="col-lg-4 col-md-6">
+              <Typography
+                variant="h5"
+                fontWeight="bold"
+                align="center"
+                marginBottom="1%"
+                style={{ color: "black", width: "100%" }}
               >
-                <AddCircleRoundedIcon />
-              </IconButton>
-            </Grid>
-        </Grid>
-      <div className="col-md-6">
-        <div className="row">
-        <div className="col-12">
-            {selectedGoal ? (
-                <div>
-                  <span style={{display: 'flex',flexDirection: 'column',alignItems: 'center',justifyContent: 'center', color:"black"}}>Start Date: {(selectedGoal.startDate).split("T")[0]} </span>
-                  <GoalProgress goal={selectedGoal.calories} progress={progress} />
-                  <span style={{display: 'flex',flexDirection: 'column',alignItems: 'center',justifyContent: 'center', color:"black" }} >End Date: {(selectedGoal.endDate).split("T")[0]}</span>
-                </div>
-              )
-             : (
-              <p>Loading...</p>
-            )}
+                GOAL:
+              </Typography>
+              <Grid
+                container
+                alignItems="center"
+                style={{ width: "100%" }}
+              >
+                <Grid item xs={10}>
+                  <GoalSelect
+                    selectedGoal={selectedGoal}
+                    setSelectedGoal={setSelectedGoal}
+                    goalHasBeenAdd={goalHasBeenAdd}
+                  />
+                </Grid>
+                <Grid item xs={2}>
+                  <React.Fragment>
+                    <GoalForm
+                      open={isModalOpen}
+                      setOpen={setIsModalOpen}
+                      setGoalHasBeenAdd={setGoalHasBeenAdd}
+                      goalHasBeenAdd={goalHasBeenAdd}
+                    />
+                  </React.Fragment>
+                  <IconButton
+                    onClick={() => {
+                      setIsModalOpen(true);
+                    }}
+                  >
+                    <AddCircleRoundedIcon />
+                  </IconButton>
+                </Grid>
+              </Grid>
+              {selectedGoal ? (
+                <Grid
+                  container
+                  alignItems="center"
+                  style={{ width: "100%", maxWidth: 600 }}
+                  textAlign="center"
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      width: "100%",
+                    }}
+                  >
+                    <GoalProgress
+                      goal={selectedGoal.calories}
+                      progress={progress}
+                    />
+                  </div>
+                  <Typography
+                    style={{
+                      color: "black",
+                      fontSize: "18px",
+                      width: "100%",
+                      textAlign: "center", // Center the text horizontally
+                    }}
+                  >
+                    End Date: {selectedGoal.endDate.split("T")[0]}
+                  </Typography>
+                </Grid>
+              ) : (
+                <p>Loading...</p>
+              )}
+            </div>
+
+            <div className="col-lg-7 col-md-6">
+              <GoalList />
+            </div>
           </div>
         </div>
       </div>
