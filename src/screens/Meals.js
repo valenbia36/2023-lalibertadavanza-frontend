@@ -8,6 +8,7 @@ import LabelBottomNavigation from "../components/BottomMenu";
 const Meals = () => {
   const theme = useTheme();
   const [isMobile, setIsMobile] = useState(false);
+
   useEffect(() => {
     function handleResize() {
       setIsMobile(window.innerWidth <= theme.breakpoints.values.sm);
@@ -18,6 +19,7 @@ const Meals = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, [theme]);
+  
   return (
     <div className="container">
       {!isMobile ? (

@@ -1,27 +1,26 @@
-import React, { useState } from "react";
-import {Typography } from "@mui/material";
-import FoodForm from "./Forms/FoodForm";
+import React from "react";
+import { Typography } from "@mui/material";
 import GoalTable from "./Tables/GoalTable";
 
 const GoalList = () => {
-  
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   return (
-    <div style={{ textAlign: "center", color: "black" }}>
-      <Typography variant="h5" fontWeight="bold" align='center' marginBottom='2%'>GOALS TABLE</Typography>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-start",
-          maxWidth: "100%",
-        }}
-      >
-        <GoalTable/>
+    <div
+      style={{
+        textAlign: "center",
+        color: "black",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center", // Esto centrará horizontalmente el contenido
+        justifyContent: "center",
+        marginBottom: '100px'
+      }}
+    >
+      <Typography variant="h5" fontWeight="bold" align="center" marginBottom="2%">
+        GOALS TABLE
+      </Typography>
+      <div style={{ maxWidth: "100%" }}>
+        <GoalTable />
       </div>
-      <React.Fragment>
-        <FoodForm open={isModalOpen} setOpen={setIsModalOpen} />
-      </React.Fragment>
     </div>
   );
 };

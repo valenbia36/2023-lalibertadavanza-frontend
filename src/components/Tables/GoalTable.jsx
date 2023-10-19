@@ -8,7 +8,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import IconButton from "@mui/material/IconButton";
-import {  TableHead } from "@mui/material";
+import { TableHead } from "@mui/material";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import getApiUrl from '../../helpers/apiConfig';
@@ -56,7 +56,7 @@ function TablePaginationActions(props) {
 }
 
 export default function GoalTable() {
-  
+
   const [totalItems, setTotalItems] = useState(0);
   const [page, setPage] = React.useState(0);
   const [noResults, setNoResults] = useState(false);
@@ -86,7 +86,7 @@ export default function GoalTable() {
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-  
+
 
   return (
     <div>
@@ -98,16 +98,10 @@ export default function GoalTable() {
                 Name
               </TableCell>
               <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
-                Start Date
+                Date
               </TableCell>
               <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
-                End Date
-              </TableCell>
-              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
-                Goal
-              </TableCell>
-              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
-                Progress
+                Goal/Progress
               </TableCell>
             </TableRow>
           </TableHead>
@@ -128,14 +122,13 @@ export default function GoalTable() {
                     >
                       {row.name}
                     </TableCell>
-                    <TableCell style={{ width: 160 }} align="center">
-                      {row.startDate.split("T")[0]}
+                    <TableCell style={{ width: 150 }} align="center">
+                      {`${row.startDate.split("T")[0]}`}
+                      <br />
+                      {`${row.endDate.split("T")[0]}`}
                     </TableCell>
                     <TableCell style={{ width: 160 }} align="center">
-                      {row.endDate.split("T")[0]}
-                    </TableCell>
-                    <TableCell style={{ width: 160 }} align="center">
-                      {row.calories}
+                      {`${row.calories}/...`}
                     </TableCell>
                   </TableRow>
                 )

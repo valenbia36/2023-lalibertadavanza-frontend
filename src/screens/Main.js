@@ -60,15 +60,7 @@ const Main = () => {
   }, [selectedGoal]);
 
   return (
-    <div
-      className="container"
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
+    <div className="container">
       {!isMobile ? (
         <Drawer user={localStorage.getItem("username")} />
       ) : (
@@ -87,11 +79,7 @@ const Main = () => {
               >
                 GOAL:
               </Typography>
-              <Grid
-                container
-                alignItems="center"
-                style={{ width: "100%" }}
-              >
+              <Grid container alignItems="center" style={{ width: "100%" }}>
                 <Grid item xs={10}>
                   <GoalSelect
                     selectedGoal={selectedGoal}
@@ -151,8 +139,7 @@ const Main = () => {
                 <p>Loading...</p>
               )}
             </div>
-
-            <div className="col-lg-7 col-md-6">
+            <div className="col-lg-8 col-md-6">
               <GoalList />
             </div>
           </div>

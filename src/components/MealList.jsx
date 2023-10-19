@@ -9,7 +9,14 @@ const MealList = () => {
 
   return (
     <div style={{ textAlign: "center", marginBottom: "250px", color: "black" }}>
-      <Typography variant="h5" fontWeight="bold" align='center' marginBottom='2%'>MEALS TABLE</Typography>
+      <Typography
+        variant="h5"
+        fontWeight="bold"
+        align="center"
+        marginBottom="2%"
+      >
+        MEALS TABLE
+      </Typography>
       <div
         style={{
           display: "flex",
