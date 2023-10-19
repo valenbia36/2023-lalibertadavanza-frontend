@@ -17,7 +17,7 @@ const GoalSelect = ({ setSelectedGoal, selectedGoal, goalHasBeenAdd }) => {
 
   const handleGetActiveGoals = async () => {
     const response = await fetch(
-      apiUrl + "/api/goals/activeGoals" + localStorage.getItem("userId"),
+      apiUrl + "/api/goals/activeGoals/" + localStorage.getItem("userId"),
       {
         method: "GET",
         headers: {
@@ -27,8 +27,8 @@ const GoalSelect = ({ setSelectedGoal, selectedGoal, goalHasBeenAdd }) => {
       }
     );
     const data = await response.json();
-    setSelectedGoal(data.data[0]);
-    setGoals(data.data);
+    setSelectedGoal(data.filteredData[0]);
+    setGoals(data.filteredData);
   };
 
   return (
