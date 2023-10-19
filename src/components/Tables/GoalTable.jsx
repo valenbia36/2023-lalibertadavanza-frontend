@@ -8,10 +8,14 @@ import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import IconButton from "@mui/material/IconButton";
-import { TableHead } from "@mui/material";
+import TableHead from "@mui/material/TableHead";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import getApiUrl from '../../helpers/apiConfig';
+import Modal from "@mui/material/Modal";
+import getApiUrl from "../../helpers/apiConfig";
+import CloseIcon from "@mui/icons-material/Close";
+import { Button } from "@mui/material";
+import GoalForm from "../../components/Forms/GoalForm";
 
 const apiUrl = getApiUrl();
 
@@ -56,11 +60,12 @@ function TablePaginationActions(props) {
 }
 
 export default function GoalTable() {
-
   const [totalItems, setTotalItems] = useState(0);
   const [page, setPage] = React.useState(0);
   const [noResults, setNoResults] = useState(false);
   const [goals, setGoals] = useState([]);
+  const [selectedGoal, setSelectedGoal] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     handleGetGoals();
@@ -80,13 +85,35 @@ export default function GoalTable() {
 
     const data = await response.json();
     setGoals(data.data);
-    console.log(data.data)
+    setTotalItems(data.data.length);
   };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
+  const handleRowClick = (goal) => {
+    setSelectedGoal(goal);
+  };
+
+  const calculateGoalStatus = (goal) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const goalStartDate = new Date(goal.startDate);
+    goalStartDate.setHours(0, 0, 0, 0);
+
+    const goalEndDate = new Date(goal.endDate);
+    goalEndDate.setHours(0, 0, 0, 0);
+
+    if (today < goalStartDate) {
+      return "Not started";
+    } else if (today >= goalStartDate && today <= goalEndDate) {
+      return "In progress";
+    } else {
+      return "Expired";
+    }
+  };
 
   return (
     <div>
@@ -98,7 +125,8 @@ export default function GoalTable() {
                 Name
               </TableCell>
               <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
-                Date
+                Start Date <br />
+                End Date
               </TableCell>
               <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
                 Goal/Progress
@@ -108,12 +136,14 @@ export default function GoalTable() {
           <TableBody>
             {noResults ? (
               <TableRow>
-                <TableCell colSpan={3} align="center">No results found. </TableCell>
+                <TableCell colSpan={3} align="center">
+                  No results found.
+                </TableCell>
               </TableRow>
             ) : (
               (5 > 0 ? goals.slice(page * 5, page * 5 + 5) : goals).map(
                 (row) => (
-                  <TableRow key={row.name}>
+                  <TableRow key={row.name} onClick={() => handleRowClick(row)}>
                     <TableCell
                       component="th"
                       scope="row"
@@ -136,7 +166,7 @@ export default function GoalTable() {
             )}
           </TableBody>
         </Table>
-        <Box sx={{ display: 'flex', justifyContent: "center" }}>
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
           <TablePaginationActions
             count={totalItems}
             page={page}
@@ -144,6 +174,66 @@ export default function GoalTable() {
           />
         </Box>
       </TableContainer>
+
+      <Modal open={selectedGoal !== null} onClose={() => setSelectedGoal(null)}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "100%",
+            maxWidth: 500,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 5,
+            borderRadius: "2%",
+          }}
+        >
+          <IconButton
+            aria-label="Close"
+            onClick={() => setSelectedGoal(null)}
+            sx={{
+              position: "absolute",
+              top: "3%",
+              right: "10px",
+              zIndex: 2,
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+          {selectedGoal && (
+            <div>
+              <h2>Detalles del Objetivo: {selectedGoal.name}</h2>
+              <p>Estado: {calculateGoalStatus(selectedGoal)}</p>
+              <p>Fecha de Inicio: {selectedGoal.startDate.split("T")[0]}</p>
+              <p>Fecha de Finalización: {selectedGoal.endDate.split("T")[0]}</p>
+              {calculateGoalStatus(selectedGoal) == "Not started" && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => setIsModalOpen(true)}
+                  sx={{
+                    mt: 3,
+                    mb: 2,
+                    backgroundColor: "#373D20",
+                    "&:hover": { backgroundColor: "#373D20" },
+                    fontWeight: "bold",
+                  }}
+                  fullWidth
+                >
+                  Edit Goal
+                </Button>
+              )}
+              <GoalForm
+                open={isModalOpen}
+                setOpen={setIsModalOpen}
+                initialData={selectedGoal}
+              />
+            </div>
+          )}
+        </Box>
+      </Modal>
     </div>
   );
 }

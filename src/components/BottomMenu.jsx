@@ -5,7 +5,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import HomeIcon from "@mui/icons-material/Home";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
-import RestaurantIcon from '@mui/icons-material/Restaurant';
+import RestaurantIcon from "@mui/icons-material/Restaurant";
 import { useNavigate, useLocation } from "react-router-dom";
 
 export default function LabelBottomNavigation() {
@@ -71,35 +71,65 @@ export default function LabelBottomNavigation() {
       value={value}
       onChange={handleChange}
     >
-      <BottomNavigationAction 
+      <BottomNavigationAction
         label="Home"
-        value="home" 
+        value="home"
         icon={<HomeIcon />}
-        sx={{ minWidth: 0, paddingLeft: 0, paddingRight: 0, marginLeft: 0, marginRight: 0  }} // Ajustar el espacio y ancho
+        sx={{
+          minWidth: 0,
+          paddingLeft: 0,
+          paddingRight: 0,
+          marginLeft: 0,
+          marginRight: 0,
+        }}
       />
-      <BottomNavigationAction 
+      <BottomNavigationAction
         label="My Meals"
-        value="meals" 
+        value="meals"
         icon={<RestaurantIcon />}
-        sx={{ minWidth: 0, paddingLeft: 0, paddingRight: 0, marginLeft: 0, marginRight: 0  }} // Ajustar el espacio y ancho
+        sx={{
+          minWidth: 0,
+          paddingLeft: 0,
+          paddingRight: 0,
+          marginLeft: 0,
+          marginRight: 0,
+        }}
       />
       <BottomNavigationAction
         label="Stats"
         value="stats"
         icon={<BarChartIcon />}
-        sx={{ minWidth: 0, paddingLeft: 0, paddingRight: 0, marginLeft: 0, marginRight: 0  }} // Ajustar el espacio y ancho
+        sx={{
+          minWidth: 0,
+          paddingLeft: 0,
+          paddingRight: 0,
+          marginLeft: 0,
+          marginRight: 0,
+        }}
       />
       <BottomNavigationAction
         label="Profile"
         value="profile"
         icon={<AccountBoxIcon />}
-        sx={{ minWidth: 0, paddingLeft: 0, paddingRight: 0, marginLeft: 0, marginRight: 0  }} // Ajustar el espacio y ancho
+        sx={{
+          minWidth: 0,
+          paddingLeft: 0,
+          paddingRight: 0,
+          marginLeft: 0,
+          marginRight: 0,
+        }}
       />
       <BottomNavigationAction
         label="Logout"
         value="logout"
         icon={<LogoutIcon />}
-        sx={{ minWidth: 0, paddingLeft: 0, paddingRight: 0, marginLeft: 0, marginRight: 0  }} // Ajustar el espacio y ancho
+        sx={{
+          minWidth: 0,
+          paddingLeft: 0,
+          paddingRight: 0,
+          marginLeft: 0,
+          marginRight: 0,
+        }}
       />
     </BottomNavigation>
   );

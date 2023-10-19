@@ -8,11 +8,11 @@ import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import IconButton from "@mui/material/IconButton";
-import {  TableHead } from "@mui/material";
+import { TableHead } from "@mui/material";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import CategoryAutocomplete from "../CategoryAutocomplete";
-import getApiUrl from '../../helpers/apiConfig';
+import getApiUrl from "../../helpers/apiConfig";
 
 const apiUrl = getApiUrl();
 
@@ -56,8 +56,7 @@ function TablePaginationActions(props) {
   );
 }
 
-export default function FoodTable({filterOpen}) {
-  
+export default function FoodTable({ filterOpen }) {
   const [foods, setFoods] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -65,12 +64,12 @@ export default function FoodTable({filterOpen}) {
   const [noResults, setNoResults] = useState(false);
 
   useEffect(() => {
-    selectedCategory ?  getFoodByCategory() : getFoods();
+    selectedCategory ? getFoodByCategory() : getFoods();
   }, [selectedCategory]);
 
   useEffect(() => {
-    if(filterOpen === false){
-      setSelectedCategory('');
+    if (filterOpen === false) {
+      setSelectedCategory("");
       getFoods();
     }
   }, [filterOpen, foods]);
@@ -120,11 +119,10 @@ export default function FoodTable({filterOpen}) {
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-  
+
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
-    console.log(category)
-    setPage(0)
+    setPage(0);
   };
 
   return (
@@ -153,7 +151,9 @@ export default function FoodTable({filterOpen}) {
           <TableBody>
             {noResults ? (
               <TableRow>
-                <TableCell colSpan={3} align="center">No results found. </TableCell>
+                <TableCell colSpan={3} align="center">
+                  No results found.{" "}
+                </TableCell>
               </TableRow>
             ) : (
               (5 > 0 ? foods.slice(page * 5, page * 5 + 5) : foods).map(
@@ -179,7 +179,7 @@ export default function FoodTable({filterOpen}) {
             )}
           </TableBody>
         </Table>
-        <Box sx={{ display: 'flex', justifyContent: "center" }}>
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
           <TablePaginationActions
             count={totalItems}
             page={page}

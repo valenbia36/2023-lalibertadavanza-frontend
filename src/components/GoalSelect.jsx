@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { Select, MenuItem, InputLabel, FormControl } from "@mui/material";
-import getApiUrl from '../helpers/apiConfig';
+import getApiUrl from "../helpers/apiConfig";
 
 const apiUrl = getApiUrl();
 
-const GoalSelect = ({setSelectedGoal, selectedGoal, goalHasBeenAdd }) => {
+const GoalSelect = ({ setSelectedGoal, selectedGoal, goalHasBeenAdd }) => {
   const [goals, setGoals] = useState([]);
 
   useEffect(() => {
-    handleGetGoals();
+    handleGetActiveGoals();
   }, []);
 
   useEffect(() => {
-    handleGetGoals();
+    handleGetActiveGoals();
   }, [goalHasBeenAdd]);
 
-  const handleGetGoals = async () => {
+  const handleGetActiveGoals = async () => {
     const response = await fetch(
-      apiUrl + "/api/goals/" + localStorage.getItem("userId"),
+      apiUrl + "/api/goals/activeGoals" + localStorage.getItem("userId"),
       {
         method: "GET",
         headers: {
@@ -26,9 +26,8 @@ const GoalSelect = ({setSelectedGoal, selectedGoal, goalHasBeenAdd }) => {
         },
       }
     );
-
     const data = await response.json();
-    setSelectedGoal(data.data[0])
+    setSelectedGoal(data.data[0]);
     setGoals(data.data);
   };
 

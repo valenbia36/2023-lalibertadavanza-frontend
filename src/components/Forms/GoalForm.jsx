@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   TextField,
   Button,
@@ -13,7 +13,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import getApiUrl from '../../helpers/apiConfig';
+import getApiUrl from "../../helpers/apiConfig";
 
 const apiUrl = getApiUrl();
 
@@ -25,15 +25,42 @@ const initialGoalState = {
   endDate: "",
 };
 
-const GoalForm = ({ open, setOpen, setGoalHasBeenAdd, goalHasBeenAdd }) => {
+const GoalForm = ({
+  open,
+  setOpen,
+  setGoalHasBeenAdd,
+  goalHasBeenAdd,
+  initialData,
+}) => {
   const { enqueueSnackbar } = useSnackbar();
   const [newGoal, setNewGoal] = useState({
     name: "",
     calories: "",
     userId: localStorage.getItem("userId"),
-    startDate: "",
+    startDate: new Date(),
     endDate: "",
   });
+
+  useEffect(() => {
+    if (initialData) {
+      const parsedStartDate = new Date(initialData.startDate);
+      const parsedEndDate = new Date(initialData.endDate);
+
+      setNewGoal({
+        ...initialData,
+        startDate: parsedStartDate,
+        endDate: parsedEndDate,
+      });
+    } else {
+      setNewGoal({
+        name: "",
+        calories: "",
+        userId: localStorage.getItem("userId"),
+        startDate: new Date(),
+        endDate: "",
+      });
+    }
+  }, [initialData]);
 
   const handleAddGoal = () => {
     if (
@@ -60,7 +87,7 @@ const GoalForm = ({ open, setOpen, setGoalHasBeenAdd, goalHasBeenAdd }) => {
           enqueueSnackbar("The goal was created successfully.", {
             variant: "success",
           });
-          setGoalHasBeenAdd(!goalHasBeenAdd)
+          setGoalHasBeenAdd(!goalHasBeenAdd);
           closeModal();
         } else {
           enqueueSnackbar("An error occurred while creating the goal.", {
@@ -141,7 +168,7 @@ const GoalForm = ({ open, setOpen, setGoalHasBeenAdd, goalHasBeenAdd }) => {
             type="number"
             variant="outlined"
             fullWidth
-            value={newGoal.weight}
+            value={newGoal.calories}
             onChange={(e) => handleCaloriesInputChange(e)}
             style={{ marginBottom: "7px" }}
             onKeyPress={(event) => {
@@ -184,7 +211,9 @@ const GoalForm = ({ open, setOpen, setGoalHasBeenAdd, goalHasBeenAdd }) => {
                   variant="outlined"
                   fullWidth
                   margin="normal"
-                  disablePast
+                  disabled={!newGoal.startDate}
+                  minDate={newGoal.startDate}
+                  minDateMessage="La fecha de fin debe ser posterior a la fecha de inicio"
                   InputLabelProps={{
                     shrink: true,
                   }}
@@ -213,7 +242,7 @@ const GoalForm = ({ open, setOpen, setGoalHasBeenAdd, goalHasBeenAdd }) => {
             }}
             fullWidth
           >
-            Add Goal
+            {initialData ? "Update Goal" : "Add Goal"}
           </Button>
         </div>
       </Box>

@@ -4,7 +4,7 @@ import { useSnackbar } from "notistack";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import CategoryForm from "./CategoryForm";
 import CloseIcon from "@mui/icons-material/Close";
-import getApiUrl from '../../helpers/apiConfig';
+import getApiUrl from "../../helpers/apiConfig";
 import CategoryAutocomplete from "../CategoryAutocomplete";
 
 const apiUrl = getApiUrl();

@@ -77,7 +77,7 @@ const Main = () => {
                 marginBottom="1%"
                 style={{ color: "black", width: "100%" }}
               >
-                GOAL:
+                ACTIVE GOALS:
               </Typography>
               <Grid container alignItems="center" style={{ width: "100%" }}>
                 <Grid item xs={10}>
@@ -129,11 +129,29 @@ const Main = () => {
                       color: "black",
                       fontSize: "18px",
                       width: "100%",
-                      textAlign: "center", // Center the text horizontally
+                      textAlign: "center",
                     }}
                   >
-                    End Date: {selectedGoal.endDate.split("T")[0]}
+                    {progress > selectedGoal.calories
+                      ? `You exceeded by ${
+                          progress - selectedGoal.calories
+                        } calories`
+                      : `You are missing ${
+                          selectedGoal.calories - progress
+                        } calories`}
                   </Typography>
+                  {progress < selectedGoal.calories && (
+                    <Typography
+                      style={{
+                        color: "black",
+                        fontSize: "18px",
+                        width: "100%",
+                        textAlign: "center",
+                      }}
+                    >
+                      You have time until: {selectedGoal.endDate.split("T")[0]}
+                    </Typography>
+                  )}
                 </Grid>
               ) : (
                 <p>Loading...</p>

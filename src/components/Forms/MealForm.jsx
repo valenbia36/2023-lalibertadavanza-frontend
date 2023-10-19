@@ -19,8 +19,8 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import CloseIcon from "@mui/icons-material/Close";
-import getApiUrl from '../../helpers/apiConfig';
-
+import getApiUrl from "../../helpers/apiConfig";
+import { Autocomplete } from "@mui/material";
 const apiUrl = getApiUrl();
 
 const initialMealState = {
@@ -75,7 +75,17 @@ const MealForm = ({ open, setOpen, initialData }) => {
   };
 
   const handleAddMeal = () => {
-    if ( mealData.name === "" || mealData.date === "" || mealData.hour === "" || !mealData.foods.every((food) => food.name !== "" && food.weight !== "" && Number(food.weightConsumed) > 0)) {
+    if (
+      mealData.name === "" ||
+      mealData.date === "" ||
+      mealData.hour === "" ||
+      !mealData.foods.every(
+        (food) =>
+          food.name !== "" &&
+          food.weight !== "" &&
+          Number(food.weightConsumed) > 0
+      )
+    ) {
       enqueueSnackbar("Please complete all the fields correctly.", {
         variant: "error",
       });
@@ -162,10 +172,12 @@ const MealForm = ({ open, setOpen, initialData }) => {
 
   const handleQuantityInputChange = (e, index) => {
     const inputValue = Number(e.target.value);
-      const updatedFoods = [...mealData.foods];
-      updatedFoods[index].weightConsumed = inputValue;
-      updatedFoods[index].totalCalories =  Math.round(inputValue * (updatedFoods[index].calories / updatedFoods[index].weight));
-      setMealData({ ...mealData, foods: updatedFoods });
+    const updatedFoods = [...mealData.foods];
+    updatedFoods[index].weightConsumed = inputValue;
+    updatedFoods[index].totalCalories = Math.round(
+      inputValue * (updatedFoods[index].calories / updatedFoods[index].weight)
+    );
+    setMealData({ ...mealData, foods: updatedFoods });
   };
 
   return (
@@ -186,7 +198,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
           bgcolor: "background.paper",
           boxShadow: 24,
           p: 4,
-          borderRadius: '2%'
+          borderRadius: "2%",
         }}
       >
         <IconButton
@@ -265,27 +277,25 @@ const MealForm = ({ open, setOpen, initialData }) => {
           {mealData.foods.map((food, index) => (
             <React.Fragment key={index}>
               <Grid item xs={6}>
-                <FormControl fullWidth>
-                  <InputLabel id={`food-label-${index}`}>Food</InputLabel>
-                  <Select
-                    labelId={`food-label-${index}`}
-                    id={`food-select-${index}`}
-                    value={food.name}
-                    label="Food"
-                    onChange={(e) => handleFoodInputChange(e, index)}
-                    MenuProps={{ PaperProps: { style: { maxHeight: 120 } } }}
-                  >
-                      {Array.isArray(foodOptions) && foodOptions.length > 0 ? (
-                        foodOptions.map((option) => (
-                          <MenuItem key={option.id} value={option.name}>
-                            {option.name}
-                          </MenuItem>
-                        ))
-                      ) : (
-                        <MenuItem value="">No foods available.</MenuItem>
-                      )}
-                  </Select>
-                </FormControl>
+                <Autocomplete
+                  style={{ width: "100%", maxWidth: 400, minWidth: 200 }}
+                  value={food.name}
+                  onChange={(e) => handleFoodInputChange(e, index)}
+                  options={foodOptions}
+                  getOptionLabel={(option) => option.name}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Choose a Food"
+                      variant="outlined"
+                    />
+                  )}
+                  ListboxProps={{
+                    style: {
+                      maxHeight: 110,
+                    },
+                  }}
+                />
               </Grid>
               <Grid item xs={4}>
                 <TextField

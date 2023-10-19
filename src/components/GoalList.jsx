@@ -10,12 +10,17 @@ const GoalList = () => {
         color: "black",
         display: "flex",
         flexDirection: "column",
-        alignItems: "center", // Esto centrará horizontalmente el contenido
+        alignItems: "center",
         justifyContent: "center",
-        marginBottom: '100px'
+        marginBottom: "100px",
       }}
     >
-      <Typography variant="h5" fontWeight="bold" align="center" marginBottom="2%">
+      <Typography
+        variant="h5"
+        fontWeight="bold"
+        align="center"
+        marginBottom="2%"
+      >
         GOALS TABLE
       </Typography>
       <div style={{ maxWidth: "100%" }}>

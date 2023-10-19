@@ -17,7 +17,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import MealForm from "../Forms/MealForm";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useSnackbar } from "notistack";
-import getApiUrl from '../../helpers/apiConfig';
+import getApiUrl from "../../helpers/apiConfig";
 
 const apiUrl = getApiUrl();
 
@@ -113,8 +113,12 @@ function Row(props) {
                       <TableCell component="th" scope="row" align="center">
                         {foodRow.name}
                       </TableCell>
-                      <TableCell align="center">{foodRow.totalCalories}</TableCell>
-                      <TableCell align="center">{foodRow.weightConsumed}</TableCell>
+                      <TableCell align="center">
+                        {foodRow.totalCalories}
+                      </TableCell>
+                      <TableCell align="center">
+                        {foodRow.weightConsumed}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

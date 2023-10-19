@@ -1,44 +1,48 @@
 import React, { useState, useEffect } from "react";
-import {
-  TextField,
-  Autocomplete,
-} from "@mui/material";
-import getApiUrl from '../helpers/apiConfig';
+import { TextField, Autocomplete } from "@mui/material";
+import getApiUrl from "../helpers/apiConfig";
 
-const CategoryAutocomplete = ({selectedCategory,onCategoryChange}) => {
-    const [categoriesOptions, setCategoriesOptions] = useState([]);
+const CategoryAutocomplete = ({ selectedCategory, onCategoryChange }) => {
+  const [categoriesOptions, setCategoriesOptions] = useState([]);
 
-    const apiUrl = getApiUrl();
+  const apiUrl = getApiUrl();
 
-    useEffect(() => {
-      getCategories();
-    }, [categoriesOptions]);
-  
-    const getCategories = async () => {
-      const response = await fetch(apiUrl + "/api/category/", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      });
-      const data = await response.json();
-      const categories = (data.data).map(item => item.name);
-      setCategoriesOptions(categories);
-    };
+  useEffect(() => {
+    getCategories();
+  }, [categoriesOptions]);
+
+  const getCategories = async () => {
+    const response = await fetch(apiUrl + "/api/category/", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    });
+    const data = await response.json();
+    const categories = data.data.map((item) => item.name);
+    setCategoriesOptions(categories);
+  };
 
   return (
     <Autocomplete
-      style={{ width:  "100%", maxWidth: 400, minWidth: 200 }}
+      style={{ width: "100%", maxWidth: 400, minWidth: 200 }}
       value={selectedCategory}
       onChange={(event, newValue) => {
         onCategoryChange(newValue);
       }}
       options={categoriesOptions}
       getOptionLabel={(option) => option}
-      renderInput={(params) => <TextField {...params} label="Choose a Category" variant="outlined" />}
+      renderInput={(params) => (
+        <TextField {...params} label="Choose a Category" variant="outlined" />
+      )}
+      ListboxProps={{
+        style: {
+          maxHeight: 110,
+        },
+      }}
     />
   );
-}
+};
 
 export default CategoryAutocomplete;
