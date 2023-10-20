@@ -76,8 +76,14 @@ const GoalForm = ({
       });
       return;
     } else {
-      fetch(apiUrl + "/api/goals", {
-        method: "POST",
+
+      const url = initialData
+        ? apiUrl + `/api/goals/${initialData._id}`
+        : apiUrl + "/api/goals";
+      const method = initialData ? "PUT" : "POST";
+
+      fetch(url, {
+        method: method,
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + localStorage.getItem("token"),
@@ -88,7 +94,9 @@ const GoalForm = ({
           enqueueSnackbar("The goal was created successfully.", {
             variant: "success",
           });
-          setGoalHasBeenAdd(!goalHasBeenAdd);
+          if(!initialData){
+            setGoalHasBeenAdd(!goalHasBeenAdd);
+          }
           closeModal();
         } else {
           enqueueSnackbar("An error occurred while creating the goal.", {
