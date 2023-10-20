@@ -4,7 +4,8 @@ import getApiUrl from "../helpers/apiConfig";
 
 const apiUrl = getApiUrl();
 
-const GoalSelect = ({ setSelectedGoal, selectedGoal, goalHasBeenAdd }) => {
+const GoalSelect = ({ onChangeGoal, goalHasBeenAdd }) => {
+  const [selectedGoal, setSelectedGoal] = useState("");
   const [goals, setGoals] = useState([]);
 
   useEffect(() => {
@@ -27,7 +28,8 @@ const GoalSelect = ({ setSelectedGoal, selectedGoal, goalHasBeenAdd }) => {
       }
     );
     const data = await response.json();
-    setSelectedGoal(data.filteredData[0]);
+    setSelectedGoal(data.filteredData[0].name);
+    onChangeGoal(data.filteredData[0])
     setGoals(data.filteredData);
   };
 
@@ -43,7 +45,8 @@ const GoalSelect = ({ setSelectedGoal, selectedGoal, goalHasBeenAdd }) => {
           const selectedGoalObj = goals.find(
             (goal) => goal.name === e.target.value
           );
-          setSelectedGoal(selectedGoalObj);
+          setSelectedGoal(e.target.value);
+          onChangeGoal(selectedGoalObj)
         }}
         MenuProps={{ PaperProps: { style: { maxHeight: 110 } } }}
       >

@@ -68,7 +68,8 @@ const GoalForm = ({
       newGoal.calories === "" ||
       newGoal.userId === "" ||
       newGoal.startDate === "" ||
-      newGoal.endDate === ""
+      newGoal.endDate === "" ||
+      newGoal.endDate < newGoal.startDate
     ) {
       enqueueSnackbar("Please complete all the fields correctly.", {
         variant: "error",

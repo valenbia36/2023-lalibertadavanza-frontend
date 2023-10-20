@@ -1,7 +1,7 @@
 import React from "react";
 import { CircularProgress, Typography, Box, Grid } from "@mui/material";
 
-const GoalProgress = ({ goal, progress }) => {
+const GoalChart = ({ goal, progress }) => {
   var percentage = (progress / goal) * 100;
   var perToShow = Math.round(percentage);
   let color = "";
@@ -53,4 +53,4 @@ const GoalProgress = ({ goal, progress }) => {
   );
 };
 
-export default GoalProgress;
+export default GoalChart;
