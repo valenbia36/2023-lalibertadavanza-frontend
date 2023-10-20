@@ -73,7 +73,7 @@ export default function GoalTable() {
 
   const handleGetGoals = async () => {
     const response = await fetch(
-      apiUrl + "/api/goals/" + localStorage.getItem("userId"),
+      apiUrl + "/api/goals/goalsWithProgress/" + localStorage.getItem("userId"),
       {
         method: "GET",
         headers: {
@@ -84,8 +84,8 @@ export default function GoalTable() {
     );
 
     const data = await response.json();
-    setGoals(data.data);
-    setTotalItems(data.data.length);
+    setGoals(data.goalsWithProgress);
+    setTotalItems(data.goalsWithProgress.length);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -161,7 +161,7 @@ export default function GoalTable() {
                       {`${row.endDate.split("T")[0]}`}
                     </TableCell>
                     <TableCell style={{ width: 160 }} align="center">
-                      {`${row.calories}/...`}
+                      {`${row.calories}`+"/"+`${row.totalCalorias}`}
                     </TableCell>
                   </TableRow>
                 )

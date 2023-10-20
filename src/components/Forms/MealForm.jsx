@@ -277,25 +277,27 @@ const MealForm = ({ open, setOpen, initialData }) => {
           {mealData.foods.map((food, index) => (
             <React.Fragment key={index}>
               <Grid item xs={6}>
-                <Autocomplete
-                  style={{ width: "100%", maxWidth: 400, minWidth: 200 }}
-                  value={food.name}
-                  onChange={(e) => handleFoodInputChange(e, index)}
-                  options={foodOptions}
-                  getOptionLabel={(option) => option.name}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Choose a Food"
-                      variant="outlined"
-                    />
-                  )}
-                  ListboxProps={{
-                    style: {
-                      maxHeight: 110,
-                    },
-                  }}
-                />
+              <FormControl fullWidth>
+                  <InputLabel id={`food-label-${index}`}>Food</InputLabel>
+                  <Select
+                    labelId={`food-label-${index}`}
+                    id={`food-select-${index}`}
+                    value={food.name}
+                    label="Food"
+                    onChange={(e) => handleFoodInputChange(e, index)}
+                    MenuProps={{ PaperProps: { style: { maxHeight: 120 } } }}
+                  >
+                      {Array.isArray(foodOptions) && foodOptions.length > 0 ? (
+                        foodOptions.map((option) => (
+                          <MenuItem key={option.id} value={option.name}>
+                            {option.name}
+                          </MenuItem>
+                        ))
+                      ) : (
+                        <MenuItem value="">No foods available.</MenuItem>
+                      )}
+                  </Select>
+                </FormControl>
               </Grid>
               <Grid item xs={4}>
                 <TextField
