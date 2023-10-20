@@ -69,7 +69,7 @@ export default function GoalTable() {
 
   useEffect(() => {
     handleGetGoals();
-  }, []);
+  }, [goals]);
 
   const handleGetGoals = async () => {
     const response = await fetch(
@@ -118,7 +118,10 @@ export default function GoalTable() {
   return (
     <div>
       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 200 }} aria-label="custom pagination table">
+        <Table
+          sx={{ minWidth: 200, minHeight: 500 }}
+          aria-label="custom pagination table"
+        >
           <TableHead sx={{ fontWeight: "bold" }}>
             <TableRow sx={{ fontWeight: "bold" }}>
               <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>

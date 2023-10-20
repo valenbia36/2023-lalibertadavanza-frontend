@@ -57,7 +57,7 @@ const Main = () => {
     if (selectedGoal) {
       getCaloriesForGoal();
     }
-  }, [selectedGoal]);
+  }, [selectedGoal, goalHasBeenAdd]);
 
   return (
     <div className="container">

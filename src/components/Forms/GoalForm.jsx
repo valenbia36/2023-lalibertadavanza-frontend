@@ -178,7 +178,7 @@ const GoalForm = ({
             }}
           />
 
-          <Grid item xs={12}>
+          <Grid item xs={12} style={{ marginBottom: "7px" }}>
             <FormControl fullWidth>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
@@ -193,7 +193,6 @@ const GoalForm = ({
                   inputProps={{
                     step: 60,
                   }}
-                  style={{ marginBottom: "7px" }}
                   value={newGoal.startDate}
                   onChange={(newDate) =>
                     setNewGoal({ ...newGoal, startDate: newDate })
