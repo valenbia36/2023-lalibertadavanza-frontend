@@ -61,7 +61,7 @@ const GoalForm = ({
         endDate: new Date(),
       });
     }
-  }, [initialData]);
+  }, [initialData, open]);
 
   const handleAddGoal = () => {
     if (
@@ -209,8 +209,12 @@ const GoalForm = ({
                     step: 60,
                   }}
                   value={newGoal.startDate}
-                  onChange={(newDate) =>
-                    setNewGoal({ ...newGoal, startDate: newDate })
+                  onChange={(newDate) => {
+                      setNewGoal((prevGoal) => ({
+                        ...prevGoal,
+                        startDate: newDate,
+                      }));
+                    }
                   }
                 />
               </LocalizationProvider>
@@ -235,15 +239,13 @@ const GoalForm = ({
                     step: 60,
                   }}
                   value={newGoal.endDate}
-                  onChange={(newEndDate) => {
-                    console.log("Fecha seleccionada en el DatePicker:", newEndDate);
-                    newEndDate.setHours(23, 59, 59);
+                  onChange={(newDate) => {
                     setNewGoal((prevGoal) => ({
                       ...prevGoal,
-                      endDate: newEndDate,
+                      endDate: newDate,
                     }));
-                    console.log("newGoal después de la actualización:", newGoal);
-                  }}
+                  }
+                  }
                 />
               </LocalizationProvider>
             </FormControl>

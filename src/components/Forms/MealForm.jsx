@@ -72,7 +72,6 @@ const MealForm = ({ open, setOpen, initialData }) => {
   };
 
   const handleAddMeal = () => {
-    console.log(mealData)
     if (
       mealData.name === "" ||
       mealData.date === "" ||
@@ -160,10 +159,18 @@ const MealForm = ({ open, setOpen, initialData }) => {
 
   const handleFoodInputChange = (newValue, index) => {
     const updatedFoods = [...mealData.foods];
-    updatedFoods[index].name = newValue.name;
-    updatedFoods[index].calories = newValue.calories;
-    updatedFoods[index].weight = newValue.weight;
-    updatedFoods[index].category = newValue.category;
+    if (newValue) {
+      updatedFoods[index].name = newValue.name ? newValue.name : "";
+      updatedFoods[index].calories = newValue.calories;
+      updatedFoods[index].weight = newValue.weight;
+      updatedFoods[index].category = newValue.category;
+    } else {
+      // Si newValue es null, establece los valores en blanco o predeterminados
+      updatedFoods[index].name = "";
+      updatedFoods[index].calories = 0; // O el valor que prefieras
+      updatedFoods[index].weight = 0; // O el valor que prefieras
+      updatedFoods[index].category = ""; // O el valor que prefieras
+    }
     setMealData({ ...mealData, foods: updatedFoods });
   };
 
@@ -274,10 +281,10 @@ const MealForm = ({ open, setOpen, initialData }) => {
           {mealData.foods.map((food, index) => (
           <React.Fragment key={index}>
             <Grid item xs={6}>
-              <Autocomplete
+             <Autocomplete
                 id={`food-autocomplete-${index}`}
                 options={foodOptions}
-                value={foodOptions.find(option => option.name === food.name)}
+                value={foodOptions.find(option => option.name === food.name) || null}
                 onChange={(e,newValue) => handleFoodInputChange(newValue, index)}
                 getOptionLabel={(option) => option.name}
                 renderInput={(params) => (

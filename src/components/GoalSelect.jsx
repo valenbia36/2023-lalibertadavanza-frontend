@@ -28,9 +28,11 @@ const GoalSelect = ({ onChangeGoal, goalHasBeenAdd }) => {
       }
     );
     const data = await response.json();
-    setSelectedGoal(data.filteredData[0].name);
-    onChangeGoal(data.filteredData[0])
-    setGoals(data.filteredData);
+    if(data.filteredData.length > 0) { 
+      setSelectedGoal(data.filteredData[0].name);
+      onChangeGoal(data.filteredData[0])
+      setGoals(data.filteredData);
+    }
   };
 
   return (
@@ -57,7 +59,7 @@ const GoalSelect = ({ onChangeGoal, goalHasBeenAdd }) => {
             </MenuItem>
           ))
         ) : (
-          <MenuItem value="">There are no goals available</MenuItem>
+          <MenuItem value="">You dont have active goals</MenuItem>
         )}
       </Select>
     </FormControl>
