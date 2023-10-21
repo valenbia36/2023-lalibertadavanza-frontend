@@ -235,9 +235,15 @@ const GoalForm = ({
                     step: 60,
                   }}
                   value={newGoal.endDate}
-                  onChange={(newDate) =>
-                    setNewGoal({ ...newGoal, endDate: newDate })
-                  }
+                  onChange={(newEndDate) => {
+                    console.log("Fecha seleccionada en el DatePicker:", newEndDate);
+                    newEndDate.setHours(23, 59, 59);
+                    setNewGoal((prevGoal) => ({
+                      ...prevGoal,
+                      endDate: newEndDate,
+                    }));
+                    console.log("newGoal después de la actualización:", newGoal);
+                  }}
                 />
               </LocalizationProvider>
             </FormControl>

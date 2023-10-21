@@ -6,9 +6,6 @@ import {
   Box,
   IconButton,
   Grid,
-  Select,
-  MenuItem,
-  InputLabel,
   FormControl,
 } from "@mui/material";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
@@ -75,6 +72,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
   };
 
   const handleAddMeal = () => {
+    console.log(mealData)
     if (
       mealData.name === "" ||
       mealData.date === "" ||
@@ -160,13 +158,12 @@ const MealForm = ({ open, setOpen, initialData }) => {
     setMealData({ ...mealData, foods: updatedFoods });
   };
 
-  const handleFoodInputChange = (event, index) => {
+  const handleFoodInputChange = (newValue, index) => {
     const updatedFoods = [...mealData.foods];
-    updatedFoods[index].name = event.target.value;
-    let result = foodOptions.find((item) => item.name === event.target.value);
-    updatedFoods[index].calories = result ? result.calories : "";
-    updatedFoods[index].weight = result ? result.weight : "";
-    updatedFoods[index].category = result ? result.category : "";
+    updatedFoods[index].name = newValue.name;
+    updatedFoods[index].calories = newValue.calories;
+    updatedFoods[index].weight = newValue.weight;
+    updatedFoods[index].category = newValue.category;
     setMealData({ ...mealData, foods: updatedFoods });
   };
 
@@ -275,66 +272,57 @@ const MealForm = ({ open, setOpen, initialData }) => {
             </FormControl>
           </Grid>
           {mealData.foods.map((food, index) => (
-            <React.Fragment key={index}>
-              <Grid item xs={6}>
-              <FormControl fullWidth>
-                  <InputLabel id={`food-label-${index}`}>Food</InputLabel>
-                  <Select
-                    labelId={`food-label-${index}`}
-                    id={`food-select-${index}`}
-                    value={food.name}
+          <React.Fragment key={index}>
+            <Grid item xs={6}>
+              <Autocomplete
+                id={`food-autocomplete-${index}`}
+                options={foodOptions}
+                value={foodOptions.find(option => option.name === food.name)}
+                onChange={(e,newValue) => handleFoodInputChange(newValue, index)}
+                getOptionLabel={(option) => option.name}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
                     label="Food"
-                    onChange={(e) => handleFoodInputChange(e, index)}
-                    MenuProps={{ PaperProps: { style: { maxHeight: 120 } } }}
-                  >
-                      {Array.isArray(foodOptions) && foodOptions.length > 0 ? (
-                        foodOptions.map((option) => (
-                          <MenuItem key={option.id} value={option.name}>
-                            {option.name}
-                          </MenuItem>
-                        ))
-                      ) : (
-                        <MenuItem value="">No foods available.</MenuItem>
-                      )}
-                  </Select>
-                </FormControl>
+                    variant="outlined"
+                    fullWidth
+                  />
+                )}
+                noOptionsText="No foods available."
+              />
+            </Grid>
+            <Grid item xs={4}>
+              <TextField
+                InputProps={{
+                  inputProps: { min: 1 },
+                }}
+                label={`Weight (gr/ml)`}
+                type="number"
+                variant="outlined"
+                fullWidth
+                value={food.weightConsumed}
+                onChange={(e) => handleQuantityInputChange(e, index)}
+              />
+            </Grid>
+            {index === 0 && (
+              <Grid item xs={2} sx={{ display: "flex", alignItems: "center" }}>
+                <IconButton color="primary" onClick={handleAddFoodInput}>
+                  <AddCircleRoundedIcon />
+                </IconButton>
               </Grid>
-              <Grid item xs={4}>
-                <TextField
-                  InputProps={{
-                    inputProps: { min: 1 },
-                  }}
-                  label={`Weight (gr/ml)`}
-                  type="number"
-                  variant="outlined"
-                  fullWidth
-                  value={food.weightConsumed}
-                  onChange={(e) => handleQuantityInputChange(e, index)}
-                />
-              </Grid>
-              {index === 0 && (
-                <Grid
-                  item
-                  xs={2}
-                  sx={{ display: "flex", alignItems: "center" }}
+            )}
+            {index > 0 && (
+              <Grid item xs={2}>
+                <IconButton
+                  color="primary"
+                  onClick={() => handleRemoveFoodInput(index)}
                 >
-                  <IconButton color="primary" onClick={handleAddFoodInput}>
-                    <AddCircleRoundedIcon />
-                  </IconButton>
-                </Grid>
-              )}
-              {index > 0 && (
-                <Grid item xs={2}>
-                  <IconButton
-                    color="primary"
-                    onClick={() => handleRemoveFoodInput(index)}
-                  >
-                    <RemoveCircleRoundedIcon />
-                  </IconButton>
-                </Grid>
-              )}
-            </React.Fragment>
-          ))}
+                  <RemoveCircleRoundedIcon />
+                </IconButton>
+              </Grid>
+            )}
+          </React.Fragment>
+        ))}
           <Grid item xs={12}>
             <Button
               variant="contained"
