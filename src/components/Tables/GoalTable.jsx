@@ -14,8 +14,9 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import Modal from "@mui/material/Modal";
 import getApiUrl from "../../helpers/apiConfig";
 import CloseIcon from "@mui/icons-material/Close";
-import { Button } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import GoalForm from "../../components/Forms/GoalForm";
+import { useSnackbar } from "notistack";
 
 const apiUrl = getApiUrl();
 
@@ -67,9 +68,11 @@ export default function GoalTable() {
   const [selectedGoal, setSelectedGoal] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const { enqueueSnackbar } = useSnackbar();
+
   useEffect(() => {
     handleGetGoals();
-  }, [goals]);
+  }, [goals, selectedGoal]);
 
   const handleGetGoals = async () => {
     const response = await fetch(
@@ -86,6 +89,31 @@ export default function GoalTable() {
     const data = await response.json();
     setGoals(data.goalsWithProgress);
     setTotalItems(data.goalsWithProgress.length);
+  };
+
+  const handleDeleteGoal = async (goal) => {
+    const response = await fetch(
+      apiUrl + "/api/goals/" + goal._id,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      setSelectedGoal(null);
+      setIsModalOpen(false);
+      enqueueSnackbar("The goal was delete successfully.", {
+        variant: "success",
+      });
+    } else {
+      enqueueSnackbar("An error occurred while deleting the goal.", {
+        variant: "error",
+      });
+    }
   };
 
   const handleChangePage = (event, newPage) => {
@@ -161,7 +189,7 @@ export default function GoalTable() {
                       {`${row.endDate.split("T")[0]}`}
                     </TableCell>
                     <TableCell style={{ width: 160 }} align="center">
-                      {`${row.calories}`+"/"+`${row.totalCalorias}`}
+                      {`${row.calories}/${row.totalCalorias}`}
                     </TableCell>
                   </TableRow>
                 )
@@ -185,12 +213,16 @@ export default function GoalTable() {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: "100%",
-            maxWidth: 500,
+            maxWidth: 400,
+            width: "90%",
             bgcolor: "background.paper",
             boxShadow: 24,
-            p: 5,
+            p: 3,
             borderRadius: "2%",
+            textAlign: "center", // Center the content horizontally
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center", // Center the content vertically
           }}
         >
           <IconButton
@@ -207,26 +239,49 @@ export default function GoalTable() {
           </IconButton>
           {selectedGoal && (
             <div>
-              <h2>Detalles del Objetivo: {selectedGoal.name}</h2>
-              <p>Estado: {calculateGoalStatus(selectedGoal)}</p>
-              <p>Fecha de Inicio: {selectedGoal.startDate.split("T")[0]}</p>
-              <p>Fecha de Finalización: {selectedGoal.endDate.split("T")[0]}</p>
-              {calculateGoalStatus(selectedGoal) == "Not started" && (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => setIsModalOpen(true)}
-                  sx={{
-                    mt: 3,
-                    mb: 2,
-                    backgroundColor: "#373D20",
-                    "&:hover": { backgroundColor: "#373D20" },
-                    fontWeight: "bold",
-                  }}
-                  fullWidth
-                >
-                  Edit Goal
-                </Button>
+              <h3 style={{ textDecoration: 'underline' }}>{selectedGoal.name}</h3>
+              <div style={{ textAlign: 'left', marginTop: '10%' }}>
+                <ul>
+                  <li><span style={{ fontWeight: 'bold' }}>State:</span> {calculateGoalStatus(selectedGoal)}</li>
+                  <li><span style={{ fontWeight: 'bold' }}>Calories:</span> {selectedGoal.calories}/{selectedGoal.totalCalorias}</li>
+                  <li><span style={{ fontWeight: 'bold' }}>Start Date:</span> {selectedGoal.startDate.split("T")[0]}</li>
+                  <li><span style={{ fontWeight: 'bold' }}>End Date:</span> {selectedGoal.endDate.split("T")[0]}</li>
+                </ul>
+              </div>
+
+              {calculateGoalStatus(selectedGoal) === "Not started" && (
+                <Grid container spacing={2}>
+                  <Grid item xs={6}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => setIsModalOpen(true)}
+                      sx={{
+                        backgroundColor: "#373D20",
+                        "&:hover": { backgroundColor: "#373D20" },
+                        fontWeight: "bold",
+                      }}
+                      fullWidth
+                    >
+                      Edit Goal
+                    </Button>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => handleDeleteGoal(selectedGoal)}
+                      sx={{
+                        backgroundColor: "#373D20",
+                        "&:hover": { backgroundColor: "#373D20" },
+                        fontWeight: "bold",
+                      }}
+                      fullWidth
+                    >
+                      Delete&nbsp;Goal
+                    </Button>
+                  </Grid>
+                </Grid>
               )}
               <GoalForm
                 open={isModalOpen}
@@ -237,6 +292,7 @@ export default function GoalTable() {
           )}
         </Box>
       </Modal>
+
     </div>
   );
 }

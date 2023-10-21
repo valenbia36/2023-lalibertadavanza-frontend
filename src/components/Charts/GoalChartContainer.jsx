@@ -56,7 +56,7 @@ const GoalChartContainer = () => {
                   marginBottom="1%"
                   style={{ color: "black", width: "100%" }}
                 >
-                  ACTIVE GOALS:
+                  ACTIVE GOALS
                 </Typography>
                 <Grid container alignItems="center" style={{ width: "100%" }}>
                   <Grid item xs={10}>
@@ -132,7 +132,7 @@ const GoalChartContainer = () => {
                     )}
                   </Grid>
                 ) : (
-                  <p>Loading...</p>
+                  <p style={{color: 'black'}}>Loading...</p>
                 )}
               </div>
 
