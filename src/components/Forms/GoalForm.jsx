@@ -21,8 +21,8 @@ const initialGoalState = {
   name: "",
   calories: "",
   userId: localStorage.getItem("userId"),
-  startDate: "",
-  endDate: "",
+  startDate: new Date(),
+  endDate: new Date(),
 };
 
 const GoalForm = ({
@@ -31,6 +31,7 @@ const GoalForm = ({
   setGoalHasBeenAdd,
   goalHasBeenAdd,
   initialData,
+  setSelectedGoal
 }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [newGoal, setNewGoal] = useState({
@@ -38,7 +39,7 @@ const GoalForm = ({
     calories: "",
     userId: localStorage.getItem("userId"),
     startDate: new Date(),
-    endDate: "",
+    endDate: new Date(),
   });
 
   useEffect(() => {
@@ -57,7 +58,7 @@ const GoalForm = ({
         calories: "",
         userId: localStorage.getItem("userId"),
         startDate: new Date(),
-        endDate: "",
+        endDate: new Date(),
       });
     }
   }, [initialData]);
@@ -91,11 +92,16 @@ const GoalForm = ({
         body: JSON.stringify(newGoal),
       }).then(function (response) {
         if (response.status === 200) {
-          enqueueSnackbar("The goal was created successfully.", {
+          enqueueSnackbar(initialData
+            ? "The goal was updated successfully."
+            : "The goal was created successfully.", {
             variant: "success",
           });
-          if(!initialData){
+          if (!initialData) {
             setGoalHasBeenAdd(!goalHasBeenAdd);
+          } else{
+            setSelectedGoal(newGoal)
+            console.log('## ' + typeof newGoal + ' - ' + typeof newGoal.startDate)
           }
           closeModal();
         } else {

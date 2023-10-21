@@ -17,6 +17,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { Button, Grid } from "@mui/material";
 import GoalForm from "../../components/Forms/GoalForm";
 import { useSnackbar } from "notistack";
+import InfoIcon from '@mui/icons-material/Info';
 
 const apiUrl = getApiUrl();
 
@@ -72,7 +73,7 @@ export default function GoalTable() {
 
   useEffect(() => {
     handleGetGoals();
-  }, [goals, selectedGoal]);
+  }, [goals, selectedGoal, isModalOpen]);
 
   const handleGetGoals = async () => {
     const response = await fetch(
@@ -120,10 +121,6 @@ export default function GoalTable() {
     setPage(newPage);
   };
 
-  const handleRowClick = (goal) => {
-    setSelectedGoal(goal);
-  };
-
   const calculateGoalStatus = (goal) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -143,6 +140,15 @@ export default function GoalTable() {
     }
   };
 
+  function formatDate(date) {
+    if (typeof date === 'string') {
+        console.log(date)
+        const parts = date.substring(0,10).split("-");
+        return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }  
+    return date.toLocaleDateString();
+  }  
+
   return (
     <div>
       <TableContainer component={Paper}>
@@ -156,11 +162,12 @@ export default function GoalTable() {
                 Name
               </TableCell>
               <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
-                Start Date <br />
+                Start Date
+              </TableCell>
+              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
                 End Date
               </TableCell>
               <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
-                Goal/Progress
               </TableCell>
             </TableRow>
           </TableHead>
@@ -174,22 +181,27 @@ export default function GoalTable() {
             ) : (
               (5 > 0 ? goals.slice(page * 5, page * 5 + 5) : goals).map(
                 (row) => (
-                  <TableRow key={row.name} onClick={() => handleRowClick(row)}>
+                  <TableRow key={row.name}>
                     <TableCell
                       component="th"
                       scope="row"
-                      style={{ width: 160 }}
+                      style={{ width: 130 }}
                       align="center"
                     >
                       {row.name}
                     </TableCell>
-                    <TableCell style={{ width: 150 }} align="center">
+                    <TableCell style={{ width: 130 }} align="center">
                       {`${row.startDate.split("T")[0]}`}
-                      <br />
+                    </TableCell>
+                    <TableCell style={{ width: 130 }} align="center">
                       {`${row.endDate.split("T")[0]}`}
                     </TableCell>
-                    <TableCell style={{ width: 160 }} align="center">
-                      {`${row.calories}/${row.totalCalorias}`}
+                    <TableCell style={{ width: 50 }} align="center">
+                      <IconButton
+                        onClick={() => { setSelectedGoal(row); console.log('>> ' + typeof row + ' - ' + typeof row.startDate) }}
+                      >
+                        <InfoIcon />
+                      </IconButton>
                     </TableCell>
                   </TableRow>
                 )
@@ -238,14 +250,21 @@ export default function GoalTable() {
             <CloseIcon />
           </IconButton>
           {selectedGoal && (
+
             <div>
-              <h3 style={{ textDecoration: 'underline' }}>{selectedGoal.name}</h3>
+              <h3 style={{ textDecoration: 'underline', fontWeight: 'bold' }}>{selectedGoal.name}</h3>
               <div style={{ textAlign: 'left', marginTop: '10%' }}>
                 <ul>
                   <li><span style={{ fontWeight: 'bold' }}>State:</span> {calculateGoalStatus(selectedGoal)}</li>
                   <li><span style={{ fontWeight: 'bold' }}>Calories:</span> {selectedGoal.calories}/{selectedGoal.totalCalorias}</li>
-                  <li><span style={{ fontWeight: 'bold' }}>Start Date:</span> {selectedGoal.startDate.split("T")[0]}</li>
-                  <li><span style={{ fontWeight: 'bold' }}>End Date:</span> {selectedGoal.endDate.split("T")[0]}</li>
+                  <li>
+                    <span style={{ fontWeight: 'bold' }}>Start Date:</span>{" "}
+                    {formatDate(selectedGoal.startDate)}
+                  </li>
+                  <li>
+                    <span style={{ fontWeight: 'bold' }}>End Date:</span>{" "}
+                    {formatDate(selectedGoal.endDate)}
+                  </li>
                 </ul>
               </div>
 
@@ -287,6 +306,7 @@ export default function GoalTable() {
                 open={isModalOpen}
                 setOpen={setIsModalOpen}
                 initialData={selectedGoal}
+                setSelectedGoal={setSelectedGoal}
               />
             </div>
           )}
