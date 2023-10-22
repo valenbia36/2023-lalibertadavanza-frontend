@@ -17,7 +17,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import { Button, Grid } from "@mui/material";
 import GoalForm from "../../components/Forms/GoalForm";
 import { useSnackbar } from "notistack";
-import InfoIcon from '@mui/icons-material/Info';
+import InfoIcon from "@mui/icons-material/Info";
+import { Select, MenuItem, InputLabel, FormControl } from "@mui/material";
 
 const apiUrl = getApiUrl();
 
@@ -61,19 +62,24 @@ function TablePaginationActions(props) {
   );
 }
 
-export default function GoalTable() {
+export default function GoalTable({ filterOpen }) {
   const [totalItems, setTotalItems] = useState(0);
   const [page, setPage] = React.useState(0);
   const [noResults, setNoResults] = useState(false);
   const [goals, setGoals] = useState([]);
   const [selectedGoal, setSelectedGoal] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState("");
 
   const { enqueueSnackbar } = useSnackbar();
 
+  const handleFilterChange = (event) => {
+    setSelectedFilter(event.target.value);
+  };
+
   useEffect(() => {
     handleGetGoals();
-  }, [goals, selectedGoal, isModalOpen]);
+  }, [goals, selectedGoal, isModalOpen, selectedFilter]);
 
   const handleGetGoals = async () => {
     const response = await fetch(
@@ -88,21 +94,26 @@ export default function GoalTable() {
     );
 
     const data = await response.json();
-    setGoals(data.goalsWithProgress);
-    setTotalItems(data.goalsWithProgress.length);
+    if (selectedFilter !== "") {
+      const filteredGoals = data.goalsWithProgress.filter(
+        (item) => calculateGoalStatus(item) === selectedFilter
+      );
+      setGoals(filteredGoals);
+      setTotalItems(filteredGoals.length);
+    } else {
+      setGoals(data.goalsWithProgress);
+      setTotalItems(data.goalsWithProgress.length);
+    }
   };
 
   const handleDeleteGoal = async (goal) => {
-    const response = await fetch(
-      apiUrl + "/api/goals/" + goal._id,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      }
-    );
+    const response = await fetch(apiUrl + "/api/goals/" + goal._id, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    });
 
     if (response.status === 200) {
       setSelectedGoal(null);
@@ -141,33 +152,46 @@ export default function GoalTable() {
   };
 
   function formatDate(date) {
-    if (typeof date === 'string') {
-        console.log(date)
-        const parts = date.substring(0,10).split("-");
-        return `${parts[2]}/${parts[1]}/${parts[0]}`;
-    }  
+    if (typeof date === "string") {
+      console.log(date);
+      const parts = date.substring(0, 10).split("-");
+      return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
     return date.toLocaleDateString();
-  }  
+  }
 
   return (
     <div>
-      <TableContainer component={Paper}>
-        <Table
-          sx={{ minWidth: 200, minHeight: 500 }}
-          aria-label="custom pagination table"
+      {filterOpen && (
+        <FormControl
+          variant="outlined"
+          style={{ width: "50%", minWidth: 200, zIndex: 2 }}
         >
+          <InputLabel>State</InputLabel>
+          <Select
+            label="State"
+            value={selectedFilter}
+            onChange={handleFilterChange}
+            MenuProps={{ PaperProps: { style: { maxHeight: 200 } } }}
+          >
+            <MenuItem value={"In progress"}>In progress</MenuItem>
+            <MenuItem value={"Not started"}>Not started</MenuItem>
+            <MenuItem value={"Expired"}>Expired</MenuItem>
+          </Select>
+        </FormControl>
+      )}
+      <TableContainer component={Paper} sx={{ minWidth: 200, minHeight: 500 }}>
+        <Table aria-label="custom pagination table">
           <TableHead sx={{ fontWeight: "bold" }}>
             <TableRow sx={{ fontWeight: "bold" }}>
               <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
                 Name
               </TableCell>
               <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
-                Start Date
+                State
               </TableCell>
               <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
-                End Date
-              </TableCell>
-              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
+                Info
               </TableCell>
             </TableRow>
           </TableHead>
@@ -191,14 +215,16 @@ export default function GoalTable() {
                       {row.name}
                     </TableCell>
                     <TableCell style={{ width: 130 }} align="center">
-                      {`${row.startDate.split("T")[0]}`}
-                    </TableCell>
-                    <TableCell style={{ width: 130 }} align="center">
-                      {`${row.endDate.split("T")[0]}`}
+                      {`${calculateGoalStatus(row)}`}
                     </TableCell>
                     <TableCell style={{ width: 50 }} align="center">
                       <IconButton
-                        onClick={() => { setSelectedGoal(row); console.log('>> ' + typeof row + ' - ' + typeof row.startDate) }}
+                        onClick={() => {
+                          setSelectedGoal(row);
+                          console.log(
+                            ">> " + typeof row + " - " + typeof row.startDate
+                          );
+                        }}
                       >
                         <InfoIcon />
                       </IconButton>
@@ -250,19 +276,32 @@ export default function GoalTable() {
             <CloseIcon />
           </IconButton>
           {selectedGoal && (
-
             <div>
-              <h3 style={{ textDecoration: 'underline', fontWeight: 'bold' }}>{selectedGoal.name}</h3>
-              <div style={{ textAlign: 'left', marginTop: '10%' }}>
+              <h3 style={{ textDecoration: "underline", fontWeight: "bold" }}>
+                {selectedGoal.name}
+              </h3>
+              <div style={{ textAlign: "left", marginTop: "10%" }}>
                 <ul>
-                  <li><span style={{ fontWeight: 'bold' }}>State:</span> {calculateGoalStatus(selectedGoal)}</li>
-                  <li><span style={{ fontWeight: 'bold' }}>Calories:</span> {selectedGoal.calories}/{selectedGoal.totalCalorias}</li>
                   <li>
-                    <span style={{ fontWeight: 'bold' }}>Start Date:</span>{" "}
+                    <span style={{ fontWeight: "bold" }}>State:</span>{" "}
+                    {calculateGoalStatus(selectedGoal)}
+                  </li>
+                  <li>
+                    <span style={{ fontWeight: "bold" }}>Goal:</span>{" "}
+                    {selectedGoal.calories}
+                  </li>
+                  <li>
+                    <span style={{ fontWeight: "bold" }}>
+                      Calories Consumed:
+                    </span>{" "}
+                    {selectedGoal.totalCalorias}
+                  </li>
+                  <li>
+                    <span style={{ fontWeight: "bold" }}>Start Date:</span>{" "}
                     {formatDate(selectedGoal.startDate)}
                   </li>
                   <li>
-                    <span style={{ fontWeight: 'bold' }}>End Date:</span>{" "}
+                    <span style={{ fontWeight: "bold" }}>End Date:</span>{" "}
                     {formatDate(selectedGoal.endDate)}
                   </li>
                 </ul>
@@ -312,7 +351,6 @@ export default function GoalTable() {
           )}
         </Box>
       </Modal>
-
     </div>
   );
 }

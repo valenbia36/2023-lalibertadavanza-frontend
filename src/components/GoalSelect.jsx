@@ -4,17 +4,20 @@ import getApiUrl from "../helpers/apiConfig";
 
 const apiUrl = getApiUrl();
 
-const GoalSelect = ({ onChangeGoal, goalHasBeenAdd }) => {
+const GoalSelect = ({ onChangeGoal }) => {
   const [selectedGoal, setSelectedGoal] = useState("");
   const [goals, setGoals] = useState([]);
+  const [isSelectOpen, setIsSelectOpen] = useState(false);
 
   useEffect(() => {
     handleGetActiveGoals();
   }, []);
 
   useEffect(() => {
-    handleGetActiveGoals();
-  }, [goalHasBeenAdd]);
+    if (isSelectOpen) {
+      handleGetActiveGoals();
+    }
+  }, [isSelectOpen]);
 
   const handleGetActiveGoals = async () => {
     const response = await fetch(
@@ -28,9 +31,11 @@ const GoalSelect = ({ onChangeGoal, goalHasBeenAdd }) => {
       }
     );
     const data = await response.json();
-    if(data.filteredData.length > 0) { 
-      setSelectedGoal(data.filteredData[0].name);
-      onChangeGoal(data.filteredData[0])
+    if (data.filteredData.length > 0) {
+      if (selectedGoal == "") {
+        setSelectedGoal(data.filteredData[0].name);
+        onChangeGoal(data.filteredData[0]);
+      }
       setGoals(data.filteredData);
     }
   };
@@ -43,12 +48,14 @@ const GoalSelect = ({ onChangeGoal, goalHasBeenAdd }) => {
         id="category-select"
         label="Category"
         value={selectedGoal}
+        onOpen={() => setIsSelectOpen(true)} // Manejador para cuando el select se abre
+        onClose={() => setIsSelectOpen(false)}
         onChange={(e) => {
           const selectedGoalObj = goals.find(
             (goal) => goal.name === e.target.value
           );
           setSelectedGoal(e.target.value);
-          onChangeGoal(selectedGoalObj)
+          onChangeGoal(selectedGoalObj);
         }}
         MenuProps={{ PaperProps: { style: { maxHeight: 110 } } }}
       >

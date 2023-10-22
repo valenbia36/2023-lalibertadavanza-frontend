@@ -25,14 +25,7 @@ const initialGoalState = {
   endDate: new Date(),
 };
 
-const GoalForm = ({
-  open,
-  setOpen,
-  setGoalHasBeenAdd,
-  goalHasBeenAdd,
-  initialData,
-  setSelectedGoal
-}) => {
+const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [newGoal, setNewGoal] = useState({
     name: "",
@@ -77,7 +70,6 @@ const GoalForm = ({
       });
       return;
     } else {
-
       const url = initialData
         ? apiUrl + `/api/goals/${initialData._id}`
         : apiUrl + "/api/goals";
@@ -95,16 +87,19 @@ const GoalForm = ({
         body: JSON.stringify(newGoal),
       }).then(function (response) {
         if (response.status === 200) {
-          enqueueSnackbar(initialData
-            ? "The goal was updated successfully."
-            : "The goal was created successfully.", {
-            variant: "success",
-          });
-          if (!initialData) {
-            setGoalHasBeenAdd(!goalHasBeenAdd);
-          } else{
-            setSelectedGoal(newGoal)
-            console.log('## ' + typeof newGoal + ' - ' + typeof newGoal.startDate)
+          enqueueSnackbar(
+            initialData
+              ? "The goal was updated successfully."
+              : "The goal was created successfully.",
+            {
+              variant: "success",
+            }
+          );
+          if (initialData) {
+            setSelectedGoal(newGoal);
+            console.log(
+              "## " + typeof newGoal + " - " + typeof newGoal.startDate
+            );
           }
           closeModal();
         } else {
@@ -213,12 +208,11 @@ const GoalForm = ({
                   }}
                   value={newGoal.startDate}
                   onChange={(newDate) => {
-                      setNewGoal((prevGoal) => ({
-                        ...prevGoal,
-                        startDate: newDate,
-                      }));
-                    }
-                  }
+                    setNewGoal((prevGoal) => ({
+                      ...prevGoal,
+                      startDate: newDate,
+                    }));
+                  }}
                 />
               </LocalizationProvider>
             </FormControl>
@@ -247,8 +241,7 @@ const GoalForm = ({
                       ...prevGoal,
                       endDate: newDate,
                     }));
-                  }
-                  }
+                  }}
                 />
               </LocalizationProvider>
             </FormControl>

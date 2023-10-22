@@ -185,8 +185,8 @@ export default function MealTable() {
   };
 
   return (
-    <TableContainer component={Paper}>
-      <Table aria-label="collapsible table" sx={{ minHeight: 600 }}>
+    <TableContainer component={Paper} sx={{ minHeight: 500 }}>
+      <Table aria-label="collapsible table">
         <TableHead>
           <TableRow>
             <TableCell />

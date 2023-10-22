@@ -1,8 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Typography } from "@mui/material";
 import GoalTable from "./Tables/GoalTable";
+import GoalForm from "./Forms/GoalForm";
+import { IconButton } from "@mui/material";
+import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
+import FilterAltRoundedIcon from "@mui/icons-material/FilterAltRounded";
 
 const GoalList = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [filterOpen, setFilterOpen] = useState(false);
   return (
     <div
       style={{
@@ -24,7 +30,28 @@ const GoalList = () => {
         GOALS TABLE
       </Typography>
       <div style={{ maxWidth: "100%" }}>
-        <GoalTable />
+        <GoalTable filterOpen={filterOpen} />
+      </div>
+
+      <React.Fragment>
+        <GoalForm open={isModalOpen} setOpen={setIsModalOpen} />
+      </React.Fragment>
+
+      <div style={{ display: "flex" }}>
+        <IconButton
+          onClick={() => {
+            setIsModalOpen(true);
+          }}
+        >
+          <AddCircleRoundedIcon />
+        </IconButton>
+        <IconButton
+          onClick={() => {
+            setFilterOpen(!filterOpen);
+          }}
+        >
+          <FilterAltRoundedIcon />
+        </IconButton>
       </div>
     </div>
   );
