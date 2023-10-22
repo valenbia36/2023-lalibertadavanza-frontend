@@ -166,6 +166,12 @@ const MealForm = ({ open, setOpen, initialData }) => {
       updatedFoods[index].calories = newValue.calories;
       updatedFoods[index].weight = newValue.weight;
       updatedFoods[index].category = newValue.category;
+      if (updatedFoods[index].weightConsumed) {
+        updatedFoods[index].totalCalories = Math.round(
+          updatedFoods[index].weightConsumed *
+            (updatedFoods[index].calories / updatedFoods[index].weight)
+        );
+      }
     } else {
       // Si newValue es null, establece los valores en blanco o predeterminados
       updatedFoods[index].name = "";
@@ -281,57 +287,71 @@ const MealForm = ({ open, setOpen, initialData }) => {
             </FormControl>
           </Grid>
           {mealData.foods.map((food, index) => (
-          <React.Fragment key={index}>
-            <Grid item xs={6}>
-             <Autocomplete
-                id={`food-autocomplete-${index}`}
-                options={foodOptions}
-                value={foodOptions.find(option => option.name === food.name) || null}
-                onChange={(e,newValue) => handleFoodInputChange(newValue, index)}
-                getOptionLabel={(option) => option.name}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Food"
-                    variant="outlined"
-                    fullWidth
-                  />
-                )}
-                noOptionsText="No foods available."
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <TextField
-                InputProps={{
-                  inputProps: { min: 1 },
-                }}
-                label={`Weight (gr/ml)`}
-                type="number"
-                variant="outlined"
-                fullWidth
-                value={food.weightConsumed}
-                onChange={(e) => handleQuantityInputChange(e, index)}
-              />
-            </Grid>
-            {index === 0 && (
-              <Grid item xs={2} sx={{ display: "flex", alignItems: "center" }}>
-                <IconButton color="primary" onClick={handleAddFoodInput}>
-                  <AddCircleRoundedIcon />
-                </IconButton>
+            <React.Fragment key={index}>
+              <Grid item xs={6}>
+                <Autocomplete
+                  id={`food-autocomplete-${index}`}
+                  options={foodOptions}
+                  value={
+                    foodOptions.find((option) => option.name === food.name) ||
+                    null
+                  }
+                  onChange={(e, newValue) =>
+                    handleFoodInputChange(newValue, index)
+                  }
+                  getOptionLabel={(option) => option.name}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Food"
+                      variant="outlined"
+                      fullWidth
+                    />
+                  )}
+                  noOptionsText="No foods available."
+                  ListboxProps={{
+                    style: {
+                      maxHeight: 110,
+                    },
+                  }}
+                />
               </Grid>
-            )}
-            {index > 0 && (
-              <Grid item xs={2}>
-                <IconButton
-                  color="primary"
-                  onClick={() => handleRemoveFoodInput(index)}
+              <Grid item xs={4}>
+                <TextField
+                  InputProps={{
+                    inputProps: { min: 1 },
+                  }}
+                  label={`Weight (gr/ml)`}
+                  type="number"
+                  variant="outlined"
+                  fullWidth
+                  value={food.weightConsumed}
+                  onChange={(e) => handleQuantityInputChange(e, index)}
+                />
+              </Grid>
+              {index === 0 && (
+                <Grid
+                  item
+                  xs={2}
+                  sx={{ display: "flex", alignItems: "center" }}
                 >
-                  <RemoveCircleRoundedIcon />
-                </IconButton>
-              </Grid>
-            )}
-          </React.Fragment>
-        ))}
+                  <IconButton color="primary" onClick={handleAddFoodInput}>
+                    <AddCircleRoundedIcon />
+                  </IconButton>
+                </Grid>
+              )}
+              {index > 0 && (
+                <Grid item xs={2}>
+                  <IconButton
+                    color="primary"
+                    onClick={() => handleRemoveFoodInput(index)}
+                  >
+                    <RemoveCircleRoundedIcon />
+                  </IconButton>
+                </Grid>
+              )}
+            </React.Fragment>
+          ))}
           <Grid item xs={12}>
             <Button
               variant="contained"
