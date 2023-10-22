@@ -132,7 +132,7 @@ const GoalChartContainer = () => {
                     )}
                   </Grid>
                 ) : (
-                  <p style={{color: 'black'}}>You dont have active goals</p>
+                  <p style={{color: 'black', fontSize: '18px', textAlign: 'center', marginTop: '10%', fontWeight: 'bold'}}>You dont have active goals</p>
                 )}
               </div>
 

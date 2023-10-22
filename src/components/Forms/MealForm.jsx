@@ -93,6 +93,8 @@ const MealForm = ({ open, setOpen, initialData }) => {
         .reduce((acc, calories) => acc + calories, 0);
       mealData.hour = mealData.hour.toTimeString().slice(0, 5);
 
+      mealData.date.setHours(1, 0);
+
       const url = initialData
         ? apiUrl + `/api/meals/${initialData._id}`
         : apiUrl + "/api/meals";
