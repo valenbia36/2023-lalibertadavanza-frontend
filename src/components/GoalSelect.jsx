@@ -32,7 +32,7 @@ const GoalSelect = ({ onChangeGoal }) => {
     );
     const data = await response.json();
     if (data.filteredData.length > 0) {
-      if (selectedGoal == "") {
+      if (selectedGoal === "") {
         setSelectedGoal(data.filteredData[0].name);
         onChangeGoal(data.filteredData[0]);
       }

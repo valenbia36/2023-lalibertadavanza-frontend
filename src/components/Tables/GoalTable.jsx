@@ -65,7 +65,6 @@ function TablePaginationActions(props) {
 export default function GoalTable({ filterOpen }) {
   const [totalItems, setTotalItems] = useState(0);
   const [page, setPage] = React.useState(0);
-  const [noResults, setNoResults] = useState(false);
   const [goals, setGoals] = useState([]);
   const [selectedGoal, setSelectedGoal] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -78,8 +77,12 @@ export default function GoalTable({ filterOpen }) {
   };
 
   useEffect(() => {
+    if(!filterOpen)
+    {
+      setSelectedFilter("")
+    }
     handleGetGoals();
-  }, [goals, selectedGoal, isModalOpen, selectedFilter]);
+  }, [goals, selectedGoal, isModalOpen, selectedFilter,filterOpen]);
 
   const handleGetGoals = async () => {
     const response = await fetch(
@@ -94,9 +97,9 @@ export default function GoalTable({ filterOpen }) {
     );
 
     const data = await response.json();
-    if (selectedFilter !== "") {
+    if (selectedFilter !== "" && filterOpen) {
       const filteredGoals = data.goalsWithProgress.filter(
-        (item) => calculateGoalStatus(item) === selectedFilter
+        (item) => item.state === selectedFilter
       );
       setGoals(filteredGoals);
       setTotalItems(filteredGoals.length);
@@ -132,28 +135,8 @@ export default function GoalTable({ filterOpen }) {
     setPage(newPage);
   };
 
-  const calculateGoalStatus = (goal) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const goalStartDate = new Date(goal.startDate);
-    goalStartDate.setHours(0, 0, 0, 0);
-
-    const goalEndDate = new Date(goal.endDate);
-    goalEndDate.setHours(0, 0, 0, 0);
-
-    if (today < goalStartDate) {
-      return "Not started";
-    } else if (today >= goalStartDate && today <= goalEndDate) {
-      return "In progress";
-    } else {
-      return "Expired";
-    }
-  };
-
   function formatDate(date) {
     if (typeof date === "string") {
-      console.log(date);
       const parts = date.substring(0, 10).split("-");
       return `${parts[2]}/${parts[1]}/${parts[0]}`;
     }
@@ -196,7 +179,7 @@ export default function GoalTable({ filterOpen }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {noResults ? (
+            {totalItems === 0 ? (
               <TableRow>
                 <TableCell colSpan={3} align="center">
                   No results found.
@@ -215,15 +198,12 @@ export default function GoalTable({ filterOpen }) {
                       {row.name}
                     </TableCell>
                     <TableCell style={{ width: 130 }} align="center">
-                      {`${calculateGoalStatus(row)}`}
+                      {`${row.state}`}
                     </TableCell>
                     <TableCell style={{ width: 50 }} align="center">
                       <IconButton
                         onClick={() => {
                           setSelectedGoal(row);
-                          console.log(
-                            ">> " + typeof row + " - " + typeof row.startDate
-                          );
                         }}
                       >
                         <InfoIcon />
@@ -284,7 +264,7 @@ export default function GoalTable({ filterOpen }) {
                 <ul>
                   <li>
                     <span style={{ fontWeight: "bold" }}>State:</span>{" "}
-                    {calculateGoalStatus(selectedGoal)}
+                    {selectedGoal.state}
                   </li>
                   <li>
                     <span style={{ fontWeight: "bold" }}>Goal:</span>{" "}
@@ -307,7 +287,7 @@ export default function GoalTable({ filterOpen }) {
                 </ul>
               </div>
 
-              {calculateGoalStatus(selectedGoal) === "Not started" && (
+              {selectedGoal.state === "Not started" && (
                 <Grid container spacing={2}>
                   <Grid item xs={6}>
                     <Button

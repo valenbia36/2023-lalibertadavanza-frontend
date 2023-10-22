@@ -30,7 +30,6 @@ const Statistics = () => {
         <LabelBottomNavigation />
       )}
       <Row>
-        <RangeDatePicker />
         <Col
           xs={12}
           md={6}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Typography } from "@mui/material";
 import GoalTable from "./Tables/GoalTable";
 import GoalForm from "./Forms/GoalForm";
