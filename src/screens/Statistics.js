@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Drawer from "../components/Drawer";
-
 import { useTheme } from "@mui/material/styles";
 import LabelBottomNavigation from "../components/BottomMenu";
 import PieChartContainer from "../components/Charts/PieChartContainer";
 import LineChartContainer from "../components/Charts/LineChartContainer";
 import { Col, Container, Row } from "react-bootstrap";
-import RangeDatePicker from "../components/RangeDatePicker";
 
 const Statistics = () => {
   const theme = useTheme();
@@ -35,7 +33,7 @@ const Statistics = () => {
           md={6}
           className="d-flex align-items-center justify-content-center"
         >
-          <div style={{ marginBottom: "30%" }}>
+          <div style={{ maxHeight: "800px" }}>
             <PieChartContainer />
           </div>
         </Col>
@@ -44,7 +42,7 @@ const Statistics = () => {
           md={6}
           className="d-flex align-items-center justify-content-center"
         >
-          <div style={{ marginBottom: "20%" }}>
+          <div style={{ height: "900px" }}>
             <LineChartContainer />
           </div>
         </Col>
