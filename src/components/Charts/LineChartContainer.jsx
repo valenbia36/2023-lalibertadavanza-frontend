@@ -28,7 +28,11 @@ const LineChartContainer = () => {
   const [data, setData] = useState();
   const [selectedMonth, setSelectedMonth] = useState("10");
   const [isLoading, setIsLoading] = useState(false);
-  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false)
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const [range, setRange] = useState({
+    from: new Date(),
+    to: addDays(new Date(), 7)
+  });
 
   const getMeals = async (selectedMonth) => {
     setIsLoading(true);
@@ -52,14 +56,9 @@ const LineChartContainer = () => {
   };
 
   useEffect(() => {
+    console.log('Rango de fehcas: ' + JSON.stringify(range));
     getMeals(selectedMonth);
-  }, [selectedMonth]);
-
-  const defaultSelected = {
-    from: new Date(),
-    to: addDays(new Date(), 4)
-  };
-  const [range, setRange] = useState(defaultSelected);
+  }, [range]);
 
   return (
     <div
