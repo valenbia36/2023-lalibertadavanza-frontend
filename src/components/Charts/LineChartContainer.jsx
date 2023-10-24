@@ -26,7 +26,6 @@ const apiUrl = getApiUrl();
 
 const LineChartContainer = () => {
   const [data, setData] = useState();
-  const [selectedMonth, setSelectedMonth] = useState("10");
   const [isLoading, setIsLoading] = useState(false);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [range, setRange] = useState({
@@ -34,14 +33,14 @@ const LineChartContainer = () => {
     to: addDays(new Date(), 7)
   });
 
-  const getMeals = async (selectedMonth) => {
+  const getMeals = async (selectedStartDate, selectedEndDate) => {
     setIsLoading(true);
     setData("");
     const response = await fetch(
       apiUrl + "/api/meals/user/" +
       localStorage.getItem("userId") +
-      "/month/" +
-      selectedMonth,
+      "/between/" +
+      selectedStartDate+"/"+selectedEndDate,
       {
         method: "GET",
         headers: {
@@ -51,13 +50,13 @@ const LineChartContainer = () => {
       }
     );
     const data = await response.json();
-    setData(data.resultWithAllDays);
+    console.log(data.fechasIntermedias)
+    setData(data.fechasIntermedias);
     setIsLoading(false);
   };
 
   useEffect(() => {
-    console.log('Rango de fehcas: ' + JSON.stringify(range));
-    getMeals(selectedMonth);
+    getMeals(range.from,range.to);
   }, [range]);
 
   return (
