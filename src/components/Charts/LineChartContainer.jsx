@@ -56,7 +56,9 @@ const LineChartContainer = () => {
   };
 
   useEffect(() => {
-    getMeals(range.from,range.to);
+    if(range){
+      getMeals(range.from,range.to);
+    }
   }, [range]);
 
   return (
