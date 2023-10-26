@@ -163,7 +163,7 @@ export default function GoalTable({ filterOpen }) {
           </Select>
         </FormControl>
       )}
-      <TableContainer component={Paper} sx={{ minWidth: 200, minHeight: 500 }}>
+      <TableContainer component={Paper} sx={{ minWidth: 200, minHeight: 420 }}>
         <Table aria-label="custom pagination table">
           <TableHead sx={{ fontWeight: "bold" }}>
             <TableRow sx={{ fontWeight: "bold" }}>

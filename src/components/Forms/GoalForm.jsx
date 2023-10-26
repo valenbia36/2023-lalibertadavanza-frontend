@@ -191,7 +191,7 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
             }}
           />
 
-          <Grid item xs={12} style={{ marginBottom: "7px" }}>
+          <Grid item xs={12} style={{marginBottom: "7px" }}>
             <FormControl fullWidth>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
