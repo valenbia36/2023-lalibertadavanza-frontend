@@ -94,6 +94,7 @@ const Login = () => {
             token: getUID(),
             userName: userName,
             userId: userId,
+            url: apiUrl
           }),
         });
 
