@@ -34,7 +34,6 @@ const LineChartContainer = () => {
   });
 
   const getMeals = async (selectedStartDate, selectedEndDate) => {
-    setIsLoading(true);
     setData("");
     const response = await fetch(
       apiUrl + "/api/meals/user/" +
@@ -51,7 +50,6 @@ const LineChartContainer = () => {
     );
     const data = await response.json();
     setData(data.fechasIntermedias);
-    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -110,8 +108,13 @@ const LineChartContainer = () => {
               <DayPicker
                 id="test"
                 mode="range"
+                defaultMonth={range.from}
                 selected={range}
                 onSelect={setRange}
+                onDayClick={() => {
+                  // Mantén el componente abierto al hacer clic en una fecha
+                  setIsDatePickerOpen(true);
+                }}
                 modifiersClassNames={{
                   selected: 'my-selected',
                   today: 'my-today',

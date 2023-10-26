@@ -32,7 +32,7 @@ const Statistics = () => {
         xs={12}
         md={6}
         className="d-flex align-items-start justify-content-center"
-        style={{ height: "900px" }}
+        style={{ height: "500px" }}
       >
         <div>
           <PieChartContainer />
@@ -42,7 +42,7 @@ const Statistics = () => {
         xs={12}
         md={6}
         className="d-flex align-items-start justify-content-center"
-        style={{ height: "900px" }}
+        style={{ height: "600px" }}
       >
         <div>
           <LineChartContainer />
