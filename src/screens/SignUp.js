@@ -13,6 +13,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from "@mui/material";
 import { useSnackbar } from "notistack";
 import getApiUrl from '../helpers/apiConfig';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 const apiUrl = getApiUrl();
 
@@ -20,7 +21,7 @@ const defaultTheme = createTheme();
 
 const SignUp = () => {
   const { enqueueSnackbar } = useSnackbar();
-
+  const [showPassword, setShowPassword] = React.useState(false);
   const [user, setUser] = React.useState({
     firstName: "",
     lastName: "",
@@ -194,14 +195,20 @@ const SignUp = () => {
                   fullWidth
                   name="password"
                   label="Password"
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   id="password"
                   autoComplete="new-password"
                   InputLabelProps={{
                     style: { color: "black" },
                   }}
                   InputProps={{
-                    style: { color: "black" },
+                    style: { color: 'black' },
+                    endAdornment: (
+                      <VisibilityIcon
+                        onClick={() => setShowPassword(!showPassword)}
+                        style={{ cursor: 'pointer' }}
+                      />
+                    ),
                   }}
                   onChange={(e) =>
                     setUser({ ...user, password: e.target.value })
