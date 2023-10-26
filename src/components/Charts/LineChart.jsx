@@ -1,17 +1,18 @@
+import { LocalConvenienceStoreOutlined } from "@mui/icons-material";
 import React from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Legend, Tooltip } from "recharts";
 
 export default function LineChartWithCustomFontSize(data) {
-  const caloriasArray = data.data.map((item) => item.calorias);
-
+  const caloriasArray = data.data.map((item) => item.calories);
   const totalCalorias = caloriasArray.reduce((acc, curr) => acc + curr, 0);
   const promedioCalorias = totalCalorias / caloriasArray.length;
 
   const dataWithAverage = data.data.map((item) => ({
-    date: item.date,
-    calorias: item.calorias,
+    date: item.date.split('T')[0],
+    calories: item.calories,
     promedio: promedioCalorias,
   }));
+  console.log("ESTE" + dataWithAverage)
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (active) {
@@ -76,7 +77,7 @@ export default function LineChartWithCustomFontSize(data) {
         <Legend verticalAlign="top" width={100} />
         <Line
           type="monotone"
-          dataKey="calorias"
+          dataKey="calories"
           name="Calories"
           stroke="#936639"
           strokeWidth={2}
