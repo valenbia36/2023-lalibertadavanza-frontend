@@ -50,14 +50,13 @@ const LineChartContainer = () => {
       }
     );
     const data = await response.json();
-    console.log(data.fechasIntermedias)
     setData(data.fechasIntermedias);
     setIsLoading(false);
   };
 
   useEffect(() => {
-    if(range){
-      getMeals(range.from,range.to);
+    if (range) {
+      getMeals(range.from, range.to);
     }
   }, [range]);
 
@@ -69,26 +68,27 @@ const LineChartContainer = () => {
         maxWidth: 320,
       }}
     >
+      <h2 style={{ fontWeight: 'bold' }}>Calories By Date</h2>
 
-      <Grid sx={{ maxHeight: "520px", minWidth: "320px" }}>
-        <h2 style={{fontWeight: 'bold'}}>Calories By Date</h2>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => setIsDatePickerOpen(!isDatePickerOpen)}
+        sx={{
+          mt: 3,
+          mb: 2,
+          backgroundColor: "#373D20",
+          "&:hover": { backgroundColor: "#373D20" },
+          fontWeight: "bold",
+        }}
+        fullWidth
+      >
+        Select Date
+      </Button>
+
+      <Grid sx={{ maxHeight: "520px", minWidth: "320px", position: "relative" }}>
         <style>{css}</style>
-        <Button
-              variant="contained"
-              color="primary"
-              onClick={() => setIsDatePickerOpen(!isDatePickerOpen)}
-              sx={{
-                mt: 3,
-                mb: 2,
-                backgroundColor: "#373D20",
-                "&:hover": { backgroundColor: "#373D20" },
-                fontWeight: "bold",
-              }}
-              fullWidth
-            >
-              Select Date
-            </Button>
-        <div style={{ position: "relative", minHeight: 450, marginTop: "10%" }}>
+        <div style={{ position: "relative", minHeight: 450, marginTop: "10%", zIndex: 1 }}>
           {isLoading ? (
             <div
               style={{
@@ -101,26 +101,37 @@ const LineChartContainer = () => {
             >
               <CircularProgress size={100} />
             </div>
+          ) : isDatePickerOpen ? (
+            <div style={{
+              border: '1px solid #000',
+              borderRadius: '10px', // Hace que los bordes sean más curvos
+              display: 'inline-block', // Centra los bordes y los acerca al contenido
+            }}>
+              <DayPicker
+                id="test"
+                mode="range"
+                selected={range}
+                onSelect={setRange}
+                modifiersClassNames={{
+                  selected: 'my-selected',
+                  today: 'my-today',
+                }}
+                styles={{
+                  caption: { fontWeight: 'bold', fontSize: '18px' },
+                  day: { fontSize: '14px' },
+                  selectedFirst: { backgroundColor: '#f9efe9', fontWeight: 'bold' },
+                  selectedLast: { backgroundColor: '#f9efe9', fontWeight: 'bold' },
+                  selected: { backgroundColor: '#f9efe9', fontWeight: 'bold' },
+                  today: { fontWeight: 'bold', color: 'red' },
+                }}
+              />
+            </div>
           ) : data && data.length > 0 ? (
             <MyResponsiveLine data={data} />
           ) : (
             <div>No calories to show</div>
           )}
         </div>
-
-        {isDatePickerOpen && (<DayPicker
-          id="test"
-          mode="range"
-          defaultMonth={new Date()}
-          selected={range}
-          onSelect={setRange}
-          style={{ fontSize: '14px'}}
-          modifiersClassNames={{
-            selected: 'my-selected',
-            today: 'my-today'
-          }}
-          styles={{caption: { fontWeight: 'black' }}}
-        />)}
       </Grid>
     </div>
   );

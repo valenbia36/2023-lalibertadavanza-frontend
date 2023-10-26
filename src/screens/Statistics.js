@@ -27,26 +27,28 @@ const Statistics = () => {
       ) : (
         <LabelBottomNavigation />
       )}
-      <Row>
-        <Col
-          xs={12}
-          md={6}
-          className="d-flex align-items-center justify-content-center"
-        >
-          <div style={{ maxHeight: "800px" }}>
-            <PieChartContainer />
-          </div>
-        </Col>
-        <Col
-          xs={12}
-          md={6}
-          className="d-flex align-items-center justify-content-center"
-        >
-          <div style={{ height: "900px" }}>
-            <LineChartContainer />
-          </div>
-        </Col>
-      </Row>
+     <Row>
+      <Col
+        xs={12}
+        md={6}
+        className="d-flex align-items-start justify-content-center"
+        style={{ height: "900px" }}
+      >
+        <div>
+          <PieChartContainer />
+        </div>
+      </Col>
+      <Col
+        xs={12}
+        md={6}
+        className="d-flex align-items-start justify-content-center"
+        style={{ height: "900px" }}
+      >
+        <div>
+          <LineChartContainer />
+        </div>
+      </Col>
+    </Row>
     </Container>
   );
 };
