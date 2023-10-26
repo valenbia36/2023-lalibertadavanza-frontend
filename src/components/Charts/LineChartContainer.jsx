@@ -108,13 +108,9 @@ const LineChartContainer = () => {
               <DayPicker
                 id="test"
                 mode="range"
-                defaultMonth={range.from}
+                defaultMonth={range ? range.from : new Date()}
                 selected={range}
                 onSelect={setRange}
-                onDayClick={() => {
-                  // Mantén el componente abierto al hacer clic en una fecha
-                  setIsDatePickerOpen(true);
-                }}
                 modifiersClassNames={{
                   selected: 'my-selected',
                   today: 'my-today',
