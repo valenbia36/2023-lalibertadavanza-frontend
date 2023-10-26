@@ -2,12 +2,13 @@ import { Button, Grid, TextField } from "@mui/material";
 import React from "react";
 import { useSnackbar } from "notistack";
 import getApiUrl from '../helpers/apiConfig';
-
+import VisibilityIcon from '@mui/icons-material/Visibility';
 const apiUrl = getApiUrl();
 
 const ResetPassword = () => {
   const { enqueueSnackbar } = useSnackbar();
-
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [showRepeatedPassword, setShowRepeatedPassword] = React.useState(false);
   const [token, setToken] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [repeatPassword, setRepeatPassword] = React.useState("");
@@ -125,14 +126,20 @@ const ResetPassword = () => {
             fullWidth
             name="password"
             label="Password"
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             id="password"
             autoComplete="current-password"
             InputLabelProps={{
               style: { color: "black" },
             }}
             InputProps={{
-              style: { color: "black", min: 0 },
+              style: { color: 'black' },
+              endAdornment: (
+                <VisibilityIcon
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{ cursor: 'pointer' }}
+                />
+              ),
             }}
             onChange={(e) => setPassword(e.target.value)}
             onKeyPress={(event) => {
@@ -148,14 +155,20 @@ const ResetPassword = () => {
             fullWidth
             name="password"
             label="Repeat Password"
-            type="password"
+            type={showRepeatedPassword ? 'text' : 'password'}
             id="password"
             autoComplete="current-password"
             InputLabelProps={{
               style: { color: "black" },
             }}
             InputProps={{
-              style: { color: "black", min: 0 },
+              style: { color: 'black' },
+              endAdornment: (
+                <VisibilityIcon
+                  onClick={() => setShowRepeatedPassword(!showRepeatedPassword)}
+                  style={{ cursor: 'pointer' }}
+                />
+              ),
             }}
             onChange={(e) => setRepeatPassword(e.target.value)}
             onKeyPress={(event) => {

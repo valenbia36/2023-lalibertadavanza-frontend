@@ -22,6 +22,7 @@ import { IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import getApiUrl from "../helpers/apiConfig";
 import getUrl from "../helpers/urlConfig";
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import "../styles/Login.css";
 const apiUrl = getApiUrl();
 const url = getUrl();
@@ -38,6 +39,7 @@ const Login = () => {
   });
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [recoveryEmail, setRecoveryEmail] = React.useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const theme = useTheme();
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
@@ -237,18 +239,25 @@ const Login = () => {
                 fullWidth
                 name="password"
                 label="Password"
-                type="password"
+                type={showPassword ? 'text' : 'password'} // Cambia el tipo según el estado
                 id="password"
                 autoComplete="current-password"
                 InputLabelProps={{
-                  style: { color: "black" },
+                  style: { color: 'black' },
                 }}
                 InputProps={{
-                  style: { color: "black", min: 0 },
+                  style: { color: 'black' },
+                  endAdornment: (
+                    <VisibilityIcon
+                      onClick={() => setShowPassword(!showPassword)}
+                      style={{ cursor: 'pointer' }}
+                    />
+                  ),
                 }}
+                value={user.password}
                 onChange={(e) => setUser({ ...user, password: e.target.value })}
                 onKeyPress={(event) => {
-                  if (event.key === "Enter") {
+                  if (event.key === 'Enter') {
                     handleLogin();
                   }
                 }}
