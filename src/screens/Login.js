@@ -21,9 +21,10 @@ import Slideshow from "../components/Slideshow";
 import { IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import getApiUrl from "../helpers/apiConfig";
+import getUrl from "../helpers/urlConfig";
 import "../styles/Login.css";
 const apiUrl = getApiUrl();
-
+const url = getUrl();
 const defaultTheme = createTheme();
 
 function getUID() {
@@ -94,7 +95,7 @@ const Login = () => {
             token: getUID(),
             userName: userName,
             userId: userId,
-            url: apiUrl
+            url: url
           }),
         });
 

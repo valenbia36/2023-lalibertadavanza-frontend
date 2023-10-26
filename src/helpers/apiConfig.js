@@ -4,6 +4,6 @@ function getApiUrl() {
     } else {
       return process.env.REACT_APP_API_URL_PROD;
     }
-  }
-  
-  export default getApiUrl;  
+}
+
+export default getApiUrl;  
