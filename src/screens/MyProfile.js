@@ -17,6 +17,9 @@ import {
   RadioGroup,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
+import getApiUrl from '../helpers/apiConfig';
+
+const apiUrl = getApiUrl();
 
 const defaultTheme = createTheme();
 
@@ -53,7 +56,7 @@ const MyProfile = () => {
 
   const getUserById = async () => {
     const response = await fetch(
-      "http://localhost:3001/api/auth/users/" + localStorage.getItem("userId"),
+      apiUrl + "/api/auth/users/" + localStorage.getItem("userId"),
       {
         method: "GET",
         headers: {
@@ -114,7 +117,7 @@ const MyProfile = () => {
     }
 
     fetch(
-      "http://localhost:3001/api/auth/users/" + localStorage.getItem("userId"),
+      apiUrl + "/api/auth/users/" + localStorage.getItem("userId"),
       {
         method: "PUT",
         headers: {

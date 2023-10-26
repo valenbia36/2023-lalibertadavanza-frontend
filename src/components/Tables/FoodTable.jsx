@@ -11,7 +11,10 @@ import IconButton from "@mui/material/IconButton";
 import { TableHead } from "@mui/material";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import CategorySelect from "../CategorySelect";
+import CategoryAutocomplete from "../CategoryAutocomplete";
+import getApiUrl from "../../helpers/apiConfig";
+
+const apiUrl = getApiUrl();
 
 function TablePaginationActions(props) {
   const theme = useTheme();
@@ -53,8 +56,7 @@ function TablePaginationActions(props) {
   );
 }
 
-export default function FoodTable({filterOpen}) {
-  
+export default function FoodTable({ filterOpen }) {
   const [foods, setFoods] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -62,12 +64,12 @@ export default function FoodTable({filterOpen}) {
   const [noResults, setNoResults] = useState(false);
 
   useEffect(() => {
-    getFoodByCategory();
+    selectedCategory ? getFoodByCategory() : getFoods();
   }, [selectedCategory]);
 
   useEffect(() => {
-    if(filterOpen === false){
-      setSelectedCategory('');
+    if (filterOpen === false) {
+      setSelectedCategory("");
       getFoods();
     }
   }, [filterOpen, foods]);
@@ -77,7 +79,7 @@ export default function FoodTable({filterOpen}) {
   }, []);
 
   const getFoods = async () => {
-    const response = await fetch("http://localhost:3001/api/foods/", {
+    const response = await fetch(apiUrl + "/api/foods/", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -92,7 +94,7 @@ export default function FoodTable({filterOpen}) {
   const getFoodByCategory = async () => {
     if (selectedCategory !== "") {
       const response = await fetch(
-        "http://localhost:3001/api/foods/category/" + selectedCategory,
+        apiUrl + "/api/foods/category/" + selectedCategory,
         {
           method: "GET",
           headers: {
@@ -117,16 +119,16 @@ export default function FoodTable({filterOpen}) {
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-  
+
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
-    setPage(0)
+    setPage(0);
   };
 
   return (
     <div>
       {filterOpen && (
-        <CategorySelect
+        <CategoryAutocomplete
           selectedCategory={selectedCategory}
           onCategoryChange={handleCategoryChange}
         />
@@ -149,7 +151,9 @@ export default function FoodTable({filterOpen}) {
           <TableBody>
             {noResults ? (
               <TableRow>
-                <TableCell colSpan={3} align="center">No results found. </TableCell>
+                <TableCell colSpan={3} align="center">
+                  No results found.{" "}
+                </TableCell>
               </TableRow>
             ) : (
               (5 > 0 ? foods.slice(page * 5, page * 5 + 5) : foods).map(
@@ -175,7 +179,7 @@ export default function FoodTable({filterOpen}) {
             )}
           </TableBody>
         </Table>
-        <Box sx={{ display: 'flex', justifyContent: "center" }}>
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
           <TablePaginationActions
             count={totalItems}
             page={page}

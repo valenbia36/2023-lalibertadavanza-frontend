@@ -1,6 +1,9 @@
 import { Button, Grid, TextField } from "@mui/material";
 import React from "react";
 import { useSnackbar } from "notistack";
+import getApiUrl from '../helpers/apiConfig';
+
+const apiUrl = getApiUrl();
 
 const ResetPassword = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -14,7 +17,7 @@ const ResetPassword = () => {
   const handleResetPassword = async () => {
     if (password === repeatPassword) {
       const response = await fetch(
-        "http://localhost:3001/api/auth/users/updatePassword/" + userId,
+        apiUrl + "/api/auth/users/updatePassword/" + userId,
         {
           method: "PUT",
           headers: {
@@ -42,22 +45,27 @@ const ResetPassword = () => {
   };
 
   const validateToken = async () => {
-    const response = await fetch(
-      "http://localhost:3001/api/notifications/validateToken/" + token,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
+    if(token === ''){
+      enqueueSnackbar("You need to enter the token.", { variant: "error" });
+    }else{
+      const response = await fetch(
+        apiUrl + "/api/notifications/validateToken/" + token,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+      console.log(JSON.stringify(data.data))
+      if (data.data != null) {
+        enqueueSnackbar("The token was validated.", { variant: "success" });
+        setUserId(data.data._id);
+        setIsValid(true);
+      } else {
+        enqueueSnackbar("The token is incorrect.", { variant: "error" });
       }
-    );
-    const data = await response.json();
-    if (data.data._id != null) {
-      enqueueSnackbar("The token was validated.", { variant: "success" });
-      setUserId(data.data._id);
-      setIsValid(true);
-    } else {
-      enqueueSnackbar("The token is incorrect.", { variant: "error" });
     }
   };
 

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { IconButton, Typography } from "@mui/material";
-import FoodForm from "./FoodForm";
+import FoodForm from "./Forms/FoodForm";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import FilterAltRoundedIcon from '@mui/icons-material/FilterAltRounded';
 import FoodTable from "./Tables/FoodTable";

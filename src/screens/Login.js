@@ -20,7 +20,11 @@ import carousel4 from "../images/carousel4.jpg";
 import Slideshow from "../components/Slideshow";
 import { IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-
+import getApiUrl from "../helpers/apiConfig";
+import getUrl from "../helpers/urlConfig";
+import "../styles/Login.css";
+const apiUrl = getApiUrl();
+const url = getUrl();
 const defaultTheme = createTheme();
 
 function getUID() {
@@ -63,7 +67,7 @@ const Login = () => {
     } else {
       try {
         const response = await fetch(
-          "http://localhost:3001/api/auth/users/email/" + recoveryEmail,
+          apiUrl + "/api/auth/users/email/" + recoveryEmail,
           {
             method: "GET",
             headers: {
@@ -72,7 +76,7 @@ const Login = () => {
           }
         );
         const data = await response.json();
-        if(data.data == null){
+        if (data.data == null) {
           enqueueSnackbar("Incorrect email.", {
             variant: "error",
           });
@@ -81,21 +85,19 @@ const Login = () => {
         const userId = data.data._id;
         const userName = data.data.firstName + " " + data.data.lastName;
 
-        const response1 = await fetch(
-          "http://localhost:3001/api/notifications/sendEmail",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              email: recoveryEmail,
-              token: getUID(),
-              userName: userName,
-              userId: userId
-            }),
-          }
-        );
+        const response1 = await fetch(apiUrl + "/api/notifications/sendEmail", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: recoveryEmail,
+            token: getUID(),
+            userName: userName,
+            userId: userId,
+            url: url
+          }),
+        });
 
         if (response1.status === 200) {
           enqueueSnackbar(
@@ -122,7 +124,7 @@ const Login = () => {
       enqueueSnackbar("Email or password is empty.", { variant: "error" });
       return;
     } else {
-      fetch("http://localhost:3001/api/auth/login", {
+      fetch(apiUrl + "/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -178,7 +180,12 @@ const Login = () => {
               marginTop: "10%",
             }}
           >
-            <Typography variant="h3" color="inherit" noWrap>
+            <Typography
+              variant="h3"
+              color="inherit"
+              noWrap
+              className="custom-font"
+            >
               HELIAPP
             </Typography>
           </div>
@@ -315,7 +322,6 @@ const Login = () => {
             borderColor: "black",
             borderStyle: "solid",
             borderRadius: "2%",
-            
           }}
         >
           <IconButton
@@ -330,8 +336,10 @@ const Login = () => {
           >
             <CloseIcon />
           </IconButton>
-          <h2 style={{textAlign: 'center'}}>Reset Password</h2>
-          <p style={{textAlign: 'center'}}>Enter your email address to recover your password.</p>
+          <h2 style={{ textAlign: "center" }}>Reset Password</h2>
+          <p style={{ textAlign: "center" }}>
+            Enter your email address to recover your password.
+          </p>
           <TextField
             margin="normal"
             required

@@ -17,10 +17,10 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
-import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import HomeIcon from "@mui/icons-material/Home";
+import RestaurantIcon from '@mui/icons-material/Restaurant';
 import { useNavigate } from "react-router-dom";
 
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
@@ -149,6 +149,10 @@ export default function MiniDrawer({ user }) {
     navigate("/myProfile", { replace: true });
   };
 
+  const navigateToMyMealsScreen = () => {
+    navigate("/meals", { replace: true });
+  };
+
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -210,6 +214,27 @@ export default function MiniDrawer({ user }) {
                 <HomeIcon />
               </ListItemIcon>
               <ListItemText primary="Home" sx={{ opacity: open ? 1 : 0 }} />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding sx={{ display: "block" }}>
+            <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: open ? "initial" : "center",
+                px: 2.5,
+              }}
+              onClick={navigateToMyMealsScreen}
+            >
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: open ? 3 : "auto",
+                  justifyContent: "center",
+                }}
+              >
+                <RestaurantIcon />
+              </ListItemIcon>
+              <ListItemText primary="My Meals" sx={{ opacity: open ? 1 : 0 }} />
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding sx={{ display: "block" }}>

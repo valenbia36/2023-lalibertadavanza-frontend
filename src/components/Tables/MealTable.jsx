@@ -14,9 +14,12 @@ import Collapse from "@mui/material/Collapse";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import EditIcon from "@mui/icons-material/Edit";
-import MealForm from "../MealForm";
+import MealForm from "../Forms/MealForm";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useSnackbar } from "notistack";
+import getApiUrl from "../../helpers/apiConfig";
+
+const apiUrl = getApiUrl();
 
 function Row(props) {
   const { row, onEditClick } = props;
@@ -26,7 +29,7 @@ function Row(props) {
 
   const handleDeleteClick = (meal) => {
     try {
-      fetch("http://localhost:3001/api/meals/" + meal._id, {
+      fetch(apiUrl + "/api/meals/" + meal._id, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -110,8 +113,12 @@ function Row(props) {
                       <TableCell component="th" scope="row" align="center">
                         {foodRow.name}
                       </TableCell>
-                      <TableCell align="center">{foodRow.totalCalories}</TableCell>
-                      <TableCell align="center">{foodRow.weightConsumed}</TableCell>
+                      <TableCell align="center">
+                        {foodRow.totalCalories}
+                      </TableCell>
+                      <TableCell align="center">
+                        {foodRow.weightConsumed}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -142,7 +149,7 @@ export default function MealTable() {
 
   const getMeals = async () => {
     const response = await fetch(
-      "http://localhost:3001/api/meals/user/" + localStorage.getItem("userId"),
+      apiUrl + "/api/meals/user/" + localStorage.getItem("userId"),
       {
         method: "GET",
         headers: {
@@ -178,7 +185,7 @@ export default function MealTable() {
   };
 
   return (
-    <TableContainer component={Paper}>
+    <TableContainer component={Paper} sx={{ minHeight: 420 }}>
       <Table aria-label="collapsible table">
         <TableHead>
           <TableRow>

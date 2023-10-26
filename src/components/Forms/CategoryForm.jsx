@@ -1,7 +1,10 @@
 import React, { useState } from "react";
-import { TextField, Button, Modal, Box , IconButton,} from "@mui/material";
+import { TextField, Button, Modal, Box, IconButton } from "@mui/material";
 import { useSnackbar } from "notistack";
 import CloseIcon from "@mui/icons-material/Close";
+import getApiUrl from '../../helpers/apiConfig';
+
+const apiUrl = getApiUrl();
 
 const initialCategoryState = {
   name: "",
@@ -12,13 +15,11 @@ const CategoryForm = ({ open, setOpen }) => {
   const [newCategory, setNewCategory] = useState(initialCategoryState);
 
   const handleAddCategory = () => {
-    if (
-      newCategory.name === ""
-    ) {
+    if (newCategory.name === "") {
       enqueueSnackbar("Please complete all the fields.", { variant: "error" });
       return;
     } else {
-      fetch("http://localhost:3001/api/category", {
+      fetch(apiUrl + "/api/category", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -63,10 +64,10 @@ const CategoryForm = ({ open, setOpen }) => {
           bgcolor: "background.paper",
           boxShadow: 24,
           p: 4,
-          borderRadius: '4%'
+          borderRadius: "4%",
         }}
       >
-         <IconButton
+        <IconButton
           aria-label="Close"
           onClick={closeModal}
           sx={{
@@ -85,7 +86,9 @@ const CategoryForm = ({ open, setOpen }) => {
             fullWidth
             margin="normal"
             value={newCategory.name}
-            onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
+            onChange={(e) =>
+              setNewCategory({ ...newCategory, name: e.target.value })
+            }
             onKeyPress={(event) => {
               if (event.key === "Enter") {
                 handleAddCategory();

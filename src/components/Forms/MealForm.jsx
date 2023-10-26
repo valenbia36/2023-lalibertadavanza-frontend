@@ -6,9 +6,6 @@ import {
   Box,
   IconButton,
   Grid,
-  Select,
-  MenuItem,
-  InputLabel,
   FormControl,
 } from "@mui/material";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
@@ -19,6 +16,9 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import CloseIcon from "@mui/icons-material/Close";
+import getApiUrl from "../../helpers/apiConfig";
+import { Autocomplete } from "@mui/material";
+const apiUrl = getApiUrl();
 
 const initialMealState = {
   name: "",
@@ -60,7 +60,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
   }, [open]);
 
   const getFoods = async () => {
-    const response = await fetch("http://localhost:3001/api/foods/", {
+    const response = await fetch(apiUrl + "/api/foods/", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -72,7 +72,17 @@ const MealForm = ({ open, setOpen, initialData }) => {
   };
 
   const handleAddMeal = () => {
-    if ( mealData.name === "" || mealData.date === "" || mealData.hour === "" || !mealData.foods.every((food) => food.name !== "" && food.weight !== "" && Number(food.weightConsumed) > 0)) {
+    if (
+      mealData.name === "" ||
+      mealData.date === "" ||
+      mealData.hour === "" ||
+      !mealData.foods.every(
+        (food) =>
+          food.name !== "" &&
+          food.weight !== "" &&
+          Number(food.weightConsumed) > 0
+      )
+    ) {
       enqueueSnackbar("Please complete all the fields correctly.", {
         variant: "error",
       });
@@ -83,9 +93,11 @@ const MealForm = ({ open, setOpen, initialData }) => {
         .reduce((acc, calories) => acc + calories, 0);
       mealData.hour = mealData.hour.toTimeString().slice(0, 5);
 
+      mealData.date.setHours(1, 0);
+
       const url = initialData
-        ? `http://localhost:3001/api/meals/${initialData._id}`
-        : "http://localhost:3001/api/meals";
+        ? apiUrl + `/api/meals/${initialData._id}`
+        : apiUrl + "/api/meals";
       const method = initialData ? "PUT" : "POST";
 
       fetch(url, {
@@ -147,22 +159,37 @@ const MealForm = ({ open, setOpen, initialData }) => {
     setMealData({ ...mealData, foods: updatedFoods });
   };
 
-  const handleFoodInputChange = (event, index) => {
+  const handleFoodInputChange = (newValue, index) => {
     const updatedFoods = [...mealData.foods];
-    updatedFoods[index].name = event.target.value;
-    let result = foodOptions.find((item) => item.name === event.target.value);
-    updatedFoods[index].calories = result ? result.calories : "";
-    updatedFoods[index].weight = result ? result.weight : "";
-    updatedFoods[index].category = result ? result.category : "";
+    if (newValue) {
+      updatedFoods[index].name = newValue.name ? newValue.name : "";
+      updatedFoods[index].calories = newValue.calories;
+      updatedFoods[index].weight = newValue.weight;
+      updatedFoods[index].category = newValue.category;
+      if (updatedFoods[index].weightConsumed) {
+        updatedFoods[index].totalCalories = Math.round(
+          updatedFoods[index].weightConsumed *
+            (updatedFoods[index].calories / updatedFoods[index].weight)
+        );
+      }
+    } else {
+      // Si newValue es null, establece los valores en blanco o predeterminados
+      updatedFoods[index].name = "";
+      updatedFoods[index].calories = 0; // O el valor que prefieras
+      updatedFoods[index].weight = 0; // O el valor que prefieras
+      updatedFoods[index].category = ""; // O el valor que prefieras
+    }
     setMealData({ ...mealData, foods: updatedFoods });
   };
 
   const handleQuantityInputChange = (e, index) => {
     const inputValue = Number(e.target.value);
-      const updatedFoods = [...mealData.foods];
-      updatedFoods[index].weightConsumed = inputValue;
-      updatedFoods[index].totalCalories =  Math.round(inputValue * (updatedFoods[index].calories / updatedFoods[index].weight));
-      setMealData({ ...mealData, foods: updatedFoods });
+    const updatedFoods = [...mealData.foods];
+    updatedFoods[index].weightConsumed = inputValue;
+    updatedFoods[index].totalCalories = Math.round(
+      inputValue * (updatedFoods[index].calories / updatedFoods[index].weight)
+    );
+    setMealData({ ...mealData, foods: updatedFoods });
   };
 
   return (
@@ -183,7 +210,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
           bgcolor: "background.paper",
           boxShadow: 24,
           p: 4,
-          borderRadius: '2%'
+          borderRadius: "2%",
         }}
       >
         <IconButton
@@ -262,27 +289,32 @@ const MealForm = ({ open, setOpen, initialData }) => {
           {mealData.foods.map((food, index) => (
             <React.Fragment key={index}>
               <Grid item xs={6}>
-                <FormControl fullWidth>
-                  <InputLabel id={`food-label-${index}`}>Food</InputLabel>
-                  <Select
-                    labelId={`food-label-${index}`}
-                    id={`food-select-${index}`}
-                    value={food.name}
-                    label="Food"
-                    onChange={(e) => handleFoodInputChange(e, index)}
-                    MenuProps={{ PaperProps: { style: { maxHeight: 120 } } }}
-                  >
-                      {Array.isArray(foodOptions) && foodOptions.length > 0 ? (
-                        foodOptions.map((option) => (
-                          <MenuItem key={option.id} value={option.name}>
-                            {option.name}
-                          </MenuItem>
-                        ))
-                      ) : (
-                        <MenuItem value="">No foods available.</MenuItem>
-                      )}
-                  </Select>
-                </FormControl>
+                <Autocomplete
+                  id={`food-autocomplete-${index}`}
+                  options={foodOptions}
+                  value={
+                    foodOptions.find((option) => option.name === food.name) ||
+                    null
+                  }
+                  onChange={(e, newValue) =>
+                    handleFoodInputChange(newValue, index)
+                  }
+                  getOptionLabel={(option) => option.name}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Food"
+                      variant="outlined"
+                      fullWidth
+                    />
+                  )}
+                  noOptionsText="No foods available."
+                  ListboxProps={{
+                    style: {
+                      maxHeight: 110,
+                    },
+                  }}
+                />
               </Grid>
               <Grid item xs={4}>
                 <TextField

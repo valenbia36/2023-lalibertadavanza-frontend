@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { TextField, Grid, IconButton } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { TextField, Grid } from "@mui/material";
 import { format } from "date-fns";
 import MyResponsivePie from "./PieChart";
-import CategorySelect from "../CategorySelect";
 import CircularProgress from "@mui/material/CircularProgress";
+import getApiUrl from '../../helpers/apiConfig';
+import CategoryAutocomplete from "../CategoryAutocomplete";
+
+const apiUrl = getApiUrl();
 
 const getMealsByUserIdAndDay = async (
   date,
@@ -15,7 +17,7 @@ const getMealsByUserIdAndDay = async (
   setData("");
   setLoading(true);
   const response = await fetch(
-    "http://localhost:3001/api/meals/user/" +
+    apiUrl + "/api/meals/user/" +
       localStorage.getItem("userId") +
       "/date/" +
       date,
@@ -77,8 +79,8 @@ const PieChartContainer = () => {
         maxWidth: 320,
       }}
     >
-      <Grid sx={{ maxHeight: "450px", minWidth: "320px" }}>
-        <h2>Foods by Day</h2>
+      <Grid sx={{ maxHeight: "450px", minWidth: "320px", alignContent: 'center', textAlign: 'center' }}>
+        <h2 style={{fontWeight: 'bold'}}>Foods by Day</h2>
         <TextField
           style={{ width: "73%", minWidth: 200 }}
           InputLabelProps={{ shrink: true }}
@@ -89,21 +91,11 @@ const PieChartContainer = () => {
           value={date}
           onChange={(e) => setDate(e.target.value)}
         />
-        <Grid>
-          <CategorySelect
-            customWidth={"30%"}
+        <Grid sx={{width: "73%", minWidth: 200, marginLeft: '13.5%' }}>
+          <CategoryAutocomplete
             selectedCategory={selectedCategory}
             onCategoryChange={handleCategoryChange}
           />
-          {selectedCategory !== "" && (
-            <IconButton
-              aria-label="delete row"
-              size="small"
-              onClick={() => setSelectedCategory("")}
-            >
-              <DeleteIcon />
-            </IconButton>
-          )}
         </Grid>
         <div style={{ position: "relative", minHeight: 320, marginTop: "10%" }}>
           {loading ? (

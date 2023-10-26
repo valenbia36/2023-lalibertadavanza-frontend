@@ -12,6 +12,9 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from "@mui/material";
 import { useSnackbar } from "notistack";
+import getApiUrl from '../helpers/apiConfig';
+
+const apiUrl = getApiUrl();
 
 const defaultTheme = createTheme();
 
@@ -74,7 +77,7 @@ const SignUp = () => {
       enqueueSnackbar("Some fields are empty.", { variant: "error" });
       return;
     }
-    fetch("http://localhost:3001/api/auth/register", {
+    fetch(apiUrl + "/api/auth/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

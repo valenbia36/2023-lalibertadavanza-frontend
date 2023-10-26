@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Drawer from "../components/Drawer";
-
 import { useTheme } from "@mui/material/styles";
 import LabelBottomNavigation from "../components/BottomMenu";
 import PieChartContainer from "../components/Charts/PieChartContainer";
@@ -8,7 +7,6 @@ import LineChartContainer from "../components/Charts/LineChartContainer";
 import { Col, Container, Row } from "react-bootstrap";
 
 const Statistics = () => {
-  
   const theme = useTheme();
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
@@ -30,14 +28,22 @@ const Statistics = () => {
         <LabelBottomNavigation />
       )}
       <Row>
-        <Col xs={12} md={6} className="d-flex align-items-center justify-content-center">
-          <div style={{marginBottom: '20%'}}>
-            <PieChartContainer/>
+        <Col
+          xs={12}
+          md={6}
+          className="d-flex align-items-center justify-content-center"
+        >
+          <div style={{ maxHeight: "800px" }}>
+            <PieChartContainer />
           </div>
         </Col>
-        <Col xs={12} md={6} className="d-flex align-items-center justify-content-center">
-          <div style={{ marginBottom: '20%' }}>
-            <LineChartContainer/>
+        <Col
+          xs={12}
+          md={6}
+          className="d-flex align-items-center justify-content-center"
+        >
+          <div style={{ height: "900px" }}>
+            <LineChartContainer />
           </div>
         </Col>
       </Row>

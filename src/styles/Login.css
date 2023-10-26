@@ -1,3 +1,7 @@
+@font-face {
+    font-family: 'Comfortaa';
+    src: url('../fonts/static/Comfortaa-Regular.ttf') format('truetype');
+  }
 .Login{
     text-align: center;
     color: white
@@ -7,4 +11,8 @@
     margin-top: 2%;
     margin-bottom: 2%;
     color: white;
+}
+
+.custom-font{
+    font-family: 'Comfortaa',sans-serif;
 }

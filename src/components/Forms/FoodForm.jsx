@@ -3,8 +3,11 @@ import { TextField, Button, Modal, Box, Grid, IconButton } from "@mui/material";
 import { useSnackbar } from "notistack";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import CategoryForm from "./CategoryForm";
-import CategorySelect from "./CategorySelect";
 import CloseIcon from "@mui/icons-material/Close";
+import getApiUrl from "../../helpers/apiConfig";
+import CategoryAutocomplete from "../CategoryAutocomplete";
+
+const apiUrl = getApiUrl();
 
 const initialFoodState = {
   name: "",
@@ -27,10 +30,12 @@ const FoodForm = ({ open, setOpen }) => {
       Number(newFood.calories) < 1 ||
       Number(newFood.weight) < 1
     ) {
-      enqueueSnackbar("Please complete all the fields correctly.", { variant: "error" });
+      enqueueSnackbar("Please complete all the fields correctly.", {
+        variant: "error",
+      });
       return;
     } else {
-      fetch("http://localhost:3001/api/foods", {
+      fetch(apiUrl + "/api/foods", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -97,7 +102,7 @@ const FoodForm = ({ open, setOpen }) => {
           bgcolor: "background.paper",
           boxShadow: 24,
           p: 5,
-          borderRadius: '2%'
+          borderRadius: "2%",
         }}
       >
         <IconButton
@@ -163,13 +168,9 @@ const FoodForm = ({ open, setOpen }) => {
               }
             }}
           />
-          <Grid
-            container
-            spacing={1}
-            alignItems="center"
-          >
+          <Grid container spacing={1} alignItems="center">
             <Grid item xs={10}>
-              <CategorySelect
+              <CategoryAutocomplete
                 selectedCategory={newFood.category}
                 onCategoryChange={handleCategoryChange}
               />
