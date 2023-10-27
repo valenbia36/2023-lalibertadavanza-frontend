@@ -4,6 +4,14 @@ import Drawer from "../components/Drawer";
 import MealList from "../components/MealList";
 import FoodList from "../components/FoodList";
 import LabelBottomNavigation from "../components/BottomMenu";
+import { SpeedDial, SpeedDialAction, SpeedDialIcon } from "@mui/material";
+import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
+import LocalDrinkIcon from "@mui/icons-material/LocalDrink";
+
+const actions = [
+  { icon: <LocalDrinkIcon />, name: "Water" },
+  { icon: <NotificationsActiveIcon />, name: "Intermittent Fasting" },
+];
 
 const Meals = () => {
   const theme = useTheme();
@@ -19,7 +27,7 @@ const Meals = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, [theme]);
-  
+
   return (
     <div className="container">
       {!isMobile ? (
@@ -27,6 +35,21 @@ const Meals = () => {
       ) : (
         <LabelBottomNavigation />
       )}
+
+      <SpeedDial
+        ariaLabel="SpeedDial basic example"
+        sx={{ position: "fixed", bottom: "70px", right: "25px" }}
+        icon={<SpeedDialIcon />}
+      >
+        {actions.map((action) => (
+          <SpeedDialAction
+            key={action.name}
+            icon={action.icon}
+            tooltipTitle={action.name}
+          />
+        ))}
+      </SpeedDial>
+
       <div className="row justify-content-center">
         <div className="col-lg-10">
           <div className="row justify-content-center">

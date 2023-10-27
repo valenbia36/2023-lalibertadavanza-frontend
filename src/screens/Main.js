@@ -4,7 +4,14 @@ import Drawer from "../components/Drawer";
 import LabelBottomNavigation from "../components/BottomMenu";
 import GoalList from "../components/GoalList";
 import GoalChartContainer from "../components/Charts/GoalChartContainer";
-import "../styles/LogoVasoAgua.css";
+import { SpeedDial, SpeedDialAction, SpeedDialIcon } from "@mui/material";
+import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
+import LocalDrinkIcon from "@mui/icons-material/LocalDrink";
+
+const actions = [
+  { icon: <LocalDrinkIcon />, name: "Water" },
+  { icon: <NotificationsActiveIcon />, name: "Intermittent Fasting" },
+];
 
 const Main = () => {
   const theme = useTheme();
@@ -29,12 +36,21 @@ const Main = () => {
         <LabelBottomNavigation />
       )}
 
-      <div
-        className="contenedorLogo"
-        onClick={() => alert("Tomaste un vaso de agua")}
+      <SpeedDial
+        ariaLabel="SpeedDial basic example"
+        sx={{ position: 'fixed',
+          bottom: '70px',
+          right: '25px'}}
+        icon={<SpeedDialIcon />}
       >
-        <div className="logo"></div>
-      </div>
+        {actions.map((action) => (
+          <SpeedDialAction
+            key={action.name}
+            icon={action.icon}
+            tooltipTitle={action.name}
+          />
+        ))}
+      </SpeedDial>
 
       <div className="row justify-content-center">
         <div className="col-lg-10">
