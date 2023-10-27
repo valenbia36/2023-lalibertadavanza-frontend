@@ -7,6 +7,11 @@ import GoalChartContainer from "../components/Charts/GoalChartContainer";
 import { SpeedDial, SpeedDialAction, SpeedDialIcon } from "@mui/material";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import LocalDrinkIcon from "@mui/icons-material/LocalDrink";
+import Confetti from "react-confetti";
+import getApiUrl from "../helpers/apiConfig";
+import { useSnackbar } from "notistack";
+
+const apiUrl = getApiUrl();
 
 const actions = [
   { icon: <LocalDrinkIcon />, name: "Water" },
@@ -14,8 +19,10 @@ const actions = [
 ];
 
 const Main = () => {
+  const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
   const [isMobile, setIsMobile] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   useEffect(() => {
     function handleResize() {
@@ -28,6 +35,38 @@ const Main = () => {
     };
   }, [theme]);
 
+  const handleClick = () => {
+    setShowConfetti(true);
+    handleCreateWaterGlass();
+    setTimeout(() => {
+      setShowConfetti(false);
+    }, 5000);
+  };
+
+  const handleCreateWaterGlass = () => {
+    fetch(apiUrl + "/api/waterGlass", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+      body: JSON.stringify({
+        date: new Date(),
+        userId: localStorage.getItem("userId")
+      }),
+    }).then(function (response) {
+      if (response.status === 200) {
+        enqueueSnackbar("The water glass was add successfully.", {
+          variant: "success",
+        });
+      } else {
+        enqueueSnackbar("An error occurred while adding the water glss.", {
+          variant: "error",
+        });
+      }
+    });;
+  };
+
   return (
     <div className="container">
       {!isMobile ? (
@@ -35,12 +74,12 @@ const Main = () => {
       ) : (
         <LabelBottomNavigation />
       )}
-
+      {showConfetti && (
+        <Confetti width={window.innerWidth} height={window.innerHeight} />
+      )}
       <SpeedDial
         ariaLabel="SpeedDial basic example"
-        sx={{ position: 'fixed',
-          bottom: '70px',
-          right: '25px'}}
+        sx={{ position: "fixed", bottom: "70px", right: "25px" }}
         icon={<SpeedDialIcon />}
       >
         {actions.map((action) => (
@@ -48,6 +87,7 @@ const Main = () => {
             key={action.name}
             icon={action.icon}
             tooltipTitle={action.name}
+            onClick={handleClick}
           />
         ))}
       </SpeedDial>

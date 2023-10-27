@@ -50,9 +50,6 @@ const LineChartContainer = () => {
     );
     const data = await response.json();
     setData(data.fechasIntermedias);
-    console.log('## : ' + selectedStartDate)
-    console.log('## : ' + selectedEndDate)
-    console.log('## : ' + JSON.stringify(data.fechasIntermedias))
   };
 
   useEffect(() => {
@@ -68,7 +65,7 @@ const LineChartContainer = () => {
       style={{
         textAlign: "center",
         color: "black",
-        maxWidth: 320,
+        maxWidth: 300,
       }}
     >
       <h2 style={{ fontWeight: 'bold' }}>Calories By Date</h2>
