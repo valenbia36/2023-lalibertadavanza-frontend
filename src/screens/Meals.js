@@ -10,19 +10,16 @@ import LocalDrinkIcon from "@mui/icons-material/LocalDrink";
 import Confetti from "react-confetti";
 import getApiUrl from "../helpers/apiConfig";
 import { useSnackbar } from "notistack";
+import IntermittentFastingForm from "../components/Forms/IntermittentFastingForm";
 
 const apiUrl = getApiUrl();
-
-const actions = [
-  { icon: <LocalDrinkIcon />, name: "Water" },
-  { icon: <NotificationsActiveIcon />, name: "Intermittent Fasting" },
-];
 
 const Meals = () => {
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
   const [isMobile, setIsMobile] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [openIntermittentFastingModal, setOpenIntermittentFastingModal] = useState(false);
 
   useEffect(() => {
     function handleResize() {
@@ -34,14 +31,6 @@ const Meals = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, [theme]);
-
-  const handleClick = () => {
-    setShowConfetti(true);
-    handleCreateWaterGlass();
-    setTimeout(() => {
-      setShowConfetti(false);
-    }, 5000);
-  };
 
   const handleCreateWaterGlass = () => {
     fetch(apiUrl + "/api/waterGlass", {
@@ -67,6 +56,27 @@ const Meals = () => {
     });;
   };
 
+  const handleWaterGlassClick = () => {
+    setShowConfetti(true);
+    handleCreateWaterGlass();
+    setTimeout(() => {
+      setShowConfetti(false);
+    }, 5000);
+  };
+
+  const handleIntermittentFasting = () => {
+    setOpenIntermittentFastingModal(true)
+  }
+  
+  const closeModal = () => {
+    setOpenIntermittentFastingModal(false);
+  };
+
+  const actions = [
+    { icon: <LocalDrinkIcon />, name: "Water", onClick: handleWaterGlassClick },
+    { icon: <NotificationsActiveIcon />, name: "Intermittent Fasting", onClick: handleIntermittentFasting}
+  ];
+
   return (
     <div className="container">
       {!isMobile ? (
@@ -88,7 +98,7 @@ const Meals = () => {
             key={action.name}
             icon={action.icon}
             tooltipTitle={action.name}
-            onClick={handleClick}
+            onClick={action.onClick}
           />
         ))}
       </SpeedDial>
@@ -105,6 +115,7 @@ const Meals = () => {
           </div>
         </div>
       </div>
+      <IntermittentFastingForm openIntermittentFastingModal={openIntermittentFastingModal} closeModal={closeModal}/>
     </div>
   );
 };
