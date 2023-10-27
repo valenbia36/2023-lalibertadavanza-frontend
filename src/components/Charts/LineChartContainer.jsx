@@ -24,17 +24,17 @@ const css = `
 
 const apiUrl = getApiUrl();
 
+
 const LineChartContainer = () => {
   const [data, setData] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [range, setRange] = useState({
-    from: new Date(),
-    to: addDays(new Date(), 7)
+    from: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 0, 0, 0, 0),
+    to: addDays(new Date().setHours(0, 0), 7)
   });
 
   const getMeals = async (selectedStartDate, selectedEndDate) => {
-    setData("");
     const response = await fetch(
       apiUrl + "/api/meals/user/" +
       localStorage.getItem("userId") +
@@ -50,11 +50,16 @@ const LineChartContainer = () => {
     );
     const data = await response.json();
     setData(data.fechasIntermedias);
+    console.log('## : ' + selectedStartDate)
+    console.log('## : ' + selectedEndDate)
+    console.log('## : ' + JSON.stringify(data.fechasIntermedias))
   };
 
   useEffect(() => {
     if (range) {
-      getMeals(range.from, range.to);
+      if(range.from && range.to){
+        getMeals(range.from, range.to);
+      }
     }
   }, [range]);
 
