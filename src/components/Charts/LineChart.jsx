@@ -12,7 +12,6 @@ export default function LineChartWithCustomFontSize(data) {
     calories: item.calories,
     promedio: promedioCalorias,
   }));
-  console.log("ESTE" + dataWithAverage)
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (active) {

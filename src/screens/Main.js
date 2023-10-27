@@ -4,12 +4,11 @@ import Drawer from "../components/Drawer";
 import LabelBottomNavigation from "../components/BottomMenu";
 import GoalList from "../components/GoalList";
 import GoalChartContainer from "../components/Charts/GoalChartContainer";
-
+import "../styles/LogoVasoAgua.css";
 
 const Main = () => {
   const theme = useTheme();
   const [isMobile, setIsMobile] = useState(false);
-
 
   useEffect(() => {
     function handleResize() {
@@ -22,7 +21,6 @@ const Main = () => {
     };
   }, [theme]);
 
-
   return (
     <div className="container">
       {!isMobile ? (
@@ -30,10 +28,18 @@ const Main = () => {
       ) : (
         <LabelBottomNavigation />
       )}
+
+      <div
+        className="contenedorLogo"
+        onClick={() => alert("Tomaste un vaso de agua")}
+      >
+        <div className="logo"></div>
+      </div>
+
       <div className="row justify-content-center">
         <div className="col-lg-10">
           <div className="row justify-content-center">
-              <GoalChartContainer/>
+            <GoalChartContainer />
             <div className="col-lg-8 col-md-6">
               <GoalList />
             </div>
