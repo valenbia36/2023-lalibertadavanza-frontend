@@ -4,14 +4,32 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import CloseIcon from "@mui/icons-material/Close";
+import getApiUrl from "../../helpers/apiConfig";
+
+const apiUrl = getApiUrl();
 
 const IntermittentFastingForm = ({ openIntermittentFastingModal, closeModal }) => {
 
   const [startDateTime, setStartDateTime] = useState(new Date(new Date().getTime() + 30 * 60000));
-  const [endDatetime, setEndDateTime] = useState(new Date(new Date().getTime() + 60 * 60000));
+  const [endDateTime, setEndDateTime] = useState(new Date(new Date().getTime() + 60 * 60000));
 
   const handleStartIntermittentFasting = () => {
-    console.log('## : ' + startDateTime + ' - ' + endDatetime);
+    fetch(apiUrl + '/api/intermittentFasting', {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+      body: JSON.stringify({
+        userId: localStorage.getItem("userId"),
+        startDateTime: startDateTime,
+        endDateTime: endDateTime
+      }),
+    }).then(function (response) {
+      if (response.status === 200) {
+        console.log('funciono')
+      }
+    })
   }
 
   return (
@@ -59,7 +77,7 @@ const IntermittentFastingForm = ({ openIntermittentFastingModal, closeModal }) =
             } />
           </div>
           <div>
-            <DateTimePicker value={endDatetime} label="End Date Time" disabled={!startDateTime}
+            <DateTimePicker value={endDateTime} label="End Date Time" disabled={!startDateTime}
               minDate={startDateTime} onChange={(newDate) =>
                 setEndDateTime(newDate)
               } />
