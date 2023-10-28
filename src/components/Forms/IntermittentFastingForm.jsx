@@ -1,10 +1,18 @@
-import React from "react";
-import { Modal, Box, Grid, Button } from "@mui/material";
+import React, { useState } from "react";
+import { Modal, Box, Grid, Button, IconButton } from "@mui/material";
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers";
+import CloseIcon from "@mui/icons-material/Close";
 
 const IntermittentFastingForm = ({ openIntermittentFastingModal, closeModal }) => {
+
+  const [startDateTime, setStartDateTime] = useState(new Date(new Date().getTime() + 30 * 60000));
+  const [endDatetime, setEndDateTime] = useState(new Date(new Date().getTime() + 60 * 60000));
+
+  const handleStartIntermittentFasting = () => {
+    console.log('## : ' + startDateTime + ' - ' + endDatetime);
+  }
 
   return (
     <Modal
@@ -17,8 +25,8 @@ const IntermittentFastingForm = ({ openIntermittentFastingModal, closeModal }) =
         sx={{
           display: "flex",
           flexDirection: "column",
-          alignItems: "center", // Centra horizontalmente
-          justifyContent: "center", // Centra verticalmente
+          alignItems: "center",
+          justifyContent: "center",
           position: "absolute",
           top: "50%",
           left: "50%",
@@ -31,9 +39,31 @@ const IntermittentFastingForm = ({ openIntermittentFastingModal, closeModal }) =
           borderRadius: "2%",
         }}
       >
-        <span style={{marginBottom: '3%'}}>Configure your Intermittent Fasting: </span>
+        <IconButton
+          aria-label="Close"
+          onClick={closeModal}
+          sx={{
+            position: "absolute",
+            top: "3%",
+            right: "10px",
+            zIndex: 2,
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+        <span style={{ marginBottom: '5%' }}>Configure your Intermittent Fasting: </span>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <DateTimePicker defaultValue={new Date()} />
+          <div style={{ marginBottom: '15px' }}>
+            <DateTimePicker value={startDateTime} label="Start Date Time" disablePast onChange={(newDate) =>
+              setStartDateTime(newDate)
+            } />
+          </div>
+          <div>
+            <DateTimePicker value={endDatetime} label="End Date Time" disabled={!startDateTime}
+              minDate={startDateTime} onChange={(newDate) =>
+                setEndDateTime(newDate)
+              } />
+          </div>
         </LocalizationProvider>
         <Grid item xs={12}>
           <Button
@@ -47,6 +77,7 @@ const IntermittentFastingForm = ({ openIntermittentFastingModal, closeModal }) =
               fontWeight: "bold",
             }}
             fullWidth
+            onClick={handleStartIntermittentFasting}
           >
             Start Intermittent Fasting
           </Button>
