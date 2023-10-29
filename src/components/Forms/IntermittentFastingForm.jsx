@@ -12,7 +12,7 @@ const apiUrl = getApiUrl();
 const IntermittentFastingForm = ({ openIntermittentFastingModal, closeModal }) => {
 
   const { enqueueSnackbar } = useSnackbar();
-  const [startDateTime, setStartDateTime] = useState(new Date(new Date().getTime() + 30 * 60000));
+  const [startDateTime, setStartDateTime] = useState(new Date(new Date().getTime() + 1 * 60000));
   const [endDateTime, setEndDateTime] = useState(new Date(new Date().getTime() + 60 * 60000));
   const [activeIntermittentFastings, setActiveIntermittentFastings] = useState();
 
