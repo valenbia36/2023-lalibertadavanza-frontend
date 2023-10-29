@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Box, Grid, Button, IconButton } from "@mui/material";
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { useSnackbar } from "notistack";
@@ -9,34 +9,74 @@ import getApiUrl from "../../helpers/apiConfig";
 
 const apiUrl = getApiUrl();
 
-const IntermittentFastingForm = ({ openIntermittentFastingModal, closeModal }) => {
-
+const IntermittentFastingForm = ({
+  openIntermittentFastingModal,
+  closeModal,
+}) => {
   const { enqueueSnackbar } = useSnackbar();
-  const [startDateTime, setStartDateTime] = useState(new Date(new Date().getTime() + 1 * 60000));
-  const [endDateTime, setEndDateTime] = useState(new Date(new Date().getTime() + 60 * 60000));
-  const [activeIntermittentFastings, setActiveIntermittentFastings] = useState();
+  const [startDateTime, setStartDateTime] = useState(
+    new Date(new Date().getTime() + 1 * 60000)
+  );
+  const [endDateTime, setEndDateTime] = useState(
+    new Date(new Date().getTime() + 60 * 60000)
+  );
+  const [activeIntermittentFastings, setActiveIntermittentFastings] =
+    useState();
 
   useEffect(() => {
     handleGetActiveIntermittentFasting();
-  }, []);
+  }, [activeIntermittentFastings]);
 
-  const handleGetActiveIntermittentFasting = async() => {
-    const response = await fetch(apiUrl + '/api/intermittentFasting/active/' + localStorage.getItem("userId"), {
-      method: 'GET',
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("token"),
+  const handleGetActiveIntermittentFasting = async () => {
+    const response = await fetch(
+      apiUrl +
+        "/api/intermittentFasting/active/" +
+        localStorage.getItem("userId"),
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
       }
-    })
+    );
     const data = await response.json();
     if (data.filteredData.length > 0) {
       setActiveIntermittentFastings(data.filteredData);
     }
-  }
-  
+  };
+
+  const cancelIntermittentFasting = async () => {
+    fetch(
+      apiUrl +
+        "/api/intermittentFasting/active/" +
+        activeIntermittentFastings[0]._id,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      }
+    ).then(function (response) {
+      if (response.status === 200) {
+        enqueueSnackbar("The intermittent fasting was cancel successfully.", {
+          variant: "success",
+        });
+        setActiveIntermittentFastings("");
+      } else if (response.status === 500) {
+        enqueueSnackbar(
+          "An error occurred while canceling the intermittent fasting.",
+          {
+            variant: "error",
+          }
+        );
+      }
+    });
+  };
   const handleStartIntermittentFasting = () => {
-    fetch(apiUrl + '/api/intermittentFasting', {
-      method: 'POST',
+    fetch(apiUrl + "/api/intermittentFasting", {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + localStorage.getItem("token"),
@@ -44,29 +84,33 @@ const IntermittentFastingForm = ({ openIntermittentFastingModal, closeModal }) =
       body: JSON.stringify({
         userId: localStorage.getItem("userId"),
         startDateTime: startDateTime,
-        endDateTime: endDateTime
+        endDateTime: endDateTime,
       }),
     }).then(function (response) {
-      console.log(response)
+      console.log(response);
       if (response.status === 200) {
         enqueueSnackbar("The intermittent fasting was created successfully.", {
           variant: "success",
         });
         closeModal();
+      } else if (response.status === 501) {
+        enqueueSnackbar(
+          "Another intermittent fasting is scheduled for the same time.",
+          {
+            variant: "error",
+          }
+        );
       }
-      else if (response.status === 501) {
-        enqueueSnackbar("Another intermittent fasting is scheduled for the same time.", {
-          variant: "error",
-        });
-      }
-    })
-  }
+    });
+  };
 
   function formatDate(date) {
     if (typeof date === "string") {
       const fecha = date.substring(0, 10).split("-");
-      const hora = date.substring(11, 19).split(":"); 
-      return `${fecha[2]}/${fecha[1]}/${fecha[0]} ${hora[0]-3}:${hora[1]}:${hora[2]}`;
+      const hora = date.substring(11, 19).split(":");
+      return `${fecha[2]}/${fecha[1]}/${fecha[0]} ${hora[0] - 3}:${hora[1]}:${
+        hora[2]
+      }`;
     }
     return date.toLocaleDateString();
   }
@@ -109,25 +153,58 @@ const IntermittentFastingForm = ({ openIntermittentFastingModal, closeModal }) =
           <CloseIcon />
         </IconButton>
         {activeIntermittentFastings && (
-          <Grid sx={{textAlign: 'center'}}>
-          <span style={{ marginBottom: '5%', fontWeight: 'bold' }}>Active Intermittent Fasting: </span><br/>
-          <span>Start: {formatDate(activeIntermittentFastings[0].startDateTime)}</span><br/>
-          <span>End: {formatDate(activeIntermittentFastings[0].endDateTime)}</span>
+          <Grid sx={{ textAlign: "center" }}>
+            <span style={{ marginBottom: "5%", fontWeight: "bold" }}>
+              Active Intermittent Fasting:{" "}
+            </span>
+            <br />
+            <span>
+              Start: {formatDate(activeIntermittentFastings[0].startDateTime)}
+            </span>
+            <br />
+            <span>
+              End: {formatDate(activeIntermittentFastings[0].endDateTime)}
+            </span>
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{
+                mt: 3,
+                mb: 2,
+                backgroundColor: "#373D20",
+                "&:hover": { backgroundColor: "#373D20" },
+                fontWeight: "bold",
+              }}
+              fullWidth
+              onClick={cancelIntermittentFasting}
+            >
+              Cancel
+            </Button>
           </Grid>
         )}
-        
-        <span style={{ marginTop: '5%', marginBottom: '5%', fontWeight: 'bold' }}>Configure your Intermittent Fasting: </span>
+
+        <span
+          style={{ marginTop: "5%", marginBottom: "5%", fontWeight: "bold" }}
+        >
+          Configure your Intermittent Fasting:{" "}
+        </span>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <div style={{ marginBottom: '15px' }}>
-            <DateTimePicker value={startDateTime} label="Start Date Time" disablePast onChange={(newDate) =>
-              setStartDateTime(newDate)
-            } />
+          <div style={{ marginBottom: "15px" }}>
+            <DateTimePicker
+              value={startDateTime}
+              label="Start Date Time"
+              disablePast
+              onChange={(newDate) => setStartDateTime(newDate)}
+            />
           </div>
           <div>
-            <DateTimePicker value={endDateTime} label="End Date Time" disabled={!startDateTime}
-              minDate={startDateTime} onChange={(newDate) =>
-                setEndDateTime(newDate)
-              } />
+            <DateTimePicker
+              value={endDateTime}
+              label="End Date Time"
+              disabled={!startDateTime}
+              minDate={startDateTime}
+              onChange={(newDate) => setEndDateTime(newDate)}
+            />
           </div>
         </LocalizationProvider>
         <Grid item xs={12}>
