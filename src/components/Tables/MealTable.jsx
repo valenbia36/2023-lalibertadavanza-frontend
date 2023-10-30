@@ -17,7 +17,9 @@ import EditIcon from "@mui/icons-material/Edit";
 import MealForm from "../Forms/MealForm";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useSnackbar } from "notistack";
+import InfoIcon from "@mui/icons-material/Info";
 import getApiUrl from "../../helpers/apiConfig";
+import InfoModal from "../InfoModal";
 
 const apiUrl = getApiUrl();
 
@@ -79,6 +81,11 @@ function Row(props) {
         <TableCell align="center">{row.date}</TableCell>
         <TableCell align="center">{row.hour}</TableCell>
         <TableCell align="center">
+          <IconButton>
+            <InfoIcon />
+          </IconButton>
+        </TableCell>
+        <TableCell align="center">
           <IconButton
             aria-label="edit row"
             size="small"
@@ -104,6 +111,9 @@ function Row(props) {
                   <TableRow>
                     <TableCell align="center">Name</TableCell>
                     <TableCell align="center">Calories</TableCell>
+                    <TableCell align="center">Carbs</TableCell>
+                    <TableCell align="center">Proteins</TableCell>
+                    <TableCell align="center">Fats</TableCell>
                     <TableCell align="center">Weight (gr/ml)</TableCell>
                   </TableRow>
                 </TableHead>
@@ -116,6 +126,9 @@ function Row(props) {
                       <TableCell align="center">
                         {foodRow.totalCalories}
                       </TableCell>
+                      <TableCell align="center">0</TableCell>
+                      <TableCell align="center">0</TableCell>
+                      <TableCell align="center">0</TableCell>
                       <TableCell align="center">
                         {foodRow.weightConsumed}
                       </TableCell>
@@ -185,75 +198,81 @@ export default function MealTable() {
   };
 
   return (
-    <TableContainer component={Paper} sx={{ minHeight: 420 }}>
-      <Table aria-label="collapsible table">
-        <TableHead>
-          <TableRow>
-            <TableCell />
-            <TableCell sx={{ fontWeight: "bold" }} align="center">
-              Name
-            </TableCell>
-            <TableCell sx={{ fontWeight: "bold" }} align="center">
-              Total Calories
-            </TableCell>
-            <TableCell sx={{ fontWeight: "bold" }} align="center">
-              Date&nbsp;
-            </TableCell>
-            <TableCell sx={{ fontWeight: "bold" }} align="center">
-              Hours&nbsp;
-            </TableCell>
-            <TableCell sx={{ fontWeight: "bold" }} align="center">
-              Actions&nbsp;
-            </TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody sx={{ textAlign: "center" }}>
-          {meals.length > 0 ? (
-            meals
-              .slice(startIndex, endIndex)
-              .map((row) => (
-                <Row
-                  key={row.name}
-                  row={row}
-                  sx={{ textAlign: "center" }}
-                  onEditClick={handleEditClick}
-                  onDelete={handleDelete}
-                  page={page}
-                  endIndex={endIndex}
-                  totalMeals={totalMeals}
-                  onPageChange={handlePageChange}
-                />
-              ))
-          ) : (
+    <div>
+      <TableContainer component={Paper} sx={{ minHeight: 420 }}>
+        <Table aria-label="collapsible table">
+          <TableHead>
             <TableRow>
-              <TableCell colSpan={5} align="center">
-                No meals to show
+              <TableCell />
+              <TableCell sx={{ fontWeight: "bold" }} align="center">
+                Name
+              </TableCell>
+              <TableCell sx={{ fontWeight: "bold" }} align="center">
+                Total Calories
+              </TableCell>
+              <TableCell sx={{ fontWeight: "bold" }} align="center">
+                Date&nbsp;
+              </TableCell>
+              <TableCell sx={{ fontWeight: "bold" }} align="center">
+                Hours&nbsp;
+              </TableCell>
+              <TableCell sx={{ fontWeight: "bold" }} align="center">
+                Info
+              </TableCell>
+              <TableCell sx={{ fontWeight: "bold" }} align="center">
+                Actions&nbsp;
               </TableCell>
             </TableRow>
-          )}
-        </TableBody>
-      </Table>
+          </TableHead>
+          <TableBody sx={{ textAlign: "center" }}>
+            {meals.length > 0 ? (
+              meals
+                .slice(startIndex, endIndex)
+                .map((row) => (
+                  <Row
+                    key={row.name}
+                    row={row}
+                    sx={{ textAlign: "center" }}
+                    onEditClick={handleEditClick}
+                    onDelete={handleDelete}
+                    page={page}
+                    endIndex={endIndex}
+                    totalMeals={totalMeals}
+                    onPageChange={handlePageChange}
+                  />
+                ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={5} align="center">
+                  No meals to show
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
 
-      <div>
-        <IconButton
-          onClick={(e) => handlePageChange(page - 1)}
-          disabled={page === 0}
-        >
-          <ArrowBackIosIcon />
-        </IconButton>
-        <IconButton
-          onClick={(e) => handlePageChange(page + 1)}
-          disabled={endIndex >= totalMeals}
-        >
-          <ArrowForwardIosIcon />
-        </IconButton>
-      </div>
+        <div>
+          <IconButton
+            onClick={(e) => handlePageChange(page - 1)}
+            disabled={page === 0}
+          >
+            <ArrowBackIosIcon />
+          </IconButton>
+          <IconButton
+            onClick={(e) => handlePageChange(page + 1)}
+            disabled={endIndex >= totalMeals}
+          >
+            <ArrowForwardIosIcon />
+          </IconButton>
+        </div>
 
-      <MealForm
-        open={isModalOpen}
-        setOpen={setIsModalOpen}
-        initialData={editMeal}
-      />
-    </TableContainer>
+        <MealForm
+          open={isModalOpen}
+          setOpen={setIsModalOpen}
+          initialData={editMeal}
+        />
+      </TableContainer>
+      <InfoModal />
+    </div>
   );
 }
