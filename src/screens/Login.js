@@ -143,6 +143,7 @@ const Login = () => {
               "username",
               data.user.firstName + " " + data.user.lastName
             );
+            localStorage.setItem("userMail", data.user.email);
             localStorage.setItem("roles", data.user.role[0]);
             window.location.replace("/main");
           } else {

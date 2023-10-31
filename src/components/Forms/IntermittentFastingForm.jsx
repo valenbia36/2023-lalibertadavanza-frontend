@@ -85,9 +85,10 @@ const IntermittentFastingForm = ({
         userId: localStorage.getItem("userId"),
         startDateTime: startDateTime,
         endDateTime: endDateTime,
+        email: localStorage.getItem("userMail"),
+        userName: localStorage.getItem("username")
       }),
     }).then(function (response) {
-      console.log(response);
       if (response.status === 200) {
         enqueueSnackbar("The intermittent fasting was created successfully.", {
           variant: "success",
