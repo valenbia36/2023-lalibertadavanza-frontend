@@ -9,7 +9,8 @@ import {
   FormControl,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-const InfoModal = ({ open, setOpen }) => {
+const InfoModal = ({ open, setOpen, initialData }) => {
+  const [mealData, setMealData] = useState(initialData);
   const closeModal = () => {
     setOpen(false);
   };
@@ -47,6 +48,22 @@ const InfoModal = ({ open, setOpen }) => {
         >
           <CloseIcon />
         </IconButton>
+        <Grid item xs={12}>
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{
+              mt: 3,
+              mb: 2,
+              backgroundColor: "#373D20",
+              "&:hover": { backgroundColor: "#373D20" },
+              fontWeight: "bold",
+            }}
+            fullWidth
+          >
+            {initialData ? "Update Meal" : "Add Meal"}
+          </Button>
+        </Grid>
       </Box>
     </Modal>
   );

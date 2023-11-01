@@ -18,6 +18,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import CloseIcon from "@mui/icons-material/Close";
 import getApiUrl from "../../helpers/apiConfig";
 import { Autocomplete } from "@mui/material";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 const apiUrl = getApiUrl();
 
 const initialMealState = {
@@ -335,13 +336,23 @@ const MealForm = ({ open, setOpen, initialData }) => {
                   xs={2}
                   sx={{ display: "flex", alignItems: "center" }}
                 >
+                  <IconButton color="primary">
+                    <MoreHorizIcon />
+                  </IconButton>
                   <IconButton color="primary" onClick={handleAddFoodInput}>
                     <AddCircleRoundedIcon />
                   </IconButton>
                 </Grid>
               )}
               {index > 0 && (
-                <Grid item xs={2}>
+                <Grid
+                  item
+                  xs={2}
+                  sx={{ display: "flex", alignItems: "center" }}
+                >
+                  <IconButton color="primary">
+                    <MoreHorizIcon />
+                  </IconButton>
                   <IconButton
                     color="primary"
                     onClick={() => handleRemoveFoodInput(index)}

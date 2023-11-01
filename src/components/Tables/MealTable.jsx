@@ -24,7 +24,7 @@ import InfoModal from "../InfoModal";
 const apiUrl = getApiUrl();
 
 function Row(props) {
-  const { row, onEditClick } = props;
+  const { row, onEditClick, onInfoClick } = props;
   const [open, setOpen] = React.useState(false);
 
   const { enqueueSnackbar } = useSnackbar();
@@ -81,7 +81,7 @@ function Row(props) {
         <TableCell align="center">{row.date}</TableCell>
         <TableCell align="center">{row.hour}</TableCell>
         <TableCell align="center">
-          <IconButton>
+          <IconButton onClick={() => onInfoClick(row)}>
             <InfoIcon />
           </IconButton>
           <IconButton
@@ -150,6 +150,8 @@ export default function MealTable() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editMeal, setEditMeal] = useState(null);
   const [totalMeals, setTotalMeals] = useState(0);
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+  const [infoMeal, setInfoMeal] = useState(null);
 
   const startIndex = page * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
@@ -185,6 +187,10 @@ export default function MealTable() {
   const handleEditClick = (meal) => {
     setEditMeal(meal);
     setIsModalOpen(true);
+  };
+  const handleInfoClick = (meal) => {
+    setInfoMeal(meal);
+    setIsInfoModalOpen(true);
   };
 
   const handlePageChange = (newPage) => {
@@ -234,6 +240,7 @@ export default function MealTable() {
                     endIndex={endIndex}
                     totalMeals={totalMeals}
                     onPageChange={handlePageChange}
+                    onInfoClick={handleInfoClick}
                   />
                 ))
             ) : (
@@ -267,7 +274,11 @@ export default function MealTable() {
           initialData={editMeal}
         />
       </TableContainer>
-      <InfoModal />
+      <InfoModal
+        open={isInfoModalOpen}
+        setOpen={setIsInfoModalOpen}
+        initialData={infoMeal}
+      />
     </div>
   );
 }
