@@ -26,7 +26,6 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import "../styles/Login.css";
 const apiUrl = getApiUrl();
 const url = getUrl();
-const defaultTheme = createTheme();
 
 function getUID() {
   return Date.now().toString(36);
@@ -162,7 +161,6 @@ const Login = () => {
   };
 
   return (
-    <ThemeProvider theme={defaultTheme}>
       <Grid container component="main" sx={{ height: "100vh" }}>
         <CssBaseline />
         {!isMobile && <Slideshow images={images} interval={2000} />}
@@ -307,7 +305,7 @@ const Login = () => {
             </Box>
           </Box>
         </Grid>
-      </Grid>
+      
 
       <Modal
         open={isModalOpen}
@@ -387,7 +385,7 @@ const Login = () => {
           </Button>
         </Box>
       </Modal>
-    </ThemeProvider>
+      </Grid>
   );
 };
 

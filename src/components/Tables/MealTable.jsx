@@ -84,8 +84,6 @@ function Row(props) {
           <IconButton>
             <InfoIcon />
           </IconButton>
-        </TableCell>
-        <TableCell align="center">
           <IconButton
             aria-label="edit row"
             size="small"
@@ -215,9 +213,6 @@ export default function MealTable() {
               </TableCell>
               <TableCell sx={{ fontWeight: "bold" }} align="center">
                 Hours&nbsp;
-              </TableCell>
-              <TableCell sx={{ fontWeight: "bold" }} align="center">
-                Info
               </TableCell>
               <TableCell sx={{ fontWeight: "bold" }} align="center">
                 Actions&nbsp;

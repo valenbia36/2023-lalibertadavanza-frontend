@@ -51,6 +51,7 @@ const Statistics = () => {
         enqueueSnackbar("The water glass was add successfully.", {
           variant: "success",
         });
+        setFlagToRerender(!flagToRerender)
       } else {
         enqueueSnackbar("An error occurred while adding the water glss.", {
           variant: "error",

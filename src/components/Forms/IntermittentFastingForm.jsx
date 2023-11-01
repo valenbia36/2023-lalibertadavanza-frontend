@@ -25,7 +25,7 @@ const IntermittentFastingForm = ({
 
   useEffect(() => {
     handleGetActiveIntermittentFasting();
-  }, [activeIntermittentFastings]);
+  }, [activeIntermittentFastings, openIntermittentFastingModal]);
 
   const handleGetActiveIntermittentFasting = async () => {
     const response = await fetch(
@@ -74,36 +74,52 @@ const IntermittentFastingForm = ({
       }
     });
   };
+
   const handleStartIntermittentFasting = () => {
-    fetch(apiUrl + "/api/intermittentFasting", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-      body: JSON.stringify({
-        userId: localStorage.getItem("userId"),
-        startDateTime: startDateTime,
-        endDateTime: endDateTime,
-        email: localStorage.getItem("userMail"),
-        userName: localStorage.getItem("username")
-      }),
-    }).then(function (response) {
-      if (response.status === 200) {
-        enqueueSnackbar("The intermittent fasting was created successfully.", {
-          variant: "success",
-        });
-        closeModal();
-      } else if (response.status === 501) {
-        enqueueSnackbar(
-          "Another intermittent fasting is scheduled for the same time.",
-          {
-            variant: "error",
-          }
-        );
-      }
-    });
+    const timeDifferenceMillis = endDateTime - startDateTime;
+    
+    const timeDifferenceHours = timeDifferenceMillis / (1000 * 60 * 60);
+  
+    if (startDateTime > endDateTime) {
+      enqueueSnackbar("End date and time must be greater than start date and time.", {
+        variant: "error",
+      });
+    } else if (timeDifferenceHours < 1) {
+      enqueueSnackbar("The fasting period must be at least 1 hour.", {
+        variant: "error",
+      });
+    } else {
+      fetch(apiUrl + "/api/intermittentFasting", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+        body: JSON.stringify({
+          userId: localStorage.getItem("userId"),
+          startDateTime: startDateTime,
+          endDateTime: endDateTime,
+          email: localStorage.getItem("userMail"),
+          userName: localStorage.getItem("username")
+        }),
+      }).then(function (response) {
+        if (response.status === 200) {
+          enqueueSnackbar("The intermittent fasting was created successfully.", {
+            variant: "success",
+          });
+          closeModal();
+        } else if (response.status === 501) {
+          enqueueSnackbar(
+            "Another intermittent fasting is scheduled for the same time.",
+            {
+              variant: "error",
+            }
+          );
+        }
+      });
+    }
   };
+  
 
   function formatDate(date) {
     if (typeof date === "string") {
