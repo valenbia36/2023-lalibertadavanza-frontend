@@ -6,6 +6,8 @@ import CategoryForm from "./CategoryForm";
 import CloseIcon from "@mui/icons-material/Close";
 import getApiUrl from "../../helpers/apiConfig";
 import CategoryAutocomplete from "../CategoryAutocomplete";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import InfoModal from "../AddInfoModal";
 
 const apiUrl = getApiUrl();
 
@@ -20,6 +22,7 @@ const FoodForm = ({ open, setOpen }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newFood, setNewFood] = useState(initialFoodState);
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
 
   const handleAddFood = () => {
     if (
@@ -175,7 +178,7 @@ const FoodForm = ({ open, setOpen }) => {
                 onCategoryChange={handleCategoryChange}
               />
             </Grid>
-            <Grid item xs={2}>
+            <Grid item xs={2} sx={{ display: "flex", alignItems: "center" }}>
               <IconButton
                 color="primary"
                 onClick={() => {
@@ -183,6 +186,14 @@ const FoodForm = ({ open, setOpen }) => {
                 }}
               >
                 <AddCircleRoundedIcon />
+              </IconButton>
+              <IconButton
+                color="primary"
+                onClick={() => {
+                  setIsInfoModalOpen(true);
+                }}
+              >
+                <MoreHorizIcon />
               </IconButton>
             </Grid>
             <React.Fragment>
@@ -206,6 +217,12 @@ const FoodForm = ({ open, setOpen }) => {
             Add Food
           </Button>
         </div>
+        <InfoModal
+          open={isInfoModalOpen}
+          setOpen={setIsInfoModalOpen}
+          newFood={newFood}
+          setNewFood={setNewFood}
+        />
       </Box>
     </Modal>
   );

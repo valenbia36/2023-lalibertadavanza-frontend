@@ -19,7 +19,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useSnackbar } from "notistack";
 import InfoIcon from "@mui/icons-material/Info";
 import getApiUrl from "../../helpers/apiConfig";
-import InfoModal from "../InfoModal";
 
 const apiUrl = getApiUrl();
 
@@ -81,9 +80,6 @@ function Row(props) {
         <TableCell align="center">{row.date}</TableCell>
         <TableCell align="center">{row.hour}</TableCell>
         <TableCell align="center">
-          <IconButton onClick={() => onInfoClick(row)}>
-            <InfoIcon />
-          </IconButton>
           <IconButton
             aria-label="edit row"
             size="small"
@@ -188,10 +184,6 @@ export default function MealTable() {
     setEditMeal(meal);
     setIsModalOpen(true);
   };
-  const handleInfoClick = (meal) => {
-    setInfoMeal(meal);
-    setIsInfoModalOpen(true);
-  };
 
   const handlePageChange = (newPage) => {
     setPage(newPage);
@@ -240,7 +232,6 @@ export default function MealTable() {
                     endIndex={endIndex}
                     totalMeals={totalMeals}
                     onPageChange={handlePageChange}
-                    onInfoClick={handleInfoClick}
                   />
                 ))
             ) : (
@@ -274,11 +265,6 @@ export default function MealTable() {
           initialData={editMeal}
         />
       </TableContainer>
-      <InfoModal
-        open={isInfoModalOpen}
-        setOpen={setIsInfoModalOpen}
-        initialData={infoMeal}
-      />
     </div>
   );
 }
