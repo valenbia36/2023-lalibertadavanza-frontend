@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   TextField,
   Button,
@@ -6,7 +6,6 @@ import {
   Box,
   IconButton,
   Grid,
-  FormControl,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 const InfoModal = ({ open, setOpen, newFood, setNewFood }) => {
@@ -15,10 +14,26 @@ const InfoModal = ({ open, setOpen, newFood, setNewFood }) => {
   };
   const handleCarbsInputChange = (e, index) => {
     const inputValue = Number(e.target.value);
-    if (!isNaN(inputValue) && inputValue >= 0) {
+    if (!isNaN(inputValue) && inputValue > 0) {
       setNewFood({ ...newFood, carbs: inputValue });
     } else {
-      setNewFood({ ...newFood, carbs: 0 });
+      setNewFood({ ...newFood, carbs: "" });
+    }
+  };
+  const handleProteinsInputChange = (e, index) => {
+    const inputValue = Number(e.target.value);
+    if (!isNaN(inputValue) && inputValue > 0) {
+      setNewFood({ ...newFood, proteins: inputValue });
+    } else {
+      setNewFood({ ...newFood, proteins: "" });
+    }
+  };
+  const handleFatsInputChange = (e, index) => {
+    const inputValue = Number(e.target.value);
+    if (!isNaN(inputValue) && inputValue > 0) {
+      setNewFood({ ...newFood, fats: inputValue });
+    } else {
+      setNewFood({ ...newFood, proteins: "" });
     }
   };
 
@@ -80,7 +95,8 @@ const InfoModal = ({ open, setOpen, newFood, setNewFood }) => {
               type="number"
               variant="outlined"
               fullWidth
-              value={0}
+              value={newFood.proteins}
+              onChange={(e) => handleProteinsInputChange(e)}
             />
           </Grid>
           <Grid item xs={12}>
@@ -93,7 +109,8 @@ const InfoModal = ({ open, setOpen, newFood, setNewFood }) => {
               type="number"
               variant="outlined"
               fullWidth
-              value={0}
+              value={newFood.fats}
+              onChange={(e) => handleFatsInputChange(e)}
             />
           </Grid>
         </Grid>
@@ -108,6 +125,7 @@ const InfoModal = ({ open, setOpen, newFood, setNewFood }) => {
             fontWeight: "bold",
           }}
           fullWidth
+          onClick={ closeModal}
         >
           Add +Info
         </Button>

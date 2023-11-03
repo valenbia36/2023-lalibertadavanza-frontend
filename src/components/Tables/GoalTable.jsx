@@ -83,10 +83,9 @@ export default function GoalTable({ filterOpen, isCreateModalOpen }) {
       setSelectedFilter("")
     }
     handleGetGoals();
-  }, [isCreateModalOpen,isModalOpen,selectedFilter,filterOpen]);
+  }, [isCreateModalOpen,isModalOpen,selectedFilter,filterOpen,selectedGoal]);
 
   const handleGetGoals = async () => {
-    setGoals([])
     const response = await fetch(
       apiUrl + "/api/goals/goalsWithProgress/" + localStorage.getItem("userId"),
       {

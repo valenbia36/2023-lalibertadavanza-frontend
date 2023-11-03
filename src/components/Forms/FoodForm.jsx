@@ -16,6 +16,9 @@ const initialFoodState = {
   calories: "",
   weight: "",
   category: "",
+  carbs: "",
+  proteins: "",
+  fats: ""
 };
 
 const FoodForm = ({ open, setOpen }) => {
@@ -152,25 +155,6 @@ const FoodForm = ({ open, setOpen }) => {
               }
             }}
           />
-          <TextField
-            InputProps={{
-              inputProps: {
-                step: 1,
-              },
-            }}
-            label={`Calories`}
-            type="number"
-            variant="outlined"
-            fullWidth
-            value={newFood.calories}
-            onChange={(e) => handleCaloriesInputChange(e)}
-            style={{ marginBottom: "7px" }}
-            onKeyPress={(event) => {
-              if (event.key === "Enter") {
-                handleAddFood();
-              }
-            }}
-          />
           <Grid container spacing={1} alignItems="center">
             <Grid item xs={10}>
               <CategoryAutocomplete
@@ -187,6 +171,30 @@ const FoodForm = ({ open, setOpen }) => {
               >
                 <AddCircleRoundedIcon />
               </IconButton>
+            </Grid>
+          </Grid>
+          <Grid container spacing={1} alignItems="center" sx={{mt:0.05}} >
+            <Grid item xs={10}>
+              <TextField
+                InputProps={{
+                  inputProps: {
+                    step: 1,
+                  },
+                }}
+                label={`Calories`}
+                type="number"
+                variant="outlined"
+                fullWidth
+                value={newFood.calories}
+                onChange={(e) => handleCaloriesInputChange(e)}
+                onKeyPress={(event) => {
+                  if (event.key === "Enter") {
+                    handleAddFood();
+                  }
+                }}
+              />
+            </Grid>
+            <Grid item xs={2}>
               <IconButton
                 color="primary"
                 onClick={() => {
@@ -196,9 +204,6 @@ const FoodForm = ({ open, setOpen }) => {
                 <MoreHorizIcon />
               </IconButton>
             </Grid>
-            <React.Fragment>
-              <CategoryForm open={isModalOpen} setOpen={setIsModalOpen} />
-            </React.Fragment>
           </Grid>
 
           <Button
@@ -223,7 +228,8 @@ const FoodForm = ({ open, setOpen }) => {
           newFood={newFood}
           setNewFood={setNewFood}
         />
-      </Box>
+        <CategoryForm open={isModalOpen} setOpen={setIsModalOpen}/>      
+        </Box>
     </Modal>
   );
 };

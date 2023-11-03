@@ -17,7 +17,6 @@ import EditIcon from "@mui/icons-material/Edit";
 import MealForm from "../Forms/MealForm";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useSnackbar } from "notistack";
-import InfoIcon from "@mui/icons-material/Info";
 import getApiUrl from "../../helpers/apiConfig";
 
 const apiUrl = getApiUrl();
@@ -120,9 +119,9 @@ function Row(props) {
                       <TableCell align="center">
                         {foodRow.totalCalories}
                       </TableCell>
-                      <TableCell align="center">0</TableCell>
-                      <TableCell align="center">0</TableCell>
-                      <TableCell align="center">0</TableCell>
+                      <TableCell align="center">{foodRow.totalCarbs}</TableCell>
+                      <TableCell align="center">{foodRow.totalProteins}</TableCell>
+                      <TableCell align="center">{foodRow.totalFats}</TableCell>
                       <TableCell align="center">
                         {foodRow.weightConsumed}
                       </TableCell>
@@ -194,8 +193,7 @@ export default function MealTable() {
   };
 
   return (
-    <div>
-      <TableContainer component={Paper} sx={{ minHeight: 420 }}>
+      <TableContainer component={Paper} sx={{ overflowX: "auto" }}>
         <Table aria-label="collapsible table">
           <TableHead>
             <TableRow>
@@ -265,6 +263,5 @@ export default function MealTable() {
           initialData={editMeal}
         />
       </TableContainer>
-    </div>
   );
 }

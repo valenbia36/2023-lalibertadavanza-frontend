@@ -42,9 +42,9 @@ export default function LineChartWithCustomFontSize(data) {
     <div style={{ fontSize: 12 }}>
       <LineChart
         width={320}
-        height={420}
+        height={410}
         data={dataWithAverage}
-        margin={{ top: 10, right: 30, left: 20, bottom: 30 }}
+        margin={{ top: 10, right: 20, left: 0, bottom: 30 }}
       >
       <Tooltip content={<CustomTooltip />} />
         <Legend
@@ -70,6 +70,8 @@ export default function LineChartWithCustomFontSize(data) {
             position: "insideLeft",
             fontSize: 14,
             fontWeight: "bold",
+            offset: 20,
+            
           }}
         />
         <Legend verticalAlign="top" width={100} />

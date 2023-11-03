@@ -31,6 +31,13 @@ const initialGoalState = {
 
 const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
   const { enqueueSnackbar } = useSnackbar();
+  const [selectedRecuringValue, setSelectedRecurringValue] = useState('Non-Recurring');
+  const closeModal = () => {
+    setOpen(false);
+    setSelectedRecurringValue("Non-Recurring")
+    setNewGoal(initialGoalState);
+  };
+
   const [newGoal, setNewGoal] = useState({
     name: "",
     calories: "",
@@ -44,7 +51,7 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
     if (initialData) {
       const parsedStartDate = new Date(initialData.startDate);
       const parsedEndDate = new Date(initialData.endDate);
-
+      setSelectedRecurringValue(initialData.recurrency)
       setNewGoal({
         ...initialData,
         startDate: parsedStartDate,
@@ -118,10 +125,6 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
     }
   };
 
-  const closeModal = () => {
-    setOpen(false);
-    setNewGoal(initialGoalState);
-  };
 
   const handleCaloriesInputChange = (e, index) => {
     const inputValue = Number(e.target.value);
@@ -132,6 +135,7 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
     }
   };
   const handleRecurrencyChange = (event) => {
+    setSelectedRecurringValue(event.target.value)
     setNewGoal({ ...newGoal, recurrency: event.target.value });
   };
 
@@ -166,7 +170,7 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
             zIndex: 2,
           }}
         >
-          <CloseIcon />
+          <CloseIcon  />
         </IconButton>
         <div>
           <TextField
@@ -256,15 +260,20 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
               </LocalizationProvider>
             </FormControl>
             <FormGroup>
-            <RadioGroup  onChange={handleRecurrencyChange} row>
+            <RadioGroup  onChange={handleRecurrencyChange} row value={selectedRecuringValue}>
               <FormControlLabel
                 control={<Radio />}
-                label="Weekly goal"
+                label="Non-Recurring"
+                value="Non-Recurring"
+              />
+              <FormControlLabel
+                control={<Radio />}
+                label="Weekly"
                 value="Weekly"
               />
               <FormControlLabel
                 control={<Radio />}
-                label="Monthly goal"
+                label="Monthly"
                 value="Monthly"
               />
             </RadioGroup>
