@@ -7,6 +7,10 @@ import {
   Grid,
   IconButton,
   FormControl,
+  FormControlLabel,
+  Radio,
+  FormGroup,
+  RadioGroup
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import CloseIcon from "@mui/icons-material/Close";
@@ -33,6 +37,7 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
     userId: localStorage.getItem("userId"),
     startDate: new Date(),
     endDate: new Date(),
+    recurrency: "Non-Recurring"
   });
 
   useEffect(() => {
@@ -52,6 +57,7 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
         userId: localStorage.getItem("userId"),
         startDate: new Date(),
         endDate: new Date(),
+        recurrency: "Non-Recurring"
       });
     }
   }, [initialData, open]);
@@ -86,6 +92,7 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
         },
         body: JSON.stringify(newGoal),
       }).then(function (response) {
+
         if (response.status === 200) {
           enqueueSnackbar(
             initialData
@@ -123,6 +130,9 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
     } else {
       setNewGoal({ ...newGoal, calories: "" });
     }
+  };
+  const handleRecurrencyChange = (event) => {
+    setNewGoal({ ...newGoal, recurrency: event.target.value });
   };
 
   return (
@@ -245,6 +255,20 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
                 />
               </LocalizationProvider>
             </FormControl>
+            <FormGroup>
+            <RadioGroup  onChange={handleRecurrencyChange} row>
+              <FormControlLabel
+                control={<Radio />}
+                label="Weekly goal"
+                value="Weekly"
+              />
+              <FormControlLabel
+                control={<Radio />}
+                label="Monthly goal"
+                value="Monthly"
+              />
+            </RadioGroup>
+          </FormGroup>
           </Grid>
 
           <Button

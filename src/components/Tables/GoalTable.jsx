@@ -62,7 +62,7 @@ function TablePaginationActions(props) {
   );
 }
 
-export default function GoalTable({ filterOpen }) {
+export default function GoalTable({ filterOpen, isCreateModalOpen }) {
   const [totalItems, setTotalItems] = useState(0);
   const [page, setPage] = React.useState(0);
   const [goals, setGoals] = useState([]);
@@ -76,15 +76,17 @@ export default function GoalTable({ filterOpen }) {
     setSelectedFilter(event.target.value);
   };
 
+
   useEffect(() => {
     if(!filterOpen)
     {
       setSelectedFilter("")
     }
     handleGetGoals();
-  }, [goals, selectedGoal, isModalOpen, selectedFilter,filterOpen]);
+  }, [isCreateModalOpen,isModalOpen,selectedFilter,filterOpen]);
 
   const handleGetGoals = async () => {
+    setGoals([])
     const response = await fetch(
       apiUrl + "/api/goals/goalsWithProgress/" + localStorage.getItem("userId"),
       {
@@ -174,6 +176,9 @@ export default function GoalTable({ filterOpen }) {
                 State
               </TableCell>
               <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
+                Recurrency
+              </TableCell>
+              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
                 Info
               </TableCell>
             </TableRow>
@@ -199,6 +204,9 @@ export default function GoalTable({ filterOpen }) {
                     </TableCell>
                     <TableCell style={{ width: 130 }} align="center">
                       {`${row.state}`}
+                    </TableCell>
+                    <TableCell style={{ width: 130 }} align="center">
+                      {`${row.recurrency}`}
                     </TableCell>
                     <TableCell style={{ width: 50 }} align="center">
                       <IconButton
@@ -283,6 +291,10 @@ export default function GoalTable({ filterOpen }) {
                   <li>
                     <span style={{ fontWeight: "bold" }}>End Date:</span>{" "}
                     {formatDate(selectedGoal.endDate)}
+                  </li>
+                  <li>
+                    <span style={{ fontWeight: "bold" }}>Recurrency:</span>{" "}
+                    {(selectedGoal.recurrency)}
                   </li>
                 </ul>
               </div>
