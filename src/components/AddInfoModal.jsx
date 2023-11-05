@@ -51,7 +51,7 @@ const InfoModal = ({ open, setOpen, newFood, setNewFood }) => {
           left: "50%",
           transform: "translate(-50%, -50%)",
           width: "100%",
-          maxWidth: 500,
+          maxWidth: 300,
           bgcolor: "background.paper",
           boxShadow: 24,
           p: 4,
@@ -70,8 +70,8 @@ const InfoModal = ({ open, setOpen, newFood, setNewFood }) => {
         >
           <CloseIcon />
         </IconButton>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
+        <Grid container spacing={2} justifyContent="center" alignItems="center">
+          <Grid item xs={10}>
             <TextField
               InputProps={{
                 inputProps: { min: 1 },
@@ -85,7 +85,7 @@ const InfoModal = ({ open, setOpen, newFood, setNewFood }) => {
               onChange={(e) => handleCarbsInputChange(e)}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={10}>
             <TextField
               InputProps={{
                 inputProps: { min: 1 },
@@ -99,7 +99,7 @@ const InfoModal = ({ open, setOpen, newFood, setNewFood }) => {
               onChange={(e) => handleProteinsInputChange(e)}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={10}>
             <TextField
               InputProps={{
                 inputProps: { min: 1 },

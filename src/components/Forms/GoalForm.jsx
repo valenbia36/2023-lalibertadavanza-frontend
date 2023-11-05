@@ -170,7 +170,7 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
             zIndex: 2,
           }}
         >
-          <CloseIcon  />
+          <CloseIcon />
         </IconButton>
         <div>
           <TextField
@@ -205,7 +205,7 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
             }}
           />
 
-          <Grid item xs={12} style={{marginBottom: "7px" }}>
+          <Grid item xs={12} style={{ marginBottom: "7px" }}>
             <FormControl fullWidth>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
@@ -260,24 +260,24 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
               </LocalizationProvider>
             </FormControl>
             <FormGroup>
-            <RadioGroup  onChange={handleRecurrencyChange} row value={selectedRecuringValue}>
-              <FormControlLabel
-                control={<Radio />}
-                label="Non-Recurring"
-                value="Non-Recurring"
-              />
-              <FormControlLabel
-                control={<Radio />}
-                label="Weekly"
-                value="Weekly"
-              />
-              <FormControlLabel
-                control={<Radio />}
-                label="Monthly"
-                value="Monthly"
-              />
-            </RadioGroup>
-          </FormGroup>
+              <RadioGroup onChange={handleRecurrencyChange} row value={selectedRecuringValue} style={{ justifyContent: 'center' }}>
+                <FormControlLabel
+                  control={<Radio />}
+                  label="Non-Recurring"
+                  value="Non-Recurring"
+                />
+                <FormControlLabel
+                  control={<Radio />}
+                  label="Weekly"
+                  value="Weekly"
+                />
+                <FormControlLabel
+                  control={<Radio />}
+                  label="Monthly"
+                  value="Monthly"
+                />
+              </RadioGroup>
+            </FormGroup>
           </Grid>
 
           <Button

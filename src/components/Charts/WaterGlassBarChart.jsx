@@ -10,7 +10,7 @@ export default function WaterGlassBarChart({ data }) {
                 <XAxis dataKey="_id" label={{
                     value: "Date",
                     position: "bottom",
-                    fontSize: 14,
+                    fontSize: 12,
                     fontWeight: "bold",
                 }} />
                 <YAxis interval={1} />

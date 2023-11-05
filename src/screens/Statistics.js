@@ -106,37 +106,38 @@ const Statistics = () => {
         ))}
       </SpeedDial>
       <Row>
-        <Col
-          xs={12}
-          md={4}
-          className="d-flex align-items-start justify-content-center"
-          style={{ height: "500px" }}
-        >
-          <div>
-            <PieChartContainer />
-          </div>
-        </Col>
-        <Col
-          xs={12}
-          md={4}
-          className="d-flex align-items-start justify-content-center"
-          style={{ height: "600px" }}
-        >
-          <div>
-            <LineChartContainer />
-          </div>
-        </Col>
-        <Col
-          xs={12}
-          md={4}
-          className="d-flex align-items-start justify-content-center"
-          style={{ height: "550px" }}
-        >
-          <div>
-            <WaterGlassBarChartContainer flag={flagToRerender} />
-          </div>
-        </Col>
-      </Row>
+  <Col
+    xs={12}
+    md={4}
+    className="d-flex align-items-start justify-content-center p-0"
+    style={{ minHeight: "500px" }} // Cambia height a minHeight para mantener el aspecto pero permite que se reduzca
+  >
+    <div style={{ width: '100%', maxWidth: '400px' }}> {/* Ajusta estos valores según sea necesario */}
+      <PieChartContainer />
+    </div>
+  </Col>
+  <Col
+    xs={12}
+    md={4}
+    className="d-flex align-items-start justify-content-center p-0"
+    style={{ minHeight: "600px" }} // Cambia height a minHeight
+  >
+    <div style={{ width: '100%', maxWidth: '400px' }}> {/* Ajusta estos valores según sea necesario */}
+      <LineChartContainer />
+    </div>
+  </Col>
+  <Col
+    xs={12}
+    md={4}
+    className="d-flex align-items-start justify-content-center p-0"
+    style={{ minHeight: "550px" }} // Cambia height a minHeight
+  >
+    <div style={{ width: '100%', maxWidth: '400px' }}> {/* Ajusta estos valores según sea necesario */}
+      <WaterGlassBarChartContainer flag={flagToRerender} />
+    </div>
+  </Col>
+</Row>
+
       <IntermittentFastingForm openIntermittentFastingModal={openIntermittentFastingModal} closeModal={closeModal}/>
     </div>
   );

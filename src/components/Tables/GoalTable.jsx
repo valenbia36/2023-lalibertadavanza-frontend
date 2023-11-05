@@ -14,11 +14,15 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import Modal from "@mui/material/Modal";
 import getApiUrl from "../../helpers/apiConfig";
 import CloseIcon from "@mui/icons-material/Close";
-import { Button, Grid } from "@mui/material";
+import { Button, Grid, TextField } from "@mui/material";
 import GoalForm from "../../components/Forms/GoalForm";
 import { useSnackbar } from "notistack";
 import InfoIcon from "@mui/icons-material/Info";
 import { Select, MenuItem, InputLabel, FormControl } from "@mui/material";
+import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
+import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
+import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
+
 
 const apiUrl = getApiUrl();
 
@@ -78,12 +82,11 @@ export default function GoalTable({ filterOpen, isCreateModalOpen }) {
 
 
   useEffect(() => {
-    if(!filterOpen)
-    {
+    if (!filterOpen) {
       setSelectedFilter("")
     }
     handleGetGoals();
-  }, [isCreateModalOpen,isModalOpen,selectedFilter,filterOpen,selectedGoal]);
+  }, [isCreateModalOpen, isModalOpen, selectedFilter, filterOpen, selectedGoal]);
 
   const handleGetGoals = async () => {
     const response = await fetch(
@@ -143,6 +146,21 @@ export default function GoalTable({ filterOpen, isCreateModalOpen }) {
     }
     return date.toLocaleDateString();
   }
+
+  const getFaceIcon = (goal) => {
+    const progress = goal.totalCalorias / goal.calories;
+
+    if (progress >= 1) {
+      // Meta cumplida o superada
+      return <SentimentVerySatisfiedIcon style={{ color: 'green' }} />;
+    } else if (progress >= 0.5) {
+      // Progreso a la mitad, meta no cumplida pero tampoco tan lejos
+      return <SentimentSatisfiedAltIcon style={{ color: 'orange' }} />;
+    } else {
+      // Meta no cumplida y progreso bajo
+      return <SentimentDissatisfiedIcon style={{ color: 'red' }} />;
+    }
+  };
 
   return (
     <div>
@@ -244,10 +262,10 @@ export default function GoalTable({ filterOpen, isCreateModalOpen }) {
             boxShadow: 24,
             p: 3,
             borderRadius: "2%",
-            textAlign: "center", // Center the content horizontally
+            textAlign: "center",
             display: "flex",
             flexDirection: "column",
-            alignItems: "center", // Center the content vertically
+            alignItems: "center",
           }}
         >
           <IconButton
@@ -265,37 +283,59 @@ export default function GoalTable({ filterOpen, isCreateModalOpen }) {
           {selectedGoal && (
             <div>
               <h3 style={{ textDecoration: "underline", fontWeight: "bold" }}>
-                {selectedGoal.name}
+                {selectedGoal.name} {getFaceIcon(selectedGoal)}
               </h3>
-              <div style={{ textAlign: "left", marginTop: "10%" }}>
-                <ul>
-                  <li>
-                    <span style={{ fontWeight: "bold" }}>State:</span>{" "}
-                    {selectedGoal.state}
-                  </li>
-                  <li>
-                    <span style={{ fontWeight: "bold" }}>Goal:</span>{" "}
-                    {selectedGoal.calories}
-                  </li>
-                  <li>
-                    <span style={{ fontWeight: "bold" }}>
-                      Calories Consumed:
-                    </span>{" "}
-                    {selectedGoal.totalCalorias}
-                  </li>
-                  <li>
-                    <span style={{ fontWeight: "bold" }}>Start Date:</span>{" "}
-                    {formatDate(selectedGoal.startDate)}
-                  </li>
-                  <li>
-                    <span style={{ fontWeight: "bold" }}>End Date:</span>{" "}
-                    {formatDate(selectedGoal.endDate)}
-                  </li>
-                  <li>
-                    <span style={{ fontWeight: "bold" }}>Recurrency:</span>{" "}
-                    {(selectedGoal.recurrency)}
-                  </li>
-                </ul>
+              <div style={{ textAlign: "left", marginTop: "5%" }}>
+                <TextField
+                  label="State"
+                  value={selectedGoal.state}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                  variant="outlined"
+                  style={{ marginBottom: 8 }}
+                  fullWidth
+                />
+                <TextField
+                  label="Calories Consumed/Goal"
+                  value={`${selectedGoal.totalCalorias}/${selectedGoal.calories}`}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                  variant="outlined"
+                  style={{ marginBottom: 8 }}
+                  fullWidth
+                />
+                <TextField
+                  label="Start Date"
+                  value={formatDate(selectedGoal.startDate)}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                  variant="outlined"
+                  style={{ marginBottom: 8 }}
+                  fullWidth
+                />
+                <TextField
+                  label="End Date"
+                  value={formatDate(selectedGoal.endDate)}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                  variant="outlined"
+                  style={{ marginBottom: 8 }}
+                  fullWidth
+                />
+                <TextField
+                  label="Recurrency"
+                  value={selectedGoal.recurrency}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                  variant="outlined"
+                  style={{ marginBottom: 8 }}
+                  fullWidth
+                />
               </div>
 
               {selectedGoal.state === "Not started" && (
@@ -327,7 +367,7 @@ export default function GoalTable({ filterOpen, isCreateModalOpen }) {
                       }}
                       fullWidth
                     >
-                      Delete&nbsp;Goal
+                      Delete Goal
                     </Button>
                   </Grid>
                 </Grid>
