@@ -72,6 +72,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
   };
 
   const handleAddMeal = () => {
+    console.log(mealData)
     if (
       mealData.name === "" ||
       mealData.date === "" ||
@@ -91,6 +92,19 @@ const MealForm = ({ open, setOpen, initialData }) => {
       mealData.calories = mealData.foods
         .map((food) => parseInt(food.totalCalories))
         .reduce((acc, calories) => acc + calories, 0);
+
+      mealData.carbs = mealData.foods
+        .map((food) => parseInt(food.totalCarbs))
+        .reduce((acc, carbs) => acc + carbs, 0);
+
+      mealData.proteins = mealData.foods
+        .map((food) => parseInt(food.totalProteins))
+        .reduce((acc, proteins) => acc + proteins, 0);
+
+      mealData.fats = mealData.foods
+        .map((food) => parseInt(food.totalFats))
+        .reduce((acc, fats) => acc + fats, 0);
+
       mealData.hour = mealData.hour.toTimeString().slice(0, 5);
 
       mealData.date.setHours(1, 0);
@@ -164,13 +178,31 @@ const MealForm = ({ open, setOpen, initialData }) => {
     if (newValue) {
       updatedFoods[index].name = newValue.name ? newValue.name : "";
       updatedFoods[index].calories = newValue.calories;
+      updatedFoods[index].carbs = newValue.carbs;
+      updatedFoods[index].proteins = newValue.proteins;
+      updatedFoods[index].fats = newValue.fats;
       updatedFoods[index].weight = newValue.weight;
       updatedFoods[index].category = newValue.category;
       if (updatedFoods[index].weightConsumed) {
         updatedFoods[index].totalCalories = Math.round(
           updatedFoods[index].weightConsumed *
             (updatedFoods[index].calories / updatedFoods[index].weight)
-        );
+        )
+
+        updatedFoods[index].totalCarbs = Math.round(
+          updatedFoods[index].weightConsumed *
+            (updatedFoods[index].carbs / updatedFoods[index].weight)
+        )
+
+        updatedFoods[index].totalProteins = Math.round(
+          updatedFoods[index].weightConsumed *
+            (updatedFoods[index].proteins / updatedFoods[index].weight)
+        )
+
+        updatedFoods[index].totalFats = Math.round(
+          updatedFoods[index].weightConsumed *
+            (updatedFoods[index].fats / updatedFoods[index].weight)
+        )
       }
     } else {
       // Si newValue es null, establece los valores en blanco o predeterminados
@@ -189,6 +221,20 @@ const MealForm = ({ open, setOpen, initialData }) => {
     updatedFoods[index].totalCalories = Math.round(
       inputValue * (updatedFoods[index].calories / updatedFoods[index].weight)
     );
+    updatedFoods[index].totalCarbs = Math.round(
+      updatedFoods[index].weightConsumed *
+        (updatedFoods[index].carbs / updatedFoods[index].weight)
+    )
+
+    updatedFoods[index].totalProteins = Math.round(
+      updatedFoods[index].weightConsumed *
+        (updatedFoods[index].proteins / updatedFoods[index].weight)
+    )
+
+    updatedFoods[index].totalFats = Math.round(
+      updatedFoods[index].weightConsumed *
+        (updatedFoods[index].fats / updatedFoods[index].weight)
+    )
     setMealData({ ...mealData, foods: updatedFoods });
   };
 

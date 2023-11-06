@@ -75,7 +75,6 @@ function Row(props) {
         <TableCell component="th" scope="row" align="center">
           {row.name}
         </TableCell>
-        <TableCell align="center">{row.calories}</TableCell>
         <TableCell align="center">{row.date}</TableCell>
         <TableCell align="center">{row.hour}</TableCell>
         <TableCell align="center">
@@ -127,6 +126,13 @@ function Row(props) {
                       </TableCell>
                     </TableRow>
                   ))}
+                  <TableRow>
+                    <TableCell align="center">Total</TableCell>
+                    <TableCell align="center">{row.calories}</TableCell>
+                    <TableCell align="center">{row.carbs}</TableCell>
+                    <TableCell align="center">{row.proteins}</TableCell>
+                    <TableCell align="center">{row.fats}</TableCell>
+                  </TableRow>
                 </TableBody>
               </Table>
             </Box>
@@ -200,9 +206,6 @@ export default function MealTable() {
               <TableCell />
               <TableCell sx={{ fontWeight: "bold" }} align="center">
                 Name
-              </TableCell>
-              <TableCell sx={{ fontWeight: "bold" }} align="center">
-                Total Calories
               </TableCell>
               <TableCell sx={{ fontWeight: "bold" }} align="center">
                 Date&nbsp;

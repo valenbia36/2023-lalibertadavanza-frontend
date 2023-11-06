@@ -106,10 +106,10 @@ const Meals = () => {
       <div className="row justify-content-center">
         <div className="col-lg-10">
           <div className="row justify-content-center">
-            <div className="col-lg-4 col-md-6">
+            <div className="col-lg-6 col-md-6">
               <FoodList />
             </div>
-            <div className="col-lg-8 col-md-6">
+            <div className="col-lg-6 col-md-6">
               <MealList />
             </div>
           </div>

@@ -144,6 +144,15 @@ export default function FoodTable({ filterOpen }) {
                 Calories
               </TableCell>
               <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
+                Carbs
+              </TableCell>
+              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
+                Proteins
+              </TableCell>
+              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
+                Fats
+              </TableCell>
+              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
                 Category
               </TableCell>
             </TableRow>
@@ -169,6 +178,15 @@ export default function FoodTable({ filterOpen }) {
                     </TableCell>
                     <TableCell style={{ width: 160 }} align="center">
                       {row.calories}
+                    </TableCell>
+                    <TableCell style={{ width: 160 }} align="center">
+                      {row.carbs}
+                    </TableCell>
+                    <TableCell style={{ width: 160 }} align="center">
+                      {row.proteins}
+                    </TableCell>
+                    <TableCell style={{ width: 160 }} align="center">
+                      {row.fats}
                     </TableCell>
                     <TableCell style={{ width: 160 }} align="center">
                       {row.category}
