@@ -63,7 +63,7 @@ function Row(props) {
   return (
     <React.Fragment>
       <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
-        <TableCell>
+        <TableCell width={5} align="center" sx={{textAlign: 'center'}}>
           <IconButton
             aria-label="expand row"
             size="small"
@@ -101,12 +101,12 @@ function Row(props) {
               <Table size="small" aria-label="purchases">
                 <TableHead>
                   <TableRow>
-                    <TableCell align="center">Name</TableCell>
-                    <TableCell align="center">Calories</TableCell>
-                    <TableCell align="center">Carbs</TableCell>
-                    <TableCell align="center">Proteins</TableCell>
-                    <TableCell align="center">Fats</TableCell>
-                    <TableCell align="center">Weight (gr/ml)</TableCell>
+                    <TableCell align="center" sx={{fontWeight:'bold'}}>Name</TableCell>
+                    <TableCell align="center" sx={{fontWeight:'bold'}}>Calories</TableCell>
+                    <TableCell align="center" sx={{fontWeight:'bold'}}>Carbs</TableCell>
+                    <TableCell align="center" sx={{fontWeight:'bold'}}>Proteins</TableCell>
+                    <TableCell align="center" sx={{fontWeight:'bold'}}>Fats</TableCell>
+                    <TableCell align="center" sx={{fontWeight:'bold'}}>Weight (gr/ml)</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -127,7 +127,7 @@ function Row(props) {
                     </TableRow>
                   ))}
                   <TableRow>
-                    <TableCell align="center">Total</TableCell>
+                    <TableCell align="center" sx={{fontWeight:'bold'}}>Total</TableCell>
                     <TableCell align="center">{row.calories}</TableCell>
                     <TableCell align="center">{row.carbs}</TableCell>
                     <TableCell align="center">{row.proteins}</TableCell>

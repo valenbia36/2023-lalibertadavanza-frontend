@@ -19,12 +19,12 @@ const GoalChartContainer = () => {
     setIsLoading(true);
     const response = await fetch(
       apiUrl +
-        "/api/meals/user/" +
-        localStorage.getItem("userId") +
-        "/startDate/" +
-        selectedGoal.startDate +
-        "/endDate/" +
-        selectedGoal.endDate,
+      "/api/meals/user/" +
+      localStorage.getItem("userId") +
+      "/startDate/" +
+      selectedGoal.startDate +
+      "/endDate/" +
+      selectedGoal.endDate,
       {
         method: "GET",
         headers: {
@@ -93,8 +93,17 @@ const GoalChartContainer = () => {
             }}
           >
             {progress > selectedGoal.calories
-              ? `You exceeded by ${progress - selectedGoal.calories} calories`
-              : `You are missing ${selectedGoal.calories - progress} calories`}
+              ? <>
+                You exceeded by
+                <span style={{ fontWeight: 'bold' }}> {progress - selectedGoal.calories} </span>
+                calories
+              </>
+              : <>
+                You are missing
+                <span style={{ fontWeight: 'bold' }}> {selectedGoal.calories - progress} </span>
+                calories
+              </>
+            }
           </Typography>
           {progress < selectedGoal.calories && (
             <Typography
@@ -105,7 +114,7 @@ const GoalChartContainer = () => {
                 textAlign: "center",
               }}
             >
-              You have time until: {selectedGoal.endDate.split("T")[0]}
+              You have time until: <span style={{ fontWeight: 'bold' }}>{selectedGoal.endDate.split("T")[0]}</span>
             </Typography>
           )}
         </Grid>

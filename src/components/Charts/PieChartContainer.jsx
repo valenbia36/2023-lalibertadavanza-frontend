@@ -97,7 +97,7 @@ const PieChartContainer = () => {
             onCategoryChange={handleCategoryChange}
           />
         </Grid>
-        <div style={{ position: "relative", minHeight: 320, marginTop: "10%" }}>
+        <div>
           {loading ? (
             <CircularProgress />
           ) : data && data.length > 0 ? (

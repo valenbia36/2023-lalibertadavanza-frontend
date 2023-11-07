@@ -126,15 +126,17 @@ export default function FoodTable({ filterOpen }) {
   };
 
   return (
-    <div>
+    <div style={{ textAlign: 'center', maxWidth: '100%', margin: 'auto' }}>
       {filterOpen && (
-        <CategoryAutocomplete
-          selectedCategory={selectedCategory}
-          onCategoryChange={handleCategoryChange}
-        />
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+          <CategoryAutocomplete
+            selectedCategory={selectedCategory}
+            onCategoryChange={handleCategoryChange}
+          />
+        </div>
       )}
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 200 }} aria-label="custom pagination table">
+      <TableContainer component={Paper} sx={{ overflowX: "auto" }}>
+        <Table aria-label="custom pagination table">
           <TableHead sx={{ fontWeight: "bold" }}>
             <TableRow sx={{ fontWeight: "bold" }}>
               <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
@@ -180,13 +182,13 @@ export default function FoodTable({ filterOpen }) {
                       {row.calories}
                     </TableCell>
                     <TableCell style={{ width: 160 }} align="center">
-                      {row.carbs}
+                      {row.carbs === '0' ? '-' : row.carbs}
                     </TableCell>
                     <TableCell style={{ width: 160 }} align="center">
-                      {row.proteins}
+                      {row.proteins === '0' ? '-' : row.proteins}
                     </TableCell>
                     <TableCell style={{ width: 160 }} align="center">
-                      {row.fats}
+                      {row.fats === '0' ? '-' : row.fats}
                     </TableCell>
                     <TableCell style={{ width: 160 }} align="center">
                       {row.category}

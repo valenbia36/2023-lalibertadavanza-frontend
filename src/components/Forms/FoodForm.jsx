@@ -90,6 +90,10 @@ const FoodForm = ({ open, setOpen }) => {
     setNewFood({ ...newFood, category: selectedCategory });
   };
 
+  const shouldBlink = () => {
+    return newFood.carbs === '' && newFood.proteins === '' && newFood.fats === '' ? 'blinkingIcon' : '';
+  };
+
   return (
     <Modal
       open={open}
@@ -169,11 +173,11 @@ const FoodForm = ({ open, setOpen }) => {
                   setIsModalOpen(true);
                 }}
               >
-                <AddCircleRoundedIcon />
+                <AddCircleRoundedIcon fontSize="medium" />
               </IconButton>
             </Grid>
           </Grid>
-          <Grid container spacing={1} alignItems="center" sx={{mt:0.05}} >
+          <Grid container spacing={1} alignItems="center" sx={{ mt: 0.05 }} >
             <Grid item xs={10}>
               <TextField
                 InputProps={{
@@ -194,14 +198,35 @@ const FoodForm = ({ open, setOpen }) => {
                 }}
               />
             </Grid>
+            <style>
+              {`
+          @keyframes blinkEffect {
+            0%, 100% {
+              opacity: 1;
+              transform: scale(1); /* original size */
+              filter: none; /* no shadow */
+            }
+            50% {
+              opacity: 0.5; /* semi-transparent */
+              transform: scale(1.1); /* slightly larger */
+              filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.25)); /* subtle shadow */
+            }
+          }
+          
+          .blinkingIcon {
+            animation: blinkEffect 1s infinite;
+          }
+        `}
+            </style>
             <Grid item xs={2}>
               <IconButton
                 color="primary"
                 onClick={() => {
                   setIsInfoModalOpen(true);
                 }}
+                className={shouldBlink()}
               >
-                <MoreHorizIcon />
+                <MoreHorizIcon fontSize="medium" />
               </IconButton>
             </Grid>
           </Grid>
@@ -228,8 +253,8 @@ const FoodForm = ({ open, setOpen }) => {
           newFood={newFood}
           setNewFood={setNewFood}
         />
-        <CategoryForm open={isModalOpen} setOpen={setIsModalOpen}/>      
-        </Box>
+        <CategoryForm open={isModalOpen} setOpen={setIsModalOpen} />
+      </Box>
     </Modal>
   );
 };

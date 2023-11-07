@@ -165,6 +165,7 @@ export default function GoalTable({ filterOpen, isCreateModalOpen }) {
   return (
     <div>
       {filterOpen && (
+        <div style={{marginBottom: '20px'}}>
         <FormControl
           variant="outlined"
           style={{ width: "50%", minWidth: 200, zIndex: 2 }}
@@ -181,6 +182,7 @@ export default function GoalTable({ filterOpen, isCreateModalOpen }) {
             <MenuItem value={"Expired"}>Expired</MenuItem>
           </Select>
         </FormControl>
+        </div>
       )}
       <TableContainer component={Paper} sx={{ minWidth: 200, minHeight: 420 }}>
         <Table aria-label="custom pagination table">
