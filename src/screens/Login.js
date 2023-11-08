@@ -232,7 +232,7 @@ const Login = () => {
               fullWidth
               name="password"
               label="Password"
-              type={showPassword ? "text" : "password"} // Cambia el tipo según el estado
+              type={showPassword ? "text" : "password"}
               id="password"
               autoComplete="current-password"
               InputLabelProps={{

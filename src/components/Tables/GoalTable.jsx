@@ -151,13 +151,10 @@ export default function GoalTable({ filterOpen, isCreateModalOpen }) {
     const progress = goal.totalCalorias / goal.calories;
 
     if (progress >= 1) {
-      // Meta cumplida o superada
       return <SentimentVerySatisfiedIcon style={{ color: 'green' }} />;
     } else if (progress >= 0.5) {
-      // Progreso a la mitad, meta no cumplida pero tampoco tan lejos
       return <SentimentSatisfiedAltIcon style={{ color: 'orange' }} />;
     } else {
-      // Meta no cumplida y progreso bajo
       return <SentimentDissatisfiedIcon style={{ color: 'red' }} />;
     }
   };
@@ -354,7 +351,7 @@ export default function GoalTable({ filterOpen, isCreateModalOpen }) {
                       }}
                       fullWidth
                     >
-                      Edit Goal
+                      Edit
                     </Button>
                   </Grid>
                   <Grid item xs={6}>
@@ -369,7 +366,7 @@ export default function GoalTable({ filterOpen, isCreateModalOpen }) {
                       }}
                       fullWidth
                     >
-                      Delete Goal
+                      Delete
                     </Button>
                   </Grid>
                 </Grid>

@@ -205,11 +205,10 @@ const MealForm = ({ open, setOpen, initialData }) => {
         )
       }
     } else {
-      // Si newValue es null, establece los valores en blanco o predeterminados
       updatedFoods[index].name = "";
-      updatedFoods[index].calories = 0; // O el valor que prefieras
-      updatedFoods[index].weight = 0; // O el valor que prefieras
-      updatedFoods[index].category = ""; // O el valor que prefieras
+      updatedFoods[index].calories = 0;
+      updatedFoods[index].weight = 0;
+      updatedFoods[index].category = "";
     }
     setMealData({ ...mealData, foods: updatedFoods });
   };

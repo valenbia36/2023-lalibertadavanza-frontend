@@ -62,7 +62,7 @@ const GoalChartContainer = () => {
         </Grid>
       </Grid>
 
-      {isLoading ? ( // Render the loading icon when isLoading is true
+      {isLoading ? (
         <div
           style={{ display: "flex", justifyContent: "center", width: "100%" }}
         >

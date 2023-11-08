@@ -40,7 +40,7 @@ const WaterGlassBarChartContainer = ({flag}) => {
         maxWidth: 300,
       }}
     >
-      <Grid sx={{ maxHeight: "450px", minWidth: "320px", alignContent: 'center', textAlign: 'center' }}>
+      <Grid sx={{ maxHeight: "450px", minWidth: "310px", alignContent: 'center', textAlign: 'center' }}>
         <h2 style={{fontWeight: 'bold'}}>Water Glass By Day</h2>
         <div style={{ position: "relative", minHeight: 320, marginTop: "10%" }}>
           {loading ? (

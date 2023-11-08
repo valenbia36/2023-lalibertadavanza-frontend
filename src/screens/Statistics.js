@@ -4,7 +4,7 @@ import { useTheme } from "@mui/material/styles";
 import LabelBottomNavigation from "../components/BottomMenu";
 import PieChartContainer from "../components/Charts/PieChartContainer";
 import LineChartContainer from "../components/Charts/LineChartContainer";
-import WaterGlassBarChartContainer from "../components/Charts/WaterGlassBarChartContainer"; // Importa el nuevo componente
+import WaterGlassBarChartContainer from "../components/Charts/WaterGlassBarChartContainer";
 import { Col, Row } from "react-bootstrap";
 import { SpeedDial, SpeedDialAction, SpeedDialIcon } from "@mui/material";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
@@ -110,9 +110,9 @@ const Statistics = () => {
     xs={12}
     md={4}
     className="d-flex align-items-start justify-content-center p-0"
-    style={{ minHeight: "500px" }} // Cambia height a minHeight para mantener el aspecto pero permite que se reduzca
+    style={{ minHeight: "500px" }}
   >
-    <div style={{ width: '100%', maxWidth: '400px' }}> {/* Ajusta estos valores según sea necesario */}
+    <div style={{ width: '100%', maxWidth: '400px' }}>
       <PieChartContainer />
     </div>
   </Col>
@@ -120,9 +120,9 @@ const Statistics = () => {
     xs={12}
     md={4}
     className="d-flex align-items-start justify-content-center p-0"
-    style={{ minHeight: "600px" }} // Cambia height a minHeight
+    style={{ minHeight: "600px" }}
   >
-    <div style={{ width: '100%', maxWidth: '400px' }}> {/* Ajusta estos valores según sea necesario */}
+    <div style={{ width: '100%', maxWidth: '400px' }}>
       <LineChartContainer />
     </div>
   </Col>
@@ -130,9 +130,9 @@ const Statistics = () => {
     xs={12}
     md={4}
     className="d-flex align-items-start justify-content-center p-0"
-    style={{ minHeight: "550px" }} // Cambia height a minHeight
+    style={{ minHeight: "550px" }}
   >
-    <div style={{ width: '100%', maxWidth: '400px' }}> {/* Ajusta estos valores según sea necesario */}
+    <div style={{ width: '100%', maxWidth: '400px' }}>
       <WaterGlassBarChartContainer flag={flagToRerender} />
     </div>
   </Col>

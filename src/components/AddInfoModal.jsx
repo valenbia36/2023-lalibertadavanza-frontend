@@ -9,9 +9,11 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 const InfoModal = ({ open, setOpen, newFood, setNewFood }) => {
+  
   const closeModal = () => {
     setOpen(false);
   };
+
   const handleCarbsInputChange = (e, index) => {
     const inputValue = Number(e.target.value);
     if (!isNaN(inputValue) && inputValue > 0) {
@@ -20,6 +22,7 @@ const InfoModal = ({ open, setOpen, newFood, setNewFood }) => {
       setNewFood({ ...newFood, carbs: "" });
     }
   };
+
   const handleProteinsInputChange = (e, index) => {
     const inputValue = Number(e.target.value);
     if (!isNaN(inputValue) && inputValue > 0) {
@@ -28,12 +31,13 @@ const InfoModal = ({ open, setOpen, newFood, setNewFood }) => {
       setNewFood({ ...newFood, proteins: "" });
     }
   };
+
   const handleFatsInputChange = (e, index) => {
     const inputValue = Number(e.target.value);
     if (!isNaN(inputValue) && inputValue > 0) {
       setNewFood({ ...newFood, fats: inputValue });
     } else {
-      setNewFood({ ...newFood, proteins: "" });
+      setNewFood({ ...newFood, fats: "" });
     }
   };
 
@@ -75,7 +79,7 @@ const InfoModal = ({ open, setOpen, newFood, setNewFood }) => {
             <TextField
               InputProps={{
                 inputProps: { min: 1 },
-                sx: { textAlign: "center" }, // Center-align text
+                sx: { textAlign: "center" },
               }}
               label="Carbs"
               type="number"
@@ -89,7 +93,7 @@ const InfoModal = ({ open, setOpen, newFood, setNewFood }) => {
             <TextField
               InputProps={{
                 inputProps: { min: 1 },
-                sx: { textAlign: "center" }, // Center-align text
+                sx: { textAlign: "center" },
               }}
               label="Proteins"
               type="number"
@@ -103,7 +107,7 @@ const InfoModal = ({ open, setOpen, newFood, setNewFood }) => {
             <TextField
               InputProps={{
                 inputProps: { min: 1 },
-                sx: { textAlign: "center" }, // Center-align text
+                sx: { textAlign: "center" },
               }}
               label="Fats"
               type="number"
@@ -125,7 +129,7 @@ const InfoModal = ({ open, setOpen, newFood, setNewFood }) => {
             fontWeight: "bold",
           }}
           fullWidth
-          onClick={ closeModal}
+          onClick={closeModal}
         >
           Add +Info
         </Button>

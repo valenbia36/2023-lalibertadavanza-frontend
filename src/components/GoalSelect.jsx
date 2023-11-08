@@ -48,7 +48,7 @@ const GoalSelect = ({ onChangeGoal }) => {
         id="category-select"
         label="Category"
         value={selectedGoal}
-        onOpen={() => setIsSelectOpen(true)} // Manejador para cuando el select se abre
+        onOpen={() => setIsSelectOpen(true)}
         onClose={() => setIsSelectOpen(false)}
         onChange={(e) => {
           const selectedGoalObj = goals.find(

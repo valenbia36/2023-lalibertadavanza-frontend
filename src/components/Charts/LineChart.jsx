@@ -41,7 +41,7 @@ export default function LineChartWithCustomFontSize(data) {
   return (
     <div style={{ fontSize: 12 }}>
       <LineChart
-        width={320}
+        width={310}
         height={410}
         data={dataWithAverage}
         margin={{ top: 10, right: 20, left: 0, bottom: 30 }}

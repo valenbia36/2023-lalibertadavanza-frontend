@@ -153,7 +153,7 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
           left: "50%",
           transform: "translate(-50%, -50%)",
           width: "100%",
-          maxWidth: 500,
+          maxWidth: 450,
           bgcolor: "background.paper",
           boxShadow: 24,
           p: 5,

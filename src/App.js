@@ -13,7 +13,7 @@ import { ThemeProvider, createTheme } from "@mui/material";
 
 const customTheme = createTheme({
   typography: {
-    fontFamily: '"Open Sans", sans-serif', // Reemplaza "Roboto" con el nombre de la fuente que desees
+    fontFamily: '"Open Sans", sans-serif',
   },
 });
 
