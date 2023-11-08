@@ -115,6 +115,7 @@ const LineChartContainer = () => {
               defaultMonth={range ? range.from : new Date()}
               selected={range}
               onSelect={setRange}
+              max={31}
               modifiersClassNames={{
                 selected: 'my-selected',
                 today: 'my-today',
