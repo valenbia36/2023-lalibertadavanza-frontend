@@ -201,7 +201,7 @@ const IntermittentFastingForm = ({
         )}
 
         <span
-          style={{ marginTop: "5%", marginBottom: "5%", fontWeight: "bold" }}
+          style={{ marginTop: "5%", marginBottom: "5%", fontWeight: "bold", textAlign: 'center' }}
         >
           Configure your Intermittent Fasting:{" "}
         </span>

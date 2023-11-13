@@ -32,7 +32,7 @@ const GoalChart = ({ goal, progress }) => {
             margin: "0 auto",
             border: "2px solid black",
             borderRadius: "50%",
-            boxShadow: "inset 0 0 10px black",
+            boxShadow: "inset 0 0 5px black",
           }}
         />
         <Typography
