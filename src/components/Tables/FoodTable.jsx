@@ -126,16 +126,33 @@ export default function FoodTable({ filterOpen }) {
   };
 
   return (
-    <div style={{ textAlign: 'center', maxWidth: '100%', margin: 'auto' }}>
+    <div
+      style={{
+        textAlign: "center",
+        maxWidth: "100%",
+        margin: "auto",
+        minHeight: "400px",
+        overflowY: "auto",
+      }}
+    >
       {filterOpen && (
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginBottom: "20px",
+          }}
+        >
           <CategoryAutocomplete
             selectedCategory={selectedCategory}
             onCategoryChange={handleCategoryChange}
           />
         </div>
       )}
-      <TableContainer component={Paper} sx={{ overflowX: "auto" }}>
+      <TableContainer
+        component={Paper}
+        sx={{ overflowX: "auto", minHeight: "450px" }}
+      >
         <Table aria-label="custom pagination table">
           <TableHead sx={{ fontWeight: "bold" }}>
             <TableRow sx={{ fontWeight: "bold" }}>
@@ -182,13 +199,13 @@ export default function FoodTable({ filterOpen }) {
                       {row.calories}
                     </TableCell>
                     <TableCell style={{ width: 160 }} align="center">
-                      {row.carbs === '0' ? '-' : row.carbs}
+                      {row.carbs === "0" ? "-" : row.carbs}
                     </TableCell>
                     <TableCell style={{ width: 160 }} align="center">
-                      {row.proteins === '0' ? '-' : row.proteins}
+                      {row.proteins === "0" ? "-" : row.proteins}
                     </TableCell>
                     <TableCell style={{ width: 160 }} align="center">
-                      {row.fats === '0' ? '-' : row.fats}
+                      {row.fats === "0" ? "-" : row.fats}
                     </TableCell>
                     <TableCell style={{ width: 160 }} align="center">
                       {row.category}

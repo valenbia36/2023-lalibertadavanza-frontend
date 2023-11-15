@@ -63,7 +63,7 @@ function Row(props) {
   return (
     <React.Fragment>
       <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
-        <TableCell width={5} align="center" sx={{textAlign: 'center'}}>
+        <TableCell width={5} align="center" sx={{ textAlign: "center" }}>
           <IconButton
             aria-label="expand row"
             size="small"
@@ -101,12 +101,24 @@ function Row(props) {
               <Table size="small" aria-label="purchases">
                 <TableHead>
                   <TableRow>
-                    <TableCell align="center" sx={{fontWeight:'bold'}}>Name</TableCell>
-                    <TableCell align="center" sx={{fontWeight:'bold'}}>Calories</TableCell>
-                    <TableCell align="center" sx={{fontWeight:'bold'}}>Carbs</TableCell>
-                    <TableCell align="center" sx={{fontWeight:'bold'}}>Proteins</TableCell>
-                    <TableCell align="center" sx={{fontWeight:'bold'}}>Fats</TableCell>
-                    <TableCell align="center" sx={{fontWeight:'bold'}}>Weight (gr/ml)</TableCell>
+                    <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                      Name
+                    </TableCell>
+                    <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                      Calories
+                    </TableCell>
+                    <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                      Carbs
+                    </TableCell>
+                    <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                      Proteins
+                    </TableCell>
+                    <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                      Fats
+                    </TableCell>
+                    <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                      Weight (gr/ml)
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -119,7 +131,9 @@ function Row(props) {
                         {foodRow.totalCalories}
                       </TableCell>
                       <TableCell align="center">{foodRow.totalCarbs}</TableCell>
-                      <TableCell align="center">{foodRow.totalProteins}</TableCell>
+                      <TableCell align="center">
+                        {foodRow.totalProteins}
+                      </TableCell>
                       <TableCell align="center">{foodRow.totalFats}</TableCell>
                       <TableCell align="center">
                         {foodRow.weightConsumed}
@@ -127,7 +141,9 @@ function Row(props) {
                     </TableRow>
                   ))}
                   <TableRow>
-                    <TableCell align="center" sx={{fontWeight:'bold'}}>Total</TableCell>
+                    <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                      Total
+                    </TableCell>
                     <TableCell align="center">{row.calories}</TableCell>
                     <TableCell align="center">{row.carbs}</TableCell>
                     <TableCell align="center">{row.proteins}</TableCell>
@@ -199,72 +215,75 @@ export default function MealTable() {
   };
 
   return (
-      <TableContainer component={Paper} sx={{ overflowX: "auto" }}>
-        <Table aria-label="collapsible table">
-          <TableHead>
+    <TableContainer
+      component={Paper}
+      sx={{ overflowX: "auto", minHeight: "450px" }}
+    >
+      <Table aria-label="collapsible table">
+        <TableHead>
+          <TableRow>
+            <TableCell />
+            <TableCell sx={{ fontWeight: "bold" }} align="center">
+              Name
+            </TableCell>
+            <TableCell sx={{ fontWeight: "bold" }} align="center">
+              Date&nbsp;
+            </TableCell>
+            <TableCell sx={{ fontWeight: "bold" }} align="center">
+              Hours&nbsp;
+            </TableCell>
+            <TableCell sx={{ fontWeight: "bold" }} align="center">
+              Actions&nbsp;
+            </TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody sx={{ textAlign: "center" }}>
+          {meals.length > 0 ? (
+            meals
+              .slice(startIndex, endIndex)
+              .map((row) => (
+                <Row
+                  key={row.name}
+                  row={row}
+                  sx={{ textAlign: "center" }}
+                  onEditClick={handleEditClick}
+                  onDelete={handleDelete}
+                  page={page}
+                  endIndex={endIndex}
+                  totalMeals={totalMeals}
+                  onPageChange={handlePageChange}
+                />
+              ))
+          ) : (
             <TableRow>
-              <TableCell />
-              <TableCell sx={{ fontWeight: "bold" }} align="center">
-                Name
-              </TableCell>
-              <TableCell sx={{ fontWeight: "bold" }} align="center">
-                Date&nbsp;
-              </TableCell>
-              <TableCell sx={{ fontWeight: "bold" }} align="center">
-                Hours&nbsp;
-              </TableCell>
-              <TableCell sx={{ fontWeight: "bold" }} align="center">
-                Actions&nbsp;
+              <TableCell colSpan={5} align="center">
+                No meals to show
               </TableCell>
             </TableRow>
-          </TableHead>
-          <TableBody sx={{ textAlign: "center" }}>
-            {meals.length > 0 ? (
-              meals
-                .slice(startIndex, endIndex)
-                .map((row) => (
-                  <Row
-                    key={row.name}
-                    row={row}
-                    sx={{ textAlign: "center" }}
-                    onEditClick={handleEditClick}
-                    onDelete={handleDelete}
-                    page={page}
-                    endIndex={endIndex}
-                    totalMeals={totalMeals}
-                    onPageChange={handlePageChange}
-                  />
-                ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={5} align="center">
-                  No meals to show
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+          )}
+        </TableBody>
+      </Table>
 
-        <div>
-          <IconButton
-            onClick={(e) => handlePageChange(page - 1)}
-            disabled={page === 0}
-          >
-            <ArrowBackIosIcon />
-          </IconButton>
-          <IconButton
-            onClick={(e) => handlePageChange(page + 1)}
-            disabled={endIndex >= totalMeals}
-          >
-            <ArrowForwardIosIcon />
-          </IconButton>
-        </div>
+      <div>
+        <IconButton
+          onClick={(e) => handlePageChange(page - 1)}
+          disabled={page === 0}
+        >
+          <ArrowBackIosIcon />
+        </IconButton>
+        <IconButton
+          onClick={(e) => handlePageChange(page + 1)}
+          disabled={endIndex >= totalMeals}
+        >
+          <ArrowForwardIosIcon />
+        </IconButton>
+      </div>
 
-        <MealForm
-          open={isModalOpen}
-          setOpen={setIsModalOpen}
-          initialData={editMeal}
-        />
-      </TableContainer>
+      <MealForm
+        open={isModalOpen}
+        setOpen={setIsModalOpen}
+        initialData={editMeal}
+      />
+    </TableContainer>
   );
 }
