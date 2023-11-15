@@ -19,10 +19,9 @@ import GoalForm from "../../components/Forms/GoalForm";
 import { useSnackbar } from "notistack";
 import InfoIcon from "@mui/icons-material/Info";
 import { Select, MenuItem, InputLabel, FormControl } from "@mui/material";
-import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
-import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
-import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
-
+import SentimentVerySatisfiedIcon from "@mui/icons-material/SentimentVerySatisfied";
+import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAlt";
+import SentimentDissatisfiedIcon from "@mui/icons-material/SentimentDissatisfied";
 
 const apiUrl = getApiUrl();
 
@@ -80,13 +79,18 @@ export default function GoalTable({ filterOpen, isCreateModalOpen }) {
     setSelectedFilter(event.target.value);
   };
 
-
   useEffect(() => {
     if (!filterOpen) {
-      setSelectedFilter("")
+      setSelectedFilter("");
     }
     handleGetGoals();
-  }, [isCreateModalOpen, isModalOpen, selectedFilter, filterOpen, selectedGoal]);
+  }, [
+    isCreateModalOpen,
+    isModalOpen,
+    selectedFilter,
+    filterOpen,
+    selectedGoal,
+  ]);
 
   const handleGetGoals = async () => {
     const response = await fetch(
@@ -151,34 +155,52 @@ export default function GoalTable({ filterOpen, isCreateModalOpen }) {
     const progress = goal.totalCalorias / goal.calories;
 
     if (progress >= 1) {
-      return <SentimentVerySatisfiedIcon style={{ color: 'green' }} />;
+      return <SentimentVerySatisfiedIcon style={{ color: "green" }} />;
     } else if (progress >= 0.5) {
-      return <SentimentSatisfiedAltIcon style={{ color: 'orange' }} />;
+      return <SentimentSatisfiedAltIcon style={{ color: "orange" }} />;
     } else {
-      return <SentimentDissatisfiedIcon style={{ color: 'red' }} />;
+      return <SentimentDissatisfiedIcon style={{ color: "red" }} />;
     }
+  };
+  const handleRecurrency = async (goal) => {
+    goal.recurrency = "Non-Recurring";
+    const response = await fetch(apiUrl + "/api/goals/" + goal._id, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+      body: JSON.stringify(goal),
+    }).then(function (response) {
+      if (response.status === 200) {
+        enqueueSnackbar("Recurrency Canceled", {
+          variant: "success",
+        });
+      }
+    });
+    setIsModalOpen(false);
   };
 
   return (
     <div>
       {filterOpen && (
-        <div style={{marginBottom: '20px'}}>
-        <FormControl
-          variant="outlined"
-          style={{ width: "50%", minWidth: 200, zIndex: 2 }}
-        >
-          <InputLabel>State</InputLabel>
-          <Select
-            label="State"
-            value={selectedFilter}
-            onChange={handleFilterChange}
-            MenuProps={{ PaperProps: { style: { maxHeight: 200 } } }}
+        <div style={{ marginBottom: "20px" }}>
+          <FormControl
+            variant="outlined"
+            style={{ width: "50%", minWidth: 200, zIndex: 2 }}
           >
-            <MenuItem value={"In progress"}>In progress</MenuItem>
-            <MenuItem value={"Not started"}>Not started</MenuItem>
-            <MenuItem value={"Expired"}>Expired</MenuItem>
-          </Select>
-        </FormControl>
+            <InputLabel>State</InputLabel>
+            <Select
+              label="State"
+              value={selectedFilter}
+              onChange={handleFilterChange}
+              MenuProps={{ PaperProps: { style: { maxHeight: 200 } } }}
+            >
+              <MenuItem value={"In progress"}>In progress</MenuItem>
+              <MenuItem value={"Not started"}>Not started</MenuItem>
+              <MenuItem value={"Expired"}>Expired</MenuItem>
+            </Select>
+          </FormControl>
         </div>
       )}
       <TableContainer component={Paper} sx={{ minWidth: 200, minHeight: 420 }}>
@@ -371,6 +393,25 @@ export default function GoalTable({ filterOpen, isCreateModalOpen }) {
                   </Grid>
                 </Grid>
               )}
+              {selectedGoal.recurrency !== "Non-Recurring" &&
+                selectedGoal.state === "In progress" && (
+                  <Grid>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => handleRecurrency(selectedGoal)}
+                      sx={{
+                        backgroundColor: "#373D20",
+                        "&:hover": { backgroundColor: "#373D20" },
+                        fontWeight: "bold",
+                        marginTop: "10px",
+                      }}
+                      fullWidth
+                    >
+                      Cancel Recurrency
+                    </Button>
+                  </Grid>
+                )}
               <GoalForm
                 open={isModalOpen}
                 setOpen={setIsModalOpen}
