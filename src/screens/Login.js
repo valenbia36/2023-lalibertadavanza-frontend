@@ -10,7 +10,6 @@ import { useState, useEffect } from "react";
 import { useTheme } from "@mui/material/styles";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Modal from "@mui/material/Modal";
 import { useSnackbar } from "notistack";
 import carousel1 from "../images/carousel1.jpg";
@@ -22,11 +21,10 @@ import { IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import getApiUrl from "../helpers/apiConfig";
 import getUrl from "../helpers/urlConfig";
-import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import "../styles/Login.css";
 const apiUrl = getApiUrl();
 const url = getUrl();
-const defaultTheme = createTheme();
 
 function getUID() {
   return Date.now().toString(36);
@@ -97,7 +95,7 @@ const Login = () => {
             token: getUID(),
             userName: userName,
             userId: userId,
-            url: url
+            url: url,
           }),
         });
 
@@ -143,6 +141,7 @@ const Login = () => {
               "username",
               data.user.firstName + " " + data.user.lastName
             );
+            localStorage.setItem("userMail", data.user.email);
             localStorage.setItem("roles", data.user.role[0]);
             window.location.replace("/main");
           } else {
@@ -161,151 +160,144 @@ const Login = () => {
   };
 
   return (
-    <ThemeProvider theme={defaultTheme}>
-      <Grid container component="main" sx={{ height: "100vh" }}>
-        <CssBaseline />
-        {!isMobile && <Slideshow images={images} interval={2000} />}
-        <Grid
-          item
-          xs={12}
-          sm={8}
-          md={5}
-          style={{ backgroundColor: "#CAD2C5" }}
-          elevation={6}
-          square="true"
+    <Grid container component="main" sx={{ height: "100vh" }}>
+      <CssBaseline />
+      {!isMobile && <Slideshow images={images} interval={2000} />}
+      <Grid
+        item
+        xs={12}
+        sm={8}
+        md={5}
+        style={{ backgroundColor: "#CAD2C5" }}
+        elevation={6}
+        square="true"
+      >
+        <div
+          style={{
+            justifyContent: "center",
+            textAlign: "center",
+            color: "black",
+            marginTop: "10%",
+          }}
         >
-          <div
-            style={{
-              justifyContent: "center",
-              textAlign: "center",
-              color: "black",
-              marginTop: "10%",
-            }}
+          <Typography variant="h3" fontWeight="bold" align='center'>
+            HELIAPP
+          </Typography>
+        </div>
+        <Box
+          sx={{
+            my: 8,
+            mx: 4,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography
+            component="h1"
+            variant="h5"
+            style={{ color: "black", fontWeight: "bold" }}
           >
-            <Typography
-              variant="h3"
-              color="inherit"
-              noWrap
-              className="custom-font"
+            Sign in
+          </Typography>
+          <Box sx={{ mt: 1 }}>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email Address"
+              name="email"
+              autoComplete="email"
+              autoFocus
+              InputLabelProps={{
+                style: { color: "black" },
+              }}
+              InputProps={{
+                style: { color: "color", min: 0 },
+              }}
+              onChange={(e) => setUser({ ...user, email: e.target.value })}
+              onKeyPress={(event) => {
+                if (event.key === "Enter") {
+                  handleLogin();
+                }
+              }}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type={showPassword ? "text" : "password"}
+              id="password"
+              autoComplete="current-password"
+              InputLabelProps={{
+                style: { color: "black" },
+              }}
+              InputProps={{
+                style: { color: "black" },
+                endAdornment: (
+                  <VisibilityIcon
+                    onClick={() => setShowPassword(!showPassword)}
+                    style={{ cursor: "pointer" }}
+                  />
+                ),
+              }}
+              value={user.password}
+              onChange={(e) => setUser({ ...user, password: e.target.value })}
+              onKeyPress={(event) => {
+                if (event.key === "Enter") {
+                  handleLogin();
+                }
+              }}
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{
+                mt: 3,
+                mb: 2,
+                backgroundColor: "#373D20",
+                "&:hover": { backgroundColor: "#373D20" },
+                fontWeight: "bold",
+              }}
+              onClick={() => handleLogin()}
             >
-              HELIAPP
-            </Typography>
-          </div>
-          <Box
-            sx={{
-              my: 8,
-              mx: 4,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-              <LockOutlinedIcon />
-            </Avatar>
-            <Typography
-              component="h1"
-              variant="h5"
-              style={{ color: "black", fontWeight: "bold" }}
-            >
-              Sign in
-            </Typography>
-            <Box sx={{ mt: 1 }}>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                autoFocus
-                InputLabelProps={{
-                  style: { color: "black" },
-                }}
-                InputProps={{
-                  style: { color: "color", min: 0 },
-                }}
-                onChange={(e) => setUser({ ...user, email: e.target.value })}
-                onKeyPress={(event) => {
-                  if (event.key === "Enter") {
-                    handleLogin();
-                  }
-                }}
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type={showPassword ? 'text' : 'password'} // Cambia el tipo según el estado
-                id="password"
-                autoComplete="current-password"
-                InputLabelProps={{
-                  style: { color: 'black' },
-                }}
-                InputProps={{
-                  style: { color: 'black' },
-                  endAdornment: (
-                    <VisibilityIcon
-                      onClick={() => setShowPassword(!showPassword)}
-                      style={{ cursor: 'pointer' }}
-                    />
-                  ),
-                }}
-                value={user.password}
-                onChange={(e) => setUser({ ...user, password: e.target.value })}
-                onKeyPress={(event) => {
-                  if (event.key === 'Enter') {
-                    handleLogin();
-                  }
-                }}
-              />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{
-                  mt: 3,
-                  mb: 2,
-                  backgroundColor: "#373D20",
-                  "&:hover": { backgroundColor: "#373D20" },
-                  fontWeight: "bold",
-                }}
-                onClick={() => handleLogin()}
-              >
-                Sign In
-              </Button>
-              <Grid container justifyContent="center">
-                <Grid container>
-                  <Grid item xs>
-                    <span
-                      onClick={openModal}
-                      style={{
-                        color: "black",
-                        textDecoration: "underline",
-                        fontSize: "14px",
-                        cursor: "pointer",
-                      }}
-                    >
-                      Forgot password?
-                    </span>
-                  </Grid>
-                  <Grid item style={{ justifyContent: "center" }}>
-                    <Link
-                      href="/SignUp"
-                      variant="body2"
-                      sx={{ color: "black", textDecorationColor: "black" }}
-                    >
-                      {"Don't have an account? Sign Up"}
-                    </Link>
-                  </Grid>
+              Sign In
+            </Button>
+            <Grid container justifyContent="center">
+              <Grid container>
+                <Grid item xs>
+                  <span
+                    onClick={openModal}
+                    style={{
+                      color: "black",
+                      textDecoration: "underline",
+                      fontSize: "14px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Forgot password?
+                  </span>
+                </Grid>
+                <Grid item style={{ justifyContent: "center" }}>
+                  <Link
+                    href="/SignUp"
+                    variant="body2"
+                    sx={{ color: "black", textDecorationColor: "black" }}
+                  >
+                    {"Don't have an account? Sign Up"}
+                  </Link>
                 </Grid>
               </Grid>
-            </Box>
+            </Grid>
           </Box>
-        </Grid>
+        </Box>
       </Grid>
 
       <Modal
@@ -386,7 +378,7 @@ const Login = () => {
           </Button>
         </Box>
       </Modal>
-    </ThemeProvider>
+    </Grid>
   );
 };
 

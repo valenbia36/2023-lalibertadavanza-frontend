@@ -30,7 +30,7 @@ const GoalList = () => {
         GOALS TABLE
       </Typography>
       <div style={{ maxWidth: "100%" }}>
-        <GoalTable filterOpen={filterOpen} />
+        <GoalTable filterOpen={filterOpen} isCreateModalOpen={isModalOpen} />
       </div>
 
       <React.Fragment>

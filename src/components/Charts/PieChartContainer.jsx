@@ -76,7 +76,7 @@ const PieChartContainer = () => {
       style={{
         textAlign: "center",
         color: "black",
-        maxWidth: 320,
+        maxWidth: 300,
       }}
     >
       <Grid sx={{ maxHeight: "450px", minWidth: "320px", alignContent: 'center', textAlign: 'center' }}>
@@ -97,7 +97,7 @@ const PieChartContainer = () => {
             onCategoryChange={handleCategoryChange}
           />
         </Grid>
-        <div style={{ position: "relative", minHeight: 320, marginTop: "10%" }}>
+        <div>
           {loading ? (
             <CircularProgress />
           ) : data && data.length > 0 ? (

@@ -14,11 +14,14 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import Modal from "@mui/material/Modal";
 import getApiUrl from "../../helpers/apiConfig";
 import CloseIcon from "@mui/icons-material/Close";
-import { Button, Grid } from "@mui/material";
+import { Button, Grid, TextField } from "@mui/material";
 import GoalForm from "../../components/Forms/GoalForm";
 import { useSnackbar } from "notistack";
 import InfoIcon from "@mui/icons-material/Info";
 import { Select, MenuItem, InputLabel, FormControl } from "@mui/material";
+import SentimentVerySatisfiedIcon from "@mui/icons-material/SentimentVerySatisfied";
+import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAlt";
+import SentimentDissatisfiedIcon from "@mui/icons-material/SentimentDissatisfied";
 
 const apiUrl = getApiUrl();
 
@@ -62,7 +65,7 @@ function TablePaginationActions(props) {
   );
 }
 
-export default function GoalTable({ filterOpen }) {
+export default function GoalTable({ filterOpen, isCreateModalOpen }) {
   const [totalItems, setTotalItems] = useState(0);
   const [page, setPage] = React.useState(0);
   const [goals, setGoals] = useState([]);
@@ -77,12 +80,17 @@ export default function GoalTable({ filterOpen }) {
   };
 
   useEffect(() => {
-    if(!filterOpen)
-    {
-      setSelectedFilter("")
+    if (!filterOpen) {
+      setSelectedFilter("");
     }
     handleGetGoals();
-  }, [goals, selectedGoal, isModalOpen, selectedFilter,filterOpen]);
+  }, [
+    isCreateModalOpen,
+    isModalOpen,
+    selectedFilter,
+    filterOpen,
+    selectedGoal,
+  ]);
 
   const handleGetGoals = async () => {
     const response = await fetch(
@@ -143,25 +151,57 @@ export default function GoalTable({ filterOpen }) {
     return date.toLocaleDateString();
   }
 
+  const getFaceIcon = (goal) => {
+    const progress = goal.totalCalorias / goal.calories;
+
+    if (progress >= 1) {
+      return <SentimentVerySatisfiedIcon style={{ color: "green" }} />;
+    } else if (progress >= 0.5) {
+      return <SentimentSatisfiedAltIcon style={{ color: "orange" }} />;
+    } else {
+      return <SentimentDissatisfiedIcon style={{ color: "red" }} />;
+    }
+  };
+  const handleRecurrency = async (goal) => {
+    goal.recurrency = "Non-Recurring";
+    await fetch(apiUrl + "/api/goals/" + goal._id, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+      body: JSON.stringify(goal),
+    }).then(function (response) {
+      if (response.status === 200) {
+        enqueueSnackbar("Recurrency Canceled", {
+          variant: "success",
+        });
+        setSelectedGoal(null)
+      }
+    });
+  };
+
   return (
     <div>
       {filterOpen && (
-        <FormControl
-          variant="outlined"
-          style={{ width: "50%", minWidth: 200, zIndex: 2 }}
-        >
-          <InputLabel>State</InputLabel>
-          <Select
-            label="State"
-            value={selectedFilter}
-            onChange={handleFilterChange}
-            MenuProps={{ PaperProps: { style: { maxHeight: 200 } } }}
+        <div style={{ marginBottom: "20px" }}>
+          <FormControl
+            variant="outlined"
+            style={{ width: "50%", minWidth: 200, zIndex: 2 }}
           >
-            <MenuItem value={"In progress"}>In progress</MenuItem>
-            <MenuItem value={"Not started"}>Not started</MenuItem>
-            <MenuItem value={"Expired"}>Expired</MenuItem>
-          </Select>
-        </FormControl>
+            <InputLabel>State</InputLabel>
+            <Select
+              label="State"
+              value={selectedFilter}
+              onChange={handleFilterChange}
+              MenuProps={{ PaperProps: { style: { maxHeight: 200 } } }}
+            >
+              <MenuItem value={"In progress"}>In progress</MenuItem>
+              <MenuItem value={"Not started"}>Not started</MenuItem>
+              <MenuItem value={"Expired"}>Expired</MenuItem>
+            </Select>
+          </FormControl>
+        </div>
       )}
       <TableContainer component={Paper} sx={{ minWidth: 200, minHeight: 420 }}>
         <Table aria-label="custom pagination table">
@@ -172,6 +212,9 @@ export default function GoalTable({ filterOpen }) {
               </TableCell>
               <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
                 State
+              </TableCell>
+              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
+                Recurrency
               </TableCell>
               <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
                 Info
@@ -199,6 +242,9 @@ export default function GoalTable({ filterOpen }) {
                     </TableCell>
                     <TableCell style={{ width: 130 }} align="center">
                       {`${row.state}`}
+                    </TableCell>
+                    <TableCell style={{ width: 130 }} align="center">
+                      {`${row.recurrency}`}
                     </TableCell>
                     <TableCell style={{ width: 50 }} align="center">
                       <IconButton
@@ -237,10 +283,10 @@ export default function GoalTable({ filterOpen }) {
             boxShadow: 24,
             p: 3,
             borderRadius: "2%",
-            textAlign: "center", // Center the content horizontally
+            textAlign: "center",
             display: "flex",
             flexDirection: "column",
-            alignItems: "center", // Center the content vertically
+            alignItems: "center",
           }}
         >
           <IconButton
@@ -258,33 +304,59 @@ export default function GoalTable({ filterOpen }) {
           {selectedGoal && (
             <div>
               <h3 style={{ textDecoration: "underline", fontWeight: "bold" }}>
-                {selectedGoal.name}
+                {selectedGoal.name} {getFaceIcon(selectedGoal)}
               </h3>
-              <div style={{ textAlign: "left", marginTop: "10%" }}>
-                <ul>
-                  <li>
-                    <span style={{ fontWeight: "bold" }}>State:</span>{" "}
-                    {selectedGoal.state}
-                  </li>
-                  <li>
-                    <span style={{ fontWeight: "bold" }}>Goal:</span>{" "}
-                    {selectedGoal.calories}
-                  </li>
-                  <li>
-                    <span style={{ fontWeight: "bold" }}>
-                      Calories Consumed:
-                    </span>{" "}
-                    {selectedGoal.totalCalorias}
-                  </li>
-                  <li>
-                    <span style={{ fontWeight: "bold" }}>Start Date:</span>{" "}
-                    {formatDate(selectedGoal.startDate)}
-                  </li>
-                  <li>
-                    <span style={{ fontWeight: "bold" }}>End Date:</span>{" "}
-                    {formatDate(selectedGoal.endDate)}
-                  </li>
-                </ul>
+              <div style={{ textAlign: "left", marginTop: "5%" }}>
+                <TextField
+                  label="State"
+                  value={selectedGoal.state}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                  variant="outlined"
+                  style={{ marginBottom: 8 }}
+                  fullWidth
+                />
+                <TextField
+                  label="Calories Consumed/Goal"
+                  value={`${selectedGoal.totalCalorias}/${selectedGoal.calories}`}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                  variant="outlined"
+                  style={{ marginBottom: 8 }}
+                  fullWidth
+                />
+                <TextField
+                  label="Start Date"
+                  value={formatDate(selectedGoal.startDate)}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                  variant="outlined"
+                  style={{ marginBottom: 8 }}
+                  fullWidth
+                />
+                <TextField
+                  label="End Date"
+                  value={formatDate(selectedGoal.endDate)}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                  variant="outlined"
+                  style={{ marginBottom: 8 }}
+                  fullWidth
+                />
+                <TextField
+                  label="Recurrency"
+                  value={selectedGoal.recurrency}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                  variant="outlined"
+                  style={{ marginBottom: 8 }}
+                  fullWidth
+                />
               </div>
 
               {selectedGoal.state === "Not started" && (
@@ -301,7 +373,7 @@ export default function GoalTable({ filterOpen }) {
                       }}
                       fullWidth
                     >
-                      Edit Goal
+                      Edit
                     </Button>
                   </Grid>
                   <Grid item xs={6}>
@@ -316,11 +388,30 @@ export default function GoalTable({ filterOpen }) {
                       }}
                       fullWidth
                     >
-                      Delete&nbsp;Goal
+                      Delete
                     </Button>
                   </Grid>
                 </Grid>
               )}
+              {selectedGoal.recurrency !== "Non-Recurring" &&
+                selectedGoal.state === "In progress" && (
+                  <Grid>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => handleRecurrency(selectedGoal)}
+                      sx={{
+                        backgroundColor: "#373D20",
+                        "&:hover": { backgroundColor: "#373D20" },
+                        fontWeight: "bold",
+                        marginTop: "10px",
+                      }}
+                      fullWidth
+                    >
+                      Cancel Recurrency
+                    </Button>
+                  </Grid>
+                )}
               <GoalForm
                 open={isModalOpen}
                 setOpen={setIsModalOpen}

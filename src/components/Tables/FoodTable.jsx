@@ -126,15 +126,34 @@ export default function FoodTable({ filterOpen }) {
   };
 
   return (
-    <div>
+    <div
+      style={{
+        textAlign: "center",
+        maxWidth: "100%",
+        margin: "auto",
+        minHeight: "400px",
+        overflowY: "auto",
+      }}
+    >
       {filterOpen && (
-        <CategoryAutocomplete
-          selectedCategory={selectedCategory}
-          onCategoryChange={handleCategoryChange}
-        />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginBottom: "20px",
+          }}
+        >
+          <CategoryAutocomplete
+            selectedCategory={selectedCategory}
+            onCategoryChange={handleCategoryChange}
+          />
+        </div>
       )}
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 200 }} aria-label="custom pagination table">
+      <TableContainer
+        component={Paper}
+        sx={{ overflowX: "auto", minHeight: "450px" }}
+      >
+        <Table aria-label="custom pagination table">
           <TableHead sx={{ fontWeight: "bold" }}>
             <TableRow sx={{ fontWeight: "bold" }}>
               <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
@@ -142,6 +161,15 @@ export default function FoodTable({ filterOpen }) {
               </TableCell>
               <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
                 Calories
+              </TableCell>
+              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
+                Carbs
+              </TableCell>
+              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
+                Proteins
+              </TableCell>
+              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
+                Fats
               </TableCell>
               <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
                 Category
@@ -169,6 +197,15 @@ export default function FoodTable({ filterOpen }) {
                     </TableCell>
                     <TableCell style={{ width: 160 }} align="center">
                       {row.calories}
+                    </TableCell>
+                    <TableCell style={{ width: 160 }} align="center">
+                      {row.carbs === "0" ? "-" : row.carbs}
+                    </TableCell>
+                    <TableCell style={{ width: 160 }} align="center">
+                      {row.proteins === "0" ? "-" : row.proteins}
+                    </TableCell>
+                    <TableCell style={{ width: 160 }} align="center">
+                      {row.fats === "0" ? "-" : row.fats}
                     </TableCell>
                     <TableCell style={{ width: 160 }} align="center">
                       {row.category}

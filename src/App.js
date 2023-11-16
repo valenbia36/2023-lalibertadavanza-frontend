@@ -9,9 +9,17 @@ import MyProfile from './screens/MyProfile'
 import "./styles/Home.css";
 import { SnackbarProvider } from "notistack";
 import Meals from "./screens/Meals";
+import { ThemeProvider, createTheme } from "@mui/material";
+
+const customTheme = createTheme({
+  typography: {
+    fontFamily: '"Open Sans", sans-serif',
+  },
+});
 
 export default function App() {
   return (
+    <ThemeProvider theme={customTheme}>
     <div className="Home-header" style={{ backgroundColor: "#CECFC7" }}>
       <SnackbarProvider>
         <Routes>
@@ -25,5 +33,6 @@ export default function App() {
         </Routes>
       </SnackbarProvider>
     </div>
+    </ThemeProvider>
   );
 }

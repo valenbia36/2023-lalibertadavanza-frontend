@@ -7,6 +7,10 @@ import {
   Grid,
   IconButton,
   FormControl,
+  FormControlLabel,
+  Radio,
+  FormGroup,
+  RadioGroup
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import CloseIcon from "@mui/icons-material/Close";
@@ -27,19 +31,27 @@ const initialGoalState = {
 
 const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
   const { enqueueSnackbar } = useSnackbar();
+  const [selectedRecuringValue, setSelectedRecurringValue] = useState('Non-Recurring');
+  const closeModal = () => {
+    setOpen(false);
+    setSelectedRecurringValue("Non-Recurring")
+    setNewGoal(initialGoalState);
+  };
+
   const [newGoal, setNewGoal] = useState({
     name: "",
     calories: "",
     userId: localStorage.getItem("userId"),
     startDate: new Date(),
     endDate: new Date(),
+    recurrency: "Non-Recurring"
   });
 
   useEffect(() => {
     if (initialData) {
       const parsedStartDate = new Date(initialData.startDate);
       const parsedEndDate = new Date(initialData.endDate);
-
+      setSelectedRecurringValue(initialData.recurrency)
       setNewGoal({
         ...initialData,
         startDate: parsedStartDate,
@@ -52,6 +64,7 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
         userId: localStorage.getItem("userId"),
         startDate: new Date(),
         endDate: new Date(),
+        recurrency: "Non-Recurring"
       });
     }
   }, [initialData, open]);
@@ -86,6 +99,7 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
         },
         body: JSON.stringify(newGoal),
       }).then(function (response) {
+
         if (response.status === 200) {
           enqueueSnackbar(
             initialData
@@ -111,11 +125,6 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
     }
   };
 
-  const closeModal = () => {
-    setOpen(false);
-    setNewGoal(initialGoalState);
-  };
-
   const handleCaloriesInputChange = (e, index) => {
     const inputValue = Number(e.target.value);
     if (!isNaN(inputValue) && inputValue >= 1) {
@@ -123,6 +132,10 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
     } else {
       setNewGoal({ ...newGoal, calories: "" });
     }
+  };
+  const handleRecurrencyChange = (event) => {
+    setSelectedRecurringValue(event.target.value)
+    setNewGoal({ ...newGoal, recurrency: event.target.value });
   };
 
   return (
@@ -139,7 +152,7 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
           left: "50%",
           transform: "translate(-50%, -50%)",
           width: "100%",
-          maxWidth: 500,
+          maxWidth: 450,
           bgcolor: "background.paper",
           boxShadow: 24,
           p: 5,
@@ -191,7 +204,7 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
             }}
           />
 
-          <Grid item xs={12} style={{marginBottom: "7px" }}>
+          <Grid item xs={12} style={{ marginBottom: "7px" }}>
             <FormControl fullWidth>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
@@ -245,6 +258,25 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
                 />
               </LocalizationProvider>
             </FormControl>
+            <FormGroup>
+              <RadioGroup onChange={handleRecurrencyChange} row value={selectedRecuringValue} style={{ justifyContent: 'center' }}>
+                <FormControlLabel
+                  control={<Radio />}
+                  label="Non-Recurring"
+                  value="Non-Recurring"
+                />
+                <FormControlLabel
+                  control={<Radio />}
+                  label="Weekly"
+                  value="Weekly"
+                />
+                <FormControlLabel
+                  control={<Radio />}
+                  label="Monthly"
+                  value="Monthly"
+                />
+              </RadioGroup>
+            </FormGroup>
           </Grid>
 
           <Button

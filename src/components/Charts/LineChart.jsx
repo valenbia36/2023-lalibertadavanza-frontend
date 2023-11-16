@@ -1,4 +1,3 @@
-import { LocalConvenienceStoreOutlined } from "@mui/icons-material";
 import React from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Legend, Tooltip } from "recharts";
 
@@ -12,7 +11,6 @@ export default function LineChartWithCustomFontSize(data) {
     calories: item.calories,
     promedio: promedioCalorias,
   }));
-  console.log("ESTE" + dataWithAverage)
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (active) {
@@ -43,10 +41,10 @@ export default function LineChartWithCustomFontSize(data) {
   return (
     <div style={{ fontSize: 12 }}>
       <LineChart
-        width={320}
-        height={420}
+        width={310}
+        height={410}
         data={dataWithAverage}
-        margin={{ top: 10, right: 30, left: 20, bottom: 30 }}
+        margin={{ top: 10, right: 20, left: 0, bottom: 30 }}
       >
       <Tooltip content={<CustomTooltip />} />
         <Legend
@@ -72,6 +70,8 @@ export default function LineChartWithCustomFontSize(data) {
             position: "insideLeft",
             fontSize: 14,
             fontWeight: "bold",
+            offset: 20,
+            
           }}
         />
         <Legend verticalAlign="top" width={100} />

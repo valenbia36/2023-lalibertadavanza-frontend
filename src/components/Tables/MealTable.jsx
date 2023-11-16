@@ -22,7 +22,7 @@ import getApiUrl from "../../helpers/apiConfig";
 const apiUrl = getApiUrl();
 
 function Row(props) {
-  const { row, onEditClick } = props;
+  const { row, onEditClick, onInfoClick } = props;
   const [open, setOpen] = React.useState(false);
 
   const { enqueueSnackbar } = useSnackbar();
@@ -63,7 +63,7 @@ function Row(props) {
   return (
     <React.Fragment>
       <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
-        <TableCell>
+        <TableCell width={5} align="center" sx={{ textAlign: "center" }}>
           <IconButton
             aria-label="expand row"
             size="small"
@@ -75,7 +75,6 @@ function Row(props) {
         <TableCell component="th" scope="row" align="center">
           {row.name}
         </TableCell>
-        <TableCell align="center">{row.calories}</TableCell>
         <TableCell align="center">{row.date}</TableCell>
         <TableCell align="center">{row.hour}</TableCell>
         <TableCell align="center">
@@ -102,9 +101,24 @@ function Row(props) {
               <Table size="small" aria-label="purchases">
                 <TableHead>
                   <TableRow>
-                    <TableCell align="center">Name</TableCell>
-                    <TableCell align="center">Calories</TableCell>
-                    <TableCell align="center">Weight (gr/ml)</TableCell>
+                    <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                      Name
+                    </TableCell>
+                    <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                      Calories
+                    </TableCell>
+                    <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                      Carbs
+                    </TableCell>
+                    <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                      Proteins
+                    </TableCell>
+                    <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                      Fats
+                    </TableCell>
+                    <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                      Weight (gr/ml)
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -116,11 +130,25 @@ function Row(props) {
                       <TableCell align="center">
                         {foodRow.totalCalories}
                       </TableCell>
+                      <TableCell align="center">{foodRow.totalCarbs}</TableCell>
+                      <TableCell align="center">
+                        {foodRow.totalProteins}
+                      </TableCell>
+                      <TableCell align="center">{foodRow.totalFats}</TableCell>
                       <TableCell align="center">
                         {foodRow.weightConsumed}
                       </TableCell>
                     </TableRow>
                   ))}
+                  <TableRow>
+                    <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                      Total
+                    </TableCell>
+                    <TableCell align="center">{row.calories}</TableCell>
+                    <TableCell align="center">{row.carbs}</TableCell>
+                    <TableCell align="center">{row.proteins}</TableCell>
+                    <TableCell align="center">{row.fats}</TableCell>
+                  </TableRow>
                 </TableBody>
               </Table>
             </Box>
@@ -139,6 +167,8 @@ export default function MealTable() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editMeal, setEditMeal] = useState(null);
   const [totalMeals, setTotalMeals] = useState(0);
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+  const [infoMeal, setInfoMeal] = useState(null);
 
   const startIndex = page * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
@@ -185,16 +215,16 @@ export default function MealTable() {
   };
 
   return (
-    <TableContainer component={Paper} sx={{ minHeight: 420 }}>
+    <TableContainer
+      component={Paper}
+      sx={{ overflowX: "auto", minHeight: "450px" }}
+    >
       <Table aria-label="collapsible table">
         <TableHead>
           <TableRow>
             <TableCell />
             <TableCell sx={{ fontWeight: "bold" }} align="center">
               Name
-            </TableCell>
-            <TableCell sx={{ fontWeight: "bold" }} align="center">
-              Total Calories
             </TableCell>
             <TableCell sx={{ fontWeight: "bold" }} align="center">
               Date&nbsp;

@@ -6,6 +6,8 @@ import CategoryForm from "./CategoryForm";
 import CloseIcon from "@mui/icons-material/Close";
 import getApiUrl from "../../helpers/apiConfig";
 import CategoryAutocomplete from "../CategoryAutocomplete";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import InfoModal from "../AddInfoModal";
 
 const apiUrl = getApiUrl();
 
@@ -14,12 +16,16 @@ const initialFoodState = {
   calories: "",
   weight: "",
   category: "",
+  carbs: "",
+  proteins: "",
+  fats: ""
 };
 
 const FoodForm = ({ open, setOpen }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newFood, setNewFood] = useState(initialFoodState);
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
 
   const handleAddFood = () => {
     if (
@@ -82,6 +88,10 @@ const FoodForm = ({ open, setOpen }) => {
 
   const handleCategoryChange = (selectedCategory) => {
     setNewFood({ ...newFood, category: selectedCategory });
+  };
+
+  const shouldBlink = () => {
+    return newFood.carbs === '' && newFood.proteins === '' && newFood.fats === '' ? 'blinkingIcon' : '';
   };
 
   return (
@@ -149,25 +159,6 @@ const FoodForm = ({ open, setOpen }) => {
               }
             }}
           />
-          <TextField
-            InputProps={{
-              inputProps: {
-                step: 1,
-              },
-            }}
-            label={`Calories`}
-            type="number"
-            variant="outlined"
-            fullWidth
-            value={newFood.calories}
-            onChange={(e) => handleCaloriesInputChange(e)}
-            style={{ marginBottom: "7px" }}
-            onKeyPress={(event) => {
-              if (event.key === "Enter") {
-                handleAddFood();
-              }
-            }}
-          />
           <Grid container spacing={1} alignItems="center">
             <Grid item xs={10}>
               <CategoryAutocomplete
@@ -175,19 +166,69 @@ const FoodForm = ({ open, setOpen }) => {
                 onCategoryChange={handleCategoryChange}
               />
             </Grid>
-            <Grid item xs={2}>
+            <Grid item xs={2} sx={{ display: "flex", alignItems: "center" }}>
               <IconButton
                 color="primary"
                 onClick={() => {
                   setIsModalOpen(true);
                 }}
               >
-                <AddCircleRoundedIcon />
+                <AddCircleRoundedIcon fontSize="medium" />
               </IconButton>
             </Grid>
-            <React.Fragment>
-              <CategoryForm open={isModalOpen} setOpen={setIsModalOpen} />
-            </React.Fragment>
+          </Grid>
+          <Grid container spacing={1} alignItems="center" sx={{ mt: 0.05 }} >
+            <Grid item xs={10}>
+              <TextField
+                InputProps={{
+                  inputProps: {
+                    step: 1,
+                  },
+                }}
+                label={`Calories`}
+                type="number"
+                variant="outlined"
+                fullWidth
+                value={newFood.calories}
+                onChange={(e) => handleCaloriesInputChange(e)}
+                onKeyPress={(event) => {
+                  if (event.key === "Enter") {
+                    handleAddFood();
+                  }
+                }}
+              />
+            </Grid>
+            <style>
+              {`
+          @keyframes blinkEffect {
+            0%, 100% {
+              opacity: 1;
+              transform: scale(1); /* original size */
+              filter: none; /* no shadow */
+            }
+            50% {
+              opacity: 0.5; /* semi-transparent */
+              transform: scale(1.1); /* slightly larger */
+              filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.25)); /* subtle shadow */
+            }
+          }
+          
+          .blinkingIcon {
+            animation: blinkEffect 1s infinite;
+          }
+        `}
+            </style>
+            <Grid item xs={2}>
+              <IconButton
+                color="primary"
+                onClick={() => {
+                  setIsInfoModalOpen(true);
+                }}
+                className={shouldBlink()}
+              >
+                <MoreHorizIcon fontSize="medium" />
+              </IconButton>
+            </Grid>
           </Grid>
 
           <Button
@@ -206,6 +247,13 @@ const FoodForm = ({ open, setOpen }) => {
             Add Food
           </Button>
         </div>
+        <InfoModal
+          open={isInfoModalOpen}
+          setOpen={setIsInfoModalOpen}
+          newFood={newFood}
+          setNewFood={setNewFood}
+        />
+        <CategoryForm open={isModalOpen} setOpen={setIsModalOpen} />
       </Box>
     </Modal>
   );
