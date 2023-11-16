@@ -164,7 +164,7 @@ export default function GoalTable({ filterOpen, isCreateModalOpen }) {
   };
   const handleRecurrency = async (goal) => {
     goal.recurrency = "Non-Recurring";
-    const response = await fetch(apiUrl + "/api/goals/" + goal._id, {
+    await fetch(apiUrl + "/api/goals/" + goal._id, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -176,9 +176,9 @@ export default function GoalTable({ filterOpen, isCreateModalOpen }) {
         enqueueSnackbar("Recurrency Canceled", {
           variant: "success",
         });
+        setSelectedGoal(null)
       }
     });
-    setIsModalOpen(false);
   };
 
   return (

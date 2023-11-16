@@ -125,7 +125,6 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
     }
   };
 
-
   const handleCaloriesInputChange = (e, index) => {
     const inputValue = Number(e.target.value);
     if (!isNaN(inputValue) && inputValue >= 1) {
