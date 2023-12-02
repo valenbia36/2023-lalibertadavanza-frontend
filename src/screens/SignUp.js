@@ -10,10 +10,16 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from "@mui/material";
+import {
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  Radio,
+  RadioGroup,
+} from "@mui/material";
 import { useSnackbar } from "notistack";
-import getApiUrl from '../helpers/apiConfig';
-import VisibilityIcon from '@mui/icons-material/Visibility';
+import getApiUrl from "../helpers/apiConfig";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const apiUrl = getApiUrl();
 
@@ -31,6 +37,7 @@ const SignUp = () => {
     sex: "",
     height: "",
     weight: "",
+    role: "",
   });
 
   const handleSexChange = (event) => {
@@ -73,7 +80,8 @@ const SignUp = () => {
       user.sex === "" ||
       user.age === "" ||
       user.height === "" ||
-      user.weight === ""
+      user.weight === "" ||
+      user.role === ""
     ) {
       enqueueSnackbar("Some fields are empty.", { variant: "error" });
       return;
@@ -92,6 +100,10 @@ const SignUp = () => {
         enqueueSnackbar("Something went wrong.", { variant: "error" });
       }
     });
+  };
+
+  const handleUserRoleChange = (event) => {
+    setUser({ ...user, role: event.target.value });
   };
 
   return (
@@ -118,6 +130,35 @@ const SignUp = () => {
           </Typography>
           <Box sx={{ mt: 3 }}>
             <Grid container spacing={2}>
+              <Grid
+                item
+                xs={12}
+                sm={12}
+                sx={{ alignItems: "center", textAlign: "center" }}
+              >
+                <FormControl component="fieldset">
+                  <RadioGroup
+                    row
+                    aria-label="user role"
+                    name="userRole"
+                    value={user.role}
+                    onChange={handleUserRoleChange}
+                  >
+                    <FormControlLabel
+                      value="User"
+                      control={<Radio style={{ color: "black" }} />}
+                      label="User"
+                      style={{ color: "black" }}
+                    />
+                    <FormControlLabel
+                      value="Nutritionist"
+                      control={<Radio style={{ color: "black" }} />}
+                      label="Nutritionist"
+                      style={{ color: "black" }}
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
                   autoComplete="given-name"
@@ -195,18 +236,18 @@ const SignUp = () => {
                   fullWidth
                   name="password"
                   label="Password"
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   id="password"
                   autoComplete="new-password"
                   InputLabelProps={{
                     style: { color: "black" },
                   }}
                   InputProps={{
-                    style: { color: 'black' },
+                    style: { color: "black" },
                     endAdornment: (
                       <VisibilityIcon
                         onClick={() => setShowPassword(!showPassword)}
-                        style={{ cursor: 'pointer' }}
+                        style={{ cursor: "pointer" }}
                       />
                     ),
                   }}
@@ -233,8 +274,8 @@ const SignUp = () => {
                     style: { color: "black" },
                   }}
                   InputProps={{
-                    style: { color: "black"},
-                    inputProps: { min: 1 } 
+                    style: { color: "black" },
+                    inputProps: { min: 1 },
                   }}
                   onChange={(e) => handleAgeInputChange(e)}
                   onKeyPress={(event) => {
@@ -245,29 +286,29 @@ const SignUp = () => {
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-              <FormControl component="fieldset">
-                <FormLabel style={{ color: "black" }}>Sex</FormLabel>
-                <RadioGroup
-                  row
-                  aria-label="sex"
-                  name="sex"
-                  value={user.sex}
-                  onChange={handleSexChange}
-                >
-                  <FormControlLabel
-                    value="male"
-                    control={<Radio style={{ color: "black" }} />}
-                    label="Male"
-                    style={{ color: "black" }}
-                  />
-                  <FormControlLabel
-                    value="female"
-                    control={<Radio style={{ color: "black" }} />}
-                    label="Female"
-                    style={{ color: "black" }}
-                  />
-                </RadioGroup>
-              </FormControl>
+                <FormControl component="fieldset">
+                  <FormLabel style={{ color: "black" }}>Sex</FormLabel>
+                  <RadioGroup
+                    row
+                    aria-label="sex"
+                    name="sex"
+                    value={user.sex}
+                    onChange={handleSexChange}
+                  >
+                    <FormControlLabel
+                      value="male"
+                      control={<Radio style={{ color: "black" }} />}
+                      label="Male"
+                      style={{ color: "black" }}
+                    />
+                    <FormControlLabel
+                      value="female"
+                      control={<Radio style={{ color: "black" }} />}
+                      label="Female"
+                      style={{ color: "black" }}
+                    />
+                  </RadioGroup>
+                </FormControl>
               </Grid>
               <Grid item xs={6} sm={6}>
                 <TextField
@@ -283,9 +324,9 @@ const SignUp = () => {
                   }}
                   InputProps={{
                     style: {
-                      color: "black"
+                      color: "black",
                     },
-                    inputProps: { min: 1 }               
+                    inputProps: { min: 1 },
                   }}
                   onChange={(e) => handleHeightInputChange(e)}
                   onKeyPress={(event) => {
@@ -309,9 +350,9 @@ const SignUp = () => {
                   }}
                   InputProps={{
                     style: {
-                      color: "black"
+                      color: "black",
                     },
-                    inputProps: { min: 1 }    
+                    inputProps: { min: 1 },
                   }}
                   onChange={(e) => handleWeightInputChange(e)}
                   onKeyPress={(event) => {
