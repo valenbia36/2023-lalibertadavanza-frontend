@@ -142,8 +142,12 @@ const Login = () => {
               data.user.firstName + " " + data.user.lastName
             );
             localStorage.setItem("userMail", data.user.email);
-            localStorage.setItem("roles", data.user.role[0]);
-            window.location.replace("/main");
+            localStorage.setItem("roles", data.user.role);
+            if (data.user.role === "user"|| data.user.role === "admin") {
+              window.location.replace("/main");
+            } else if (data.user.role === "nutritionist") {
+              window.location.replace("/mainNutritionist");
+            }
           } else {
             enqueueSnackbar("Wrong Email or Password.", { variant: "error" });
           }
@@ -180,7 +184,7 @@ const Login = () => {
             marginTop: "10%",
           }}
         >
-          <Typography variant="h3" fontWeight="bold" align='center'>
+          <Typography variant="h3" fontWeight="bold" align="center">
             HELIAPP
           </Typography>
         </div>

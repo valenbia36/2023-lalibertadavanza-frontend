@@ -2,12 +2,10 @@ import * as React from "react";
 import BottomNavigation from "@mui/material/BottomNavigation";
 import BottomNavigationAction from "@mui/material/BottomNavigationAction";
 import LogoutIcon from "@mui/icons-material/Logout";
-import BarChartIcon from "@mui/icons-material/BarChart";
 import HomeIcon from "@mui/icons-material/Home";
-import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
-import SettingsIcon from '@mui/icons-material/Settings';
-import RestaurantIcon from "@mui/icons-material/Restaurant";
 import { useNavigate, useLocation } from "react-router-dom";
+import SettingsIcon from '@mui/icons-material/Settings';
+import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
 
 export default function LabelBottomNavigation() {
   const navigate = useNavigate();
@@ -19,14 +17,8 @@ export default function LabelBottomNavigation() {
       case "/main":
         setValue("home");
         break;
-      case "/meals":
-        setValue("meals");
-        break;
-      case "/statistics":
-        setValue("stats");
-        break;
-      case "/nutritionist":
-        setValue("nutritionist");
+      case "/relationshipRequestInbox":
+        setValue("inbox");
         break;
       case "/myProfile":
         setValue("profile");
@@ -38,24 +30,17 @@ export default function LabelBottomNavigation() {
   }, [location.pathname]);
 
   const handleChange = (event, newValue) => {
-    console.log(newValue);
     setValue(newValue);
 
     switch (newValue) {
       case "home":
-        navigate("/main");
+        navigate("/mainNutritionist");
         break;
-      case "stats":
-        navigate("/statistics");
+      case "inbox":
+        navigate("/relationshipRequestInbox");
         break;
       case "profile":
         navigate("/myProfile");
-        break;
-      case "meals":
-        navigate("/meals");
-        break;
-      case "nutritionist":
-        navigate("/nutritionist");
         break;
       case "logout":
         localStorage.removeItem("token");
@@ -94,9 +79,9 @@ export default function LabelBottomNavigation() {
         }}
       />
       <BottomNavigationAction
-        label="My Meals"
-        value="meals"
-        icon={<RestaurantIcon />}
+        label="Inbox"
+        value="inbox"
+        icon={<MarkEmailUnreadIcon />}
         sx={{
           minWidth: 0,
           paddingLeft: 0,
@@ -106,31 +91,7 @@ export default function LabelBottomNavigation() {
         }}
       />
       <BottomNavigationAction
-        label="Stats"
-        value="stats"
-        icon={<BarChartIcon />}
-        sx={{
-          minWidth: 0,
-          paddingLeft: 0,
-          paddingRight: 0,
-          marginLeft: 0,
-          marginRight: 0,
-        }}
-      />
-      <BottomNavigationAction
-        label="Nutritionist"
-        value="nutritionist"
-        icon={<AssignmentIndIcon />}
-        sx={{
-          minWidth: 0,
-          paddingLeft: 0,
-          paddingRight: 0,
-          marginLeft: 0,
-          marginRight: 0,
-        }}
-      />
-      <BottomNavigationAction
-        label="Profile"
+        label="My Profile"
         value="profile"
         icon={<SettingsIcon />}
         sx={{

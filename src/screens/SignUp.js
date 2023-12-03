@@ -145,13 +145,13 @@ const SignUp = () => {
                     onChange={handleUserRoleChange}
                   >
                     <FormControlLabel
-                      value="User"
+                      value="user"
                       control={<Radio style={{ color: "black" }} />}
                       label="User"
                       style={{ color: "black" }}
                     />
                     <FormControlLabel
-                      value="Nutritionist"
+                      value="nutritionist"
                       control={<Radio style={{ color: "black" }} />}
                       label="Nutritionist"
                       style={{ color: "black" }}

@@ -1,6 +1,6 @@
 import Drawer from "../components/Drawer";
 import React, { useState, useEffect } from "react";
-import {useTheme } from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
@@ -9,6 +9,8 @@ import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import LabelBottomNavigation from "../components/BottomMenu";
+import LabelBottomNavigationNutritionist from "../components/BottomMenuNutritionist";
+import DrawerNutritionist from "../components/DrawerNutritionist";
 import {
   FormControl,
   FormControlLabel,
@@ -17,7 +19,7 @@ import {
   RadioGroup,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import getApiUrl from '../helpers/apiConfig';
+import getApiUrl from "../helpers/apiConfig";
 
 const apiUrl = getApiUrl();
 
@@ -116,16 +118,13 @@ const MyProfile = () => {
       return;
     }
 
-    fetch(
-      apiUrl + "/api/auth/users/" + localStorage.getItem("userId"),
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(user),
-      }
-    ).then(function (response) {
+    fetch(apiUrl + "/api/auth/users/" + localStorage.getItem("userId"), {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    }).then(function (response) {
       if (response.status === 200) {
         enqueueSnackbar("User updated successfully.", { variant: "success" });
         getUserById();
@@ -138,12 +137,17 @@ const MyProfile = () => {
 
   return (
     <div className="container">
-      {!isMobile ? (
-        <Drawer user={localStorage.getItem("username")} />
+      {isMobile ? (
+        localStorage.getItem("roles") === "nutritionist" ? (
+          <LabelBottomNavigationNutritionist/>
+        ) :(
+          <LabelBottomNavigation/>
+        )
+      ) : localStorage.getItem("roles") === "nutritionist" ? (
+        <DrawerNutritionist user={localStorage.getItem("username")} />   
       ) : (
-        <LabelBottomNavigation />
+        <Drawer user={localStorage.getItem("username")} />
       )}
-      <div className="row justify-content-center"></div>
       <ThemeProvider theme={defaultTheme}>
         <Container component="main" maxWidth="s" maxheight="s">
           <CssBaseline />
@@ -279,9 +283,7 @@ const MyProfile = () => {
                       },
                       inputProps: { min: 1 },
                     }}
-                    onChange={(e) =>
-                      handleHeightInputChange(e)
-                    }
+                    onChange={(e) => handleHeightInputChange(e)}
                   />
                 </Grid>
                 <Grid item xs={6} sm={6}>
@@ -302,9 +304,7 @@ const MyProfile = () => {
                       },
                       inputProps: { min: 1 },
                     }}
-                    onChange={(e) =>
-                      handleWeightInputChange(e)
-                    }
+                    onChange={(e) => handleWeightInputChange(e)}
                   />
                 </Grid>
               </Grid>
