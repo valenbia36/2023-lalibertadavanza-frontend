@@ -18,9 +18,9 @@ const getMealsByUserIdAndDay = async (
   setLoading(true);
   const response = await fetch(
     apiUrl + "/api/meals/user/" +
-      localStorage.getItem("userId") +
-      "/date/" +
-      date,
+    localStorage.getItem("userId") +
+    "/date/" +
+    date,
     {
       method: "GET",
       headers: {
@@ -71,16 +71,23 @@ const PieChartContainer = () => {
     setSelectedCategory(selectedCategory);
   };
 
+  const noPatientsStyle = {
+    textAlign: "center",
+    margin: "20px",
+    fontSize: "1.5rem",
+    color: "grey",
+  };
+
   return (
     <div
       style={{
         textAlign: "center",
         color: "black",
-        maxWidth: 300,
+        maxWidth: 400,
       }}
     >
       <Grid sx={{ maxHeight: "450px", minWidth: "320px", alignContent: 'center', textAlign: 'center' }}>
-        <h2 style={{fontWeight: 'bold'}}>Foods by Day</h2>
+        <h2 style={{ fontWeight: 'bold' }}>Foods by Day</h2>
         <TextField
           style={{ width: "73%", minWidth: 200 }}
           InputLabelProps={{ shrink: true }}
@@ -91,7 +98,7 @@ const PieChartContainer = () => {
           value={date}
           onChange={(e) => setDate(e.target.value)}
         />
-        <Grid sx={{width: "73%", minWidth: 200, marginLeft: '13.5%' }}>
+        <Grid sx={{ width: "73%", minWidth: 200, marginLeft: '13.5%' }}>
           <CategoryAutocomplete
             selectedCategory={selectedCategory}
             onCategoryChange={handleCategoryChange}
@@ -103,9 +110,9 @@ const PieChartContainer = () => {
           ) : data && data.length > 0 ? (
             <MyResponsivePie data={data} />
           ) : (
-            <div style={{ fontSize: "18px", width: 320, marginTop: "10%" }}>
+            <p style={noPatientsStyle}>
               No foods to show
-            </div>
+            </p>
           )}
         </div>
       </Grid>

@@ -142,6 +142,7 @@ const Login = () => {
               data.user.firstName + " " + data.user.lastName
             );
             localStorage.setItem("userMail", data.user.email);
+            localStorage.setItem("viewAs", false);
             localStorage.setItem("roles", data.user.role);
             if (data.user.role === "user"|| data.user.role === "admin") {
               window.location.replace("/main");

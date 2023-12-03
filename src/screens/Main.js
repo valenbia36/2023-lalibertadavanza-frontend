@@ -4,14 +4,14 @@ import Drawer from "../components/Drawer";
 import LabelBottomNavigation from "../components/BottomMenu";
 import GoalList from "../components/GoalList";
 import GoalChartContainer from "../components/Charts/GoalChartContainer";
-import { Grid, SpeedDial, SpeedDialAction, SpeedDialIcon } from "@mui/material";
+import { SpeedDial, SpeedDialAction, SpeedDialIcon } from "@mui/material";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import LocalDrinkIcon from "@mui/icons-material/LocalDrink";
 import Confetti from "react-confetti";
 import getApiUrl from "../helpers/apiConfig";
 import { useSnackbar } from "notistack";
 import IntermittentFastingForm from "../components/Forms/IntermittentFastingForm";
-import LabelBottomNavigationNutritionist from "../components/BottomMenuNutritionist";
+import ViewingMessage from "../components/ViewingMessage";
 
 const apiUrl = getApiUrl();
 
@@ -86,11 +86,7 @@ const Main = () => {
   return (
     <div className="container">
       {isMobile ? (
-        localStorage.getItem("roles") === "nutritionist" ? (
-          <LabelBottomNavigationNutritionist />
-        ) : (
-          <LabelBottomNavigation />
-        )
+        <LabelBottomNavigation />
       ) : (
         <Drawer user={localStorage.getItem("username")} />
       )}
@@ -114,13 +110,9 @@ const Main = () => {
         </SpeedDial>
       )}
       {localStorage.getItem("viewAs") === "true" && (
-        <Grid sx={{ justifyContent: "center", textAlign: "center" }}>
-          <p
-            style={{ color: "black", fontStyle: "italic", marginBottom: "5%" }}
-          >
-            Viewing {localStorage.getItem("patientUserName")} profile
-          </p>
-        </Grid>
+        <ViewingMessage
+          patientUserName={localStorage.getItem("patientUserName")}
+        />
       )}
       <div className="row justify-content-center">
         <div className="col-lg-10">

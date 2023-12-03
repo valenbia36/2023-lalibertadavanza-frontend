@@ -98,6 +98,13 @@ const RelationshipRequestInbox = () => {
     marginBottom: "10px",
   };
 
+  const noPatientsStyle = {
+    textAlign: "center",
+    margin: "20px",
+    fontSize: "1.5rem",
+    color: "grey",
+  };
+
   return (
     <div className="container">
       {!isMobile ? (
@@ -112,8 +119,11 @@ const RelationshipRequestInbox = () => {
           textAlign: "center",
         }}
       >
-        MY RELATIONSHIP REQUEST
+        MY RELATIONSHIP requests
       </h2>
+      {relationshipRequestList.length === 0 ? (
+        <p style={noPatientsStyle}>You currently have no relationship requests.</p>
+      ) : (
       <Grid container spacing={2}>
         {relationshipRequestList.map((relationshipRequest) => (
           <Grid item xs={12} md={6} key={relationshipRequest._id}>
@@ -195,7 +205,7 @@ const RelationshipRequestInbox = () => {
             </div>
           </Grid>
         ))}
-      </Grid>
+      </Grid>)}
     </div>
   );
 };

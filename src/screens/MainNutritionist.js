@@ -59,6 +59,13 @@ const MainNutritionist = () => {
     marginBottom: "10px",
   };
 
+  const noPatientsStyle = {
+    textAlign: "center",
+    margin: "20px",
+    fontSize: "1.5rem",
+    color: "grey",
+  };
+
   return (
     <div className="container">
       {!isMobile ? (
@@ -69,6 +76,9 @@ const MainNutritionist = () => {
       <h2 style={{ fontWeight: "bold", color: "black", textAlign: "center" }}>
         MY CURRENT PATIENTS
       </h2>
+      {patients.length === 0 ? (
+        <p style={noPatientsStyle}>You currently have no patients.</p>
+      ) : (
       <Grid container spacing={2} justifyContent={patients.length % 2 === 0 ? "flex-start" : "center"}>
         {patients.map((patient) => (
           <Grid item xs={12} sm={6} key={patient._id}>
@@ -118,6 +128,7 @@ const MainNutritionist = () => {
           </Grid>
         ))}
       </Grid>
+      )}
     </div>
   );
 };

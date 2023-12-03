@@ -8,6 +8,7 @@ import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import SettingsIcon from '@mui/icons-material/Settings';
 import RestaurantIcon from "@mui/icons-material/Restaurant";
 import { useNavigate, useLocation } from "react-router-dom";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 export default function LabelBottomNavigation() {
   const navigate = useNavigate();
@@ -18,6 +19,9 @@ export default function LabelBottomNavigation() {
     switch (location.pathname) {
       case "/main":
         setValue("home");
+        break;
+      case "/mainNutritionist":
+        setValue("return");
         break;
       case "/meals":
         setValue("meals");
@@ -44,6 +48,12 @@ export default function LabelBottomNavigation() {
     switch (newValue) {
       case "home":
         navigate("/main");
+        break;
+      case "return":
+        localStorage.setItem("userId", localStorage.getItem("nutritionistUserId"));
+        localStorage.removeItem("nutritionistUserId");
+        localStorage.setItem("viewAs", false);
+        navigate("/mainNutritionist");
         break;
       case "stats":
         navigate("/statistics");
@@ -82,6 +92,18 @@ export default function LabelBottomNavigation() {
       onChange={handleChange}
     >
       <BottomNavigationAction
+        label="Return"
+        value="return"
+        icon={<ArrowBackIcon />}
+        sx={{
+          minWidth: 0,
+          paddingLeft: 0,
+          paddingRight: 0,
+          marginLeft: 0,
+          marginRight: 0,
+        }}
+      />
+      <BottomNavigationAction
         label="Home"
         value="home"
         icon={<HomeIcon />}
@@ -117,42 +139,45 @@ export default function LabelBottomNavigation() {
           marginRight: 0,
         }}
       />
-      <BottomNavigationAction
-        label="Nutritionist"
-        value="nutritionist"
-        icon={<AssignmentIndIcon />}
-        sx={{
-          minWidth: 0,
-          paddingLeft: 0,
-          paddingRight: 0,
-          marginLeft: 0,
-          marginRight: 0,
-        }}
-      />
-      <BottomNavigationAction
-        label="Profile"
-        value="profile"
-        icon={<SettingsIcon />}
-        sx={{
-          minWidth: 0,
-          paddingLeft: 0,
-          paddingRight: 0,
-          marginLeft: 0,
-          marginRight: 0,
-        }}
-      />
-      <BottomNavigationAction
-        label="Logout"
-        value="logout"
-        icon={<LogoutIcon />}
-        sx={{
-          minWidth: 0,
-          paddingLeft: 0,
-          paddingRight: 0,
-          marginLeft: 0,
-          marginRight: 0,
-        }}
-      />
+      {localStorage.getItem("viewAs") === "false" && (
+        <BottomNavigationAction
+          label="Nutritionist"
+          value="nutritionist"
+          icon={<AssignmentIndIcon />}
+          sx={{
+            minWidth: 0,
+            paddingLeft: 0,
+            paddingRight: 0,
+            marginLeft: 0,
+            marginRight: 0,
+          }}
+        />)}
+      {localStorage.getItem("viewAs") === "false" && (
+        <BottomNavigationAction
+          label="Profile"
+          value="profile"
+          icon={<SettingsIcon />}
+          sx={{
+            minWidth: 0,
+            paddingLeft: 0,
+            paddingRight: 0,
+            marginLeft: 0,
+            marginRight: 0,
+          }}
+        />)}
+      {localStorage.getItem("viewAs") === "false" && (
+        <BottomNavigationAction
+          label="Logout"
+          value="logout"
+          icon={<LogoutIcon />}
+          sx={{
+            minWidth: 0,
+            paddingLeft: 0,
+            paddingRight: 0,
+            marginLeft: 0,
+            marginRight: 0,
+          }}
+        />)}
     </BottomNavigation>
   );
 }

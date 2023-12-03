@@ -6,14 +6,14 @@ import PieChartContainer from "../components/Charts/PieChartContainer";
 import LineChartContainer from "../components/Charts/LineChartContainer";
 import WaterGlassBarChartContainer from "../components/Charts/WaterGlassBarChartContainer";
 import { Col, Row } from "react-bootstrap";
-import { Grid, SpeedDial, SpeedDialAction, SpeedDialIcon } from "@mui/material";
+import { SpeedDial, SpeedDialAction, SpeedDialIcon } from "@mui/material";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import LocalDrinkIcon from "@mui/icons-material/LocalDrink";
 import Confetti from "react-confetti";
 import getApiUrl from "../helpers/apiConfig";
 import { useSnackbar } from "notistack";
 import IntermittentFastingForm from "../components/Forms/IntermittentFastingForm";
-import LabelBottomNavigationNutritionist from "../components/BottomMenuNutritionist";
+import ViewingMessage from "../components/ViewingMessage";
 
 const apiUrl = getApiUrl();
 
@@ -90,36 +90,31 @@ const Statistics = () => {
   return (
     <div className="container">
       {isMobile ? (
-        localStorage.getItem("roles") === "nutritionist" ? (
-          <LabelBottomNavigationNutritionist />
-        ) : (
-          <LabelBottomNavigation />
-        )
-      ): (
+        <LabelBottomNavigation />
+      ) : (
         <Drawer user={localStorage.getItem("username")} />
       )}
       {showConfetti && (
         <Confetti width={window.innerWidth} height={window.innerHeight} />
       )}
       {localStorage.getItem("viewAs") === "false" && (
-      <SpeedDial
-        ariaLabel="SpeedDial basic example"
-        sx={{ position: "fixed", bottom: "70px", right: "25px" }}
-        icon={<SpeedDialIcon />}
-      >
-        {actions.map((action) => (
-          <SpeedDialAction
-            key={action.name}
-            icon={action.icon}
-            tooltipTitle={action.name}
-            onClick={action.onClick}
-          />
-        ))}
-      </SpeedDial>)}
+        <SpeedDial
+          ariaLabel="SpeedDial basic example"
+          sx={{ position: "fixed", bottom: "70px", right: "25px" }}
+          icon={<SpeedDialIcon />}
+        >
+          {actions.map((action) => (
+            <SpeedDialAction
+              key={action.name}
+              icon={action.icon}
+              tooltipTitle={action.name}
+              onClick={action.onClick}
+            />
+          ))}
+        </SpeedDial>
+      )}
       {localStorage.getItem("viewAs") === "true" && (
-        <Grid sx={{ justifyContent: "center", textAlign: "center" }}>
-          <p style={{ color: "black", fontStyle: 'italic', marginBottom: '5%'  }}>Viewing {localStorage.getItem("patientUserName")} profile</p>
-        </Grid>
+        <ViewingMessage patientUserName={localStorage.getItem("patientUserName")} />
       )}
       <Row>
         <Col
