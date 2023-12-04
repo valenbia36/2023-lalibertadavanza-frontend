@@ -22,7 +22,7 @@ import getApiUrl from "../../helpers/apiConfig";
 const apiUrl = getApiUrl();
 
 function Row(props) {
-  const { row, onEditClick, onInfoClick } = props;
+  const { row, onEditClick } = props;
   const [open, setOpen] = React.useState(false);
 
   const { enqueueSnackbar } = useSnackbar();
@@ -77,6 +77,7 @@ function Row(props) {
         </TableCell>
         <TableCell align="center">{row.date}</TableCell>
         <TableCell align="center">{row.hour}</TableCell>
+        {localStorage.getItem("viewAs") === "false" && (
         <TableCell align="center">
           <IconButton
             aria-label="edit row"
@@ -93,6 +94,7 @@ function Row(props) {
             <DeleteIcon />
           </IconButton>
         </TableCell>
+        )}
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
@@ -167,8 +169,6 @@ export default function MealTable() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editMeal, setEditMeal] = useState(null);
   const [totalMeals, setTotalMeals] = useState(0);
-  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
-  const [infoMeal, setInfoMeal] = useState(null);
 
   const startIndex = page * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
@@ -232,9 +232,10 @@ export default function MealTable() {
             <TableCell sx={{ fontWeight: "bold" }} align="center">
               Hours&nbsp;
             </TableCell>
+            {localStorage.getItem("viewAs") === "false" && (
             <TableCell sx={{ fontWeight: "bold" }} align="center">
               Actions&nbsp;
-            </TableCell>
+            </TableCell>)}
           </TableRow>
         </TableHead>
         <TableBody sx={{ textAlign: "center" }}>

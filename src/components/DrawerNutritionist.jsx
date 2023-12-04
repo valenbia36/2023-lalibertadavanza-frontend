@@ -16,14 +16,11 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from "@mui/icons-material/Logout";
-import BarChartIcon from "@mui/icons-material/BarChart";
 import HomeIcon from "@mui/icons-material/Home";
-import RestaurantIcon from '@mui/icons-material/Restaurant';
 import { useNavigate } from "react-router-dom";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
 
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
   ({ theme, open }) => ({
@@ -93,7 +90,7 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-const Drawer = styled(MuiDrawer, {
+const DrawerNutritionist = styled(MuiDrawer, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
   width: drawerWidth,
@@ -138,33 +135,34 @@ export default function MiniDrawer({ user }) {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
-    localStorage.removeItem("viewAs");
+    localStorage.removeItem("viewAs");   
     window.location.replace("/");
   };
 
-  const navigateToStatisticsScreen = () => {
-    navigate("/statistics", { replace: true });
+  const navigateToRelationshipRequestInboxScreen = () => {
+    if(localStorage.getItem("viewAs") === 'true'){
+      localStorage.setItem("userId", localStorage.getItem("nutritionistUserId"));
+      localStorage.removeItem("nutritionistUserId");
+      localStorage.setItem("viewAs", false);
+    }
+    navigate("/relationshipRequestInbox", { replace: true });
   };
   const navigateToHomeScreen = () => {
-    navigate("/main", { replace: true });
-  };
-  const navigateToNutritionMainScreen = () => {
-    localStorage.setItem("userId", localStorage.getItem("nutritionistUserId"));
-    localStorage.removeItem("nutritionistUserId");
-    localStorage.setItem("viewAs", false);
+    if(localStorage.getItem("viewAs") === 'true'){
+      localStorage.setItem("userId", localStorage.getItem("nutritionistUserId"));
+      localStorage.removeItem("nutritionistUserId");
+      localStorage.setItem("viewAs", false);
+    }
     navigate("/mainNutritionist", { replace: true });
   };
 
   const navigateToMyProfileScreen = () => {
+    if(localStorage.getItem("viewAs") === 'true'){
+      localStorage.setItem("userId", localStorage.getItem("nutritionistUserId"));
+      localStorage.removeItem("nutritionistUserId");
+      localStorage.setItem("viewAs", false);
+    }
     navigate("/myProfile", { replace: true });
-  };
-
-  const navigateToMyMealsScreen = () => {
-    navigate("/meals", { replace: true });
-  };
-
-  const navigateToNutritionistScreen = () => {
-    navigate("/nutritionist", { replace: true });
   };
 
   return (
@@ -197,7 +195,7 @@ export default function MiniDrawer({ user }) {
           </Typography>
         </Toolbar>
       </AppBar>
-      <Drawer variant="permanent" open={open}>
+      <DrawerNutritionist variant="permanent" open={open}>
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "rtl" ? (
@@ -209,30 +207,6 @@ export default function MiniDrawer({ user }) {
         </DrawerHeader>
         <Divider />
         <List>
-          {localStorage.getItem("viewAs") === "true" && (
-            <ListItem disablePadding sx={{ display: "block" }}>
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
-                onClick={navigateToNutritionMainScreen}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  <ArrowBackIcon />
-                </ListItemIcon>
-                <ListItemText primary="Return" sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </ListItem>
-          )}
-
           <ListItem disablePadding sx={{ display: "block" }}>
             <ListItemButton
               sx={{
@@ -261,7 +235,7 @@ export default function MiniDrawer({ user }) {
                 justifyContent: open ? "initial" : "center",
                 px: 2.5,
               }}
-              onClick={navigateToMyMealsScreen}
+              onClick={navigateToRelationshipRequestInboxScreen}
             >
               <ListItemIcon
                 sx={{
@@ -270,9 +244,12 @@ export default function MiniDrawer({ user }) {
                   justifyContent: "center",
                 }}
               >
-                <RestaurantIcon />
+                <MarkEmailUnreadIcon />
               </ListItemIcon>
-              <ListItemText primary="My Meals" sx={{ opacity: open ? 1 : 0 }} />
+              <ListItemText
+                primary="Inbox"
+                sx={{ opacity: open ? 1 : 0 }}
+              />
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding sx={{ display: "block" }}>
@@ -282,7 +259,7 @@ export default function MiniDrawer({ user }) {
                 justifyContent: open ? "initial" : "center",
                 px: 2.5,
               }}
-              onClick={navigateToStatisticsScreen}
+              onClick={navigateToMyProfileScreen}
             >
               <ListItemIcon
                 sx={{
@@ -291,88 +268,37 @@ export default function MiniDrawer({ user }) {
                   justifyContent: "center",
                 }}
               >
-                <BarChartIcon />
+                <SettingsIcon />
               </ListItemIcon>
               <ListItemText
-                primary="Statistics"
+                primary="My Profile"
                 sx={{ opacity: open ? 1 : 0 }}
               />
             </ListItemButton>
           </ListItem>
-          {localStorage.getItem("viewAs") === "false" && (
-            <ListItem disablePadding sx={{ display: "block" }}>
-              <ListItemButton
+          <ListItem disablePadding sx={{ display: "block" }}>
+            <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: open ? "initial" : "center",
+                px: 2.5,
+              }}
+              onClick={handleLogout}
+            >
+              <ListItemIcon
                 sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
+                  minWidth: 0,
+                  mr: open ? 3 : "auto",
+                  justifyContent: "center",
                 }}
-                onClick={navigateToNutritionistScreen}
               >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  <AssignmentIndIcon />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Nutritionist"
-                  sx={{ opacity: open ? 1 : 0 }}
-                />
-              </ListItemButton>
-            </ListItem>)}
-          {localStorage.getItem("viewAs") === "false" && (
-            <ListItem disablePadding sx={{ display: "block" }}>
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
-                onClick={navigateToMyProfileScreen}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  <SettingsIcon />
-                </ListItemIcon>
-                <ListItemText
-                  primary="My Profile"
-                  sx={{ opacity: open ? 1 : 0 }}
-                />
-              </ListItemButton>
-            </ListItem>)}
-          {localStorage.getItem("viewAs") === "false" && (
-            <ListItem disablePadding sx={{ display: "block" }}>
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
-                onClick={handleLogout}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  <LogoutIcon />
-                </ListItemIcon>
-                <ListItemText primary="Logout" sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </ListItem>)}
+                <LogoutIcon />
+              </ListItemIcon>
+              <ListItemText primary="Logout" sx={{ opacity: open ? 1 : 0 }} />
+            </ListItemButton>
+          </ListItem>
         </List>
-      </Drawer>
+      </DrawerNutritionist>
       <Main open={open}>
         <DrawerHeader />
       </Main>

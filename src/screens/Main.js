@@ -11,6 +11,7 @@ import Confetti from "react-confetti";
 import getApiUrl from "../helpers/apiConfig";
 import { useSnackbar } from "notistack";
 import IntermittentFastingForm from "../components/Forms/IntermittentFastingForm";
+import ViewingMessage from "../components/ViewingMessage";
 
 const apiUrl = getApiUrl();
 
@@ -84,29 +85,35 @@ const Main = () => {
 
   return (
     <div className="container">
-      {!isMobile ? (
-        <Drawer user={localStorage.getItem("username")} />
-      ) : (
+      {isMobile ? (
         <LabelBottomNavigation />
+      ) : (
+        <Drawer user={localStorage.getItem("username")} />
       )}
       {showConfetti && (
         <Confetti width={window.innerWidth} height={window.innerHeight} />
       )}
-      <SpeedDial
-        ariaLabel="SpeedDial basic example"
-        sx={{ position: "fixed", bottom: "70px", right: "25px" }}
-        icon={<SpeedDialIcon />}
-      >
-        {actions.map((action) => (
-          <SpeedDialAction
-            key={action.name}
-            icon={action.icon}
-            tooltipTitle={action.name}
-            onClick={action.onClick}
-          />
-        ))}
-      </SpeedDial>
-
+      {localStorage.getItem("viewAs") === "false" && (
+        <SpeedDial
+          ariaLabel="SpeedDial"
+          sx={{ position: "fixed", bottom: "70px", right: "25px" }}
+          icon={<SpeedDialIcon />}
+        >
+          {actions.map((action) => (
+            <SpeedDialAction
+              key={action.name}
+              icon={action.icon}
+              tooltipTitle={action.name}
+              onClick={action.onClick}
+            />
+          ))}
+        </SpeedDial>
+      )}
+      {localStorage.getItem("viewAs") === "true" && (
+        <ViewingMessage
+          patientUserName={localStorage.getItem("patientUserName")}
+        />
+      )}
       <div className="row justify-content-center">
         <div className="col-lg-10">
           <div className="row justify-content-center">
@@ -117,7 +124,10 @@ const Main = () => {
           </div>
         </div>
       </div>
-      <IntermittentFastingForm openIntermittentFastingModal={openIntermittentFastingModal} closeModal={closeModal}/>
+      <IntermittentFastingForm
+        openIntermittentFastingModal={openIntermittentFastingModal}
+        closeModal={closeModal}
+      />
     </div>
   );
 };

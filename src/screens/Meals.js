@@ -11,6 +11,7 @@ import Confetti from "react-confetti";
 import getApiUrl from "../helpers/apiConfig";
 import { useSnackbar } from "notistack";
 import IntermittentFastingForm from "../components/Forms/IntermittentFastingForm";
+import ViewingMessage from "../components/ViewingMessage";
 
 const apiUrl = getApiUrl();
 
@@ -19,7 +20,8 @@ const Meals = () => {
   const theme = useTheme();
   const [isMobile, setIsMobile] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
-  const [openIntermittentFastingModal, setOpenIntermittentFastingModal] = useState(false);
+  const [openIntermittentFastingModal, setOpenIntermittentFastingModal] =
+    useState(false);
 
   useEffect(() => {
     function handleResize() {
@@ -41,7 +43,7 @@ const Meals = () => {
       },
       body: JSON.stringify({
         date: new Date(),
-        userId: localStorage.getItem("userId")
+        userId: localStorage.getItem("userId"),
       }),
     }).then(function (response) {
       if (response.status === 200) {
@@ -53,7 +55,7 @@ const Meals = () => {
           variant: "error",
         });
       }
-    });;
+    });
   };
 
   const handleWaterGlassClick = () => {
@@ -65,44 +67,51 @@ const Meals = () => {
   };
 
   const handleIntermittentFasting = () => {
-    setOpenIntermittentFastingModal(true)
-  }
-  
+    setOpenIntermittentFastingModal(true);
+  };
+
   const closeModal = () => {
     setOpenIntermittentFastingModal(false);
   };
 
   const actions = [
     { icon: <LocalDrinkIcon />, name: "Water", onClick: handleWaterGlassClick },
-    { icon: <NotificationsActiveIcon />, name: "Intermittent Fasting", onClick: handleIntermittentFasting}
+    {
+      icon: <NotificationsActiveIcon />,
+      name: "Intermittent Fasting",
+      onClick: handleIntermittentFasting,
+    },
   ];
 
   return (
     <div className="container">
-      {!isMobile ? (
-        <Drawer user={localStorage.getItem("username")} />
-      ) : (
+      {isMobile ? (
         <LabelBottomNavigation />
+      ) : (
+        <Drawer user={localStorage.getItem("username")} />
       )}
       {showConfetti && (
         <Confetti width={window.innerWidth} height={window.innerHeight} />
       )}
-
-      <SpeedDial
-        ariaLabel="SpeedDial basic example"
-        sx={{ position: "fixed", bottom: "70px", right: "25px" }}
-        icon={<SpeedDialIcon />}
-      >
-        {actions.map((action) => (
-          <SpeedDialAction
-            key={action.name}
-            icon={action.icon}
-            tooltipTitle={action.name}
-            onClick={action.onClick}
-          />
-        ))}
-      </SpeedDial>
-
+      {localStorage.getItem("viewAs") === "false" && (
+        <SpeedDial
+          ariaLabel="SpeedDial basic example"
+          sx={{ position: "fixed", bottom: "70px", right: "25px" }}
+          icon={<SpeedDialIcon />}
+        >
+          {actions.map((action) => (
+            <SpeedDialAction
+              key={action.name}
+              icon={action.icon}
+              tooltipTitle={action.name}
+              onClick={action.onClick}
+            />
+          ))}
+        </SpeedDial>
+      )}
+      {localStorage.getItem("viewAs") === "true" && (
+        <ViewingMessage patientUserName={localStorage.getItem("patientUserName")} />
+      )}
       <div className="row justify-content-center">
         <div className="col-lg-10">
           <div className="row justify-content-center">
@@ -115,7 +124,10 @@ const Meals = () => {
           </div>
         </div>
       </div>
-      <IntermittentFastingForm openIntermittentFastingModal={openIntermittentFastingModal} closeModal={closeModal}/>
+      <IntermittentFastingForm
+        openIntermittentFastingModal={openIntermittentFastingModal}
+        closeModal={closeModal}
+      />
     </div>
   );
 };
