@@ -16,8 +16,10 @@ import Confetti from "react-confetti";
 import getApiUrl from "../helpers/apiConfig";
 import { useSnackbar } from "notistack";
 import IntermittentFastingForm from "../components/Forms/IntermittentFastingForm";
+import getUrl from "../helpers/urlConfig";
 
 const apiUrl = getApiUrl();
+const url = getUrl();
 
 const Nutritionist = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -170,6 +172,7 @@ const Nutritionist = () => {
             nutritionistFirstName + " " + nutritionistLastName,
           nutritionistEmail: nutritionistEmail,
           userName: localStorage.getItem("username"),
+          url: url
         }),
       }).then(function (response) {
         if (response.status === 200) {
