@@ -56,7 +56,7 @@ function TablePaginationActions(props) {
   );
 }
 
-export default function FoodTable({ filterOpen }) {
+export default function FoodTable({ filterOpen, modalOpen  }) {
   const [foods, setFoods] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -72,7 +72,7 @@ export default function FoodTable({ filterOpen }) {
       setSelectedCategory("");
       getFoods();
     }
-  }, [filterOpen, foods]);
+  }, [filterOpen, modalOpen]);
 
   useEffect(() => {
     getFoods();

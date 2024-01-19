@@ -161,7 +161,7 @@ function Row(props) {
 
 const rowsPerPage = 5;
 
-export default function MealTable() {
+export default function MealTable({modalOpen  })  {
   const [page, setPage] = useState(0);
   const [meals, setMeals] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -175,7 +175,7 @@ export default function MealTable() {
 
   useEffect(() => {
     getMeals();
-  }, [meals]);
+  }, [modalOpen]);
 
   const getMeals = async () => {
     const response = await fetch(

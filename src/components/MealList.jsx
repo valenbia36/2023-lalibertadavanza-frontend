@@ -24,7 +24,7 @@ const MealList = () => {
           maxWidth: "100%",
         }}
       >
-        <MealTable />
+        <MealTable modalOpen={isModalOpen}/>
       </div>
 
       <React.Fragment>

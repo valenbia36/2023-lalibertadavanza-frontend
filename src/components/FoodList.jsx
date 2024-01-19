@@ -20,7 +20,7 @@ const FoodList = () => {
           maxWidth: "100%",
         }}
       >
-        <FoodTable filterOpen={filterOpen}/>
+        <FoodTable filterOpen={filterOpen} modalOpen={isModalOpen} />
       </div>
       <React.Fragment>
         <FoodForm open={isModalOpen} setOpen={setIsModalOpen} />
