@@ -164,6 +164,7 @@ const FoodForm = ({ open, setOpen }) => {
               <CategoryAutocomplete
                 selectedCategory={newFood.category}
                 onCategoryChange={handleCategoryChange}
+                addModalOpen={isModalOpen}
               />
             </Grid>
             <Grid item xs={2} sx={{ display: "flex", alignItems: "center" }}>
