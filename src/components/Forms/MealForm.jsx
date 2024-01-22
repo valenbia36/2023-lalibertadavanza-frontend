@@ -216,25 +216,30 @@ const MealForm = ({ open, setOpen, initialData }) => {
   const handleQuantityInputChange = (e, index) => {
     const inputValue = Number(e.target.value);
     const updatedFoods = [...mealData.foods];
-    updatedFoods[index].weightConsumed = inputValue;
-    updatedFoods[index].totalCalories = Math.round(
-      inputValue * (updatedFoods[index].calories / updatedFoods[index].weight)
-    );
-    updatedFoods[index].totalCarbs = Math.round(
-      updatedFoods[index].weightConsumed *
-        (updatedFoods[index].carbs / updatedFoods[index].weight)
-    )
+    if (!isNaN(inputValue) && inputValue >= 1) {
+      updatedFoods[index].weightConsumed = inputValue;
+      updatedFoods[index].totalCalories = Math.round(
+        inputValue * (updatedFoods[index].calories / updatedFoods[index].weight)
+      );
+      updatedFoods[index].totalCarbs = Math.round(
+        updatedFoods[index].weightConsumed *
+          (updatedFoods[index].carbs / updatedFoods[index].weight)
+      )
 
-    updatedFoods[index].totalProteins = Math.round(
-      updatedFoods[index].weightConsumed *
-        (updatedFoods[index].proteins / updatedFoods[index].weight)
-    )
+      updatedFoods[index].totalProteins = Math.round(
+        updatedFoods[index].weightConsumed *
+          (updatedFoods[index].proteins / updatedFoods[index].weight)
+      )
 
-    updatedFoods[index].totalFats = Math.round(
-      updatedFoods[index].weightConsumed *
-        (updatedFoods[index].fats / updatedFoods[index].weight)
-    )
-    setMealData({ ...mealData, foods: updatedFoods });
+      updatedFoods[index].totalFats = Math.round(
+        updatedFoods[index].weightConsumed *
+          (updatedFoods[index].fats / updatedFoods[index].weight)
+      )
+      setMealData({ ...mealData, foods: updatedFoods });
+    }else {
+      console.log("ENTRA")
+      updatedFoods[index].weightConsumed = "";
+    }
   };
 
   return (
