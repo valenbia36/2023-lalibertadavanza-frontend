@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { IconButton, Typography } from "@mui/material";
-import MealForm from "./Forms/MealForm";
+import MealForm from "../Forms/MealForm";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
-import MealTable from "./Tables/MealTable";
+import MealTable from "../Tables/MealTable";
 
 const MealList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,20 +24,21 @@ const MealList = () => {
           maxWidth: "100%",
         }}
       >
-        <MealTable modalOpen={isModalOpen}/>
+        <MealTable modalOpen={isModalOpen} />
       </div>
 
       <React.Fragment>
         <MealForm open={isModalOpen} setOpen={setIsModalOpen} />
       </React.Fragment>
       {localStorage.getItem("viewAs") === "false" && (
-      <IconButton
-        onClick={() => {
-          setIsModalOpen(true);
-        }}
-      >
-        <AddCircleRoundedIcon />
-      </IconButton>)}
+        <IconButton
+          onClick={() => {
+            setIsModalOpen(true);
+          }}
+        >
+          <AddCircleRoundedIcon />
+        </IconButton>
+      )}
     </div>
   );
 };

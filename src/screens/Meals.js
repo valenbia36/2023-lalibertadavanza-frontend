@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useTheme } from "@mui/material/styles";
-import Drawer from "../components/Drawer";
-import MealList from "../components/MealList";
-import FoodList from "../components/FoodList";
-import LabelBottomNavigation from "../components/BottomMenu";
+import Drawer from "../components/Menu/Drawer";
+import MealList from "../components/Lists/MealList";
+import FoodList from "../components/Lists/FoodList";
+import LabelBottomNavigation from "../components/Menu/BottomMenu";
 import { SpeedDial, SpeedDialAction, SpeedDialIcon } from "@mui/material";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import LocalDrinkIcon from "@mui/icons-material/LocalDrink";
@@ -110,7 +110,9 @@ const Meals = () => {
         </SpeedDial>
       )}
       {localStorage.getItem("viewAs") === "true" && (
-        <ViewingMessage patientUserName={localStorage.getItem("patientUserName")} />
+        <ViewingMessage
+          patientUserName={localStorage.getItem("patientUserName")}
+        />
       )}
       <div className="row justify-content-center">
         <div className="col-lg-10">

@@ -1,21 +1,16 @@
 import React, { useEffect, useState } from "react";
-import {
-  TextField,
-  Button,
-  Modal,
-  Box,
-  IconButton,
-  Grid,
-  FormControl,
-} from "@mui/material";
-import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
-import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
+import { TextField, Modal, Box, IconButton, Grid } from "@mui/material";
 import { useSnackbar } from "notistack";
-import CloseIcon from "@mui/icons-material/Close";
 import getApiUrl from "../../../helpers/apiConfig";
-import { Autocomplete } from "@mui/material";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
+import CloseButton from "./CloseButton";
+import NameField from "./NameField";
+import StepField from "./StepField";
+import AddButton from "./AddButton";
+import AddMealButton from "./AddMealButton";
+import RemoveButton from "./RemoveButton";
+import FoodAutocomplete from "./FoodAutocomplete";
 
 const apiUrl = getApiUrl();
 
@@ -303,77 +298,21 @@ const RecipeForm = ({ open, setOpen, initialData }) => {
           borderRadius: "2%",
         }}
       >
-        <IconButton
-          aria-label="Close"
-          onClick={closeModal}
-          sx={{
-            position: "absolute",
-            top: "3%",
-            right: "10px",
-            zIndex: 2,
-          }}
-        >
-          <CloseIcon />
-        </IconButton>
+        <CloseButton closeModal={closeModal} />
         <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <TextField
-              label="Name"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              value={mealData.name}
-              onChange={(e) =>
-                setMealData({ ...mealData, name: e.target.value })
-              }
-            />
-          </Grid>
-
+          <NameField mealData={mealData} setMealData={setMealData} />
           {mealData.steps.map((step, index) => (
             <React.Fragment key={index}>
-              <Grid item xs={10}>
-                <TextField
-                  id={`step-${index}`}
-                  label={`Step ${index + 1}`}
-                  variant="outlined"
-                  fullWidth
-                  multiline
-                  rows={2}
-                  value={mealData.steps[index].text}
-                  onChange={(e) =>
-                    handleStepChange(
-                      index,
-                      e.target.value,
-                      mealData.steps[index].images
-                    )
-                  }
-                />
-              </Grid>
-              {index === 0 && (
-                <Grid
-                  item
-                  xs={1}
-                  sx={{ display: "flex", alignItems: "center" }}
-                >
-                  <IconButton color="primary" onClick={handleAddStepInput}>
-                    <AddCircleRoundedIcon />
-                  </IconButton>
-                </Grid>
-              )}
-              {index > 0 && (
-                <Grid
-                  item
-                  xs={1}
-                  sx={{ display: "flex", alignItems: "center" }}
-                >
-                  <IconButton
-                    color="primary"
-                    onClick={() => handleRemoveStepInput(index)}
-                  >
-                    <RemoveCircleRoundedIcon />
-                  </IconButton>
-                </Grid>
-              )}
+              <StepField
+                mealData={mealData}
+                handleStepChange={handleStepChange}
+                index={index}
+              />
+              <AddButton index={index} handleInput={handleAddStepInput} />
+              <RemoveButton
+                index={index}
+                handleRemove={handleRemoveStepInput}
+              />
               {mealData.steps[index].images.length === 0 ? (
                 <Grid
                   item
@@ -416,34 +355,12 @@ const RecipeForm = ({ open, setOpen, initialData }) => {
 
           {mealData.foods.map((food, index) => (
             <React.Fragment key={index}>
-              <Grid item xs={6}>
-                <Autocomplete
-                  id={`food-autocomplete-${index}`}
-                  options={foodOptions}
-                  value={
-                    foodOptions.find((option) => option.name === food.name) ||
-                    null
-                  }
-                  onChange={(e, newValue) =>
-                    handleFoodInputChange(newValue, index)
-                  }
-                  getOptionLabel={(option) => option.name}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Food"
-                      variant="outlined"
-                      fullWidth
-                    />
-                  )}
-                  noOptionsText="No foods available."
-                  ListboxProps={{
-                    style: {
-                      maxHeight: 110,
-                    },
-                  }}
-                />
-              </Grid>
+              <FoodAutocomplete
+                food={food}
+                foodOptions={foodOptions}
+                index={index}
+                handleFoodInputChange={handleFoodInputChange}
+              />
               <Grid item xs={4}>
                 <TextField
                   InputProps={{
@@ -457,50 +374,17 @@ const RecipeForm = ({ open, setOpen, initialData }) => {
                   onChange={(e) => handleQuantityInputChange(e, index)}
                 />
               </Grid>
-              {index === 0 && (
-                <Grid
-                  item
-                  xs={2}
-                  sx={{ display: "flex", alignItems: "center" }}
-                >
-                  <IconButton color="primary" onClick={handleAddFoodInput}>
-                    <AddCircleRoundedIcon />
-                  </IconButton>
-                </Grid>
-              )}
-              {index > 0 && (
-                <Grid
-                  item
-                  xs={2}
-                  sx={{ display: "flex", alignItems: "center" }}
-                >
-                  <IconButton
-                    color="primary"
-                    onClick={() => handleRemoveFoodInput(index)}
-                  >
-                    <RemoveCircleRoundedIcon />
-                  </IconButton>
-                </Grid>
-              )}
+              <AddButton index={index} handleInput={handleAddFoodInput} />
+              <RemoveButton
+                index={index}
+                handleRemove={handleRemoveFoodInput}
+              />
             </React.Fragment>
           ))}
-          <Grid item xs={12}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleAddMeal}
-              sx={{
-                mt: 3,
-                mb: 2,
-                backgroundColor: "#373D20",
-                "&:hover": { backgroundColor: "#373D20" },
-                fontWeight: "bold",
-              }}
-              fullWidth
-            >
-              {initialData ? "Update Meal" : "Add Meal"}
-            </Button>
-          </Grid>
+          <AddMealButton
+            initialData={initialData}
+            handleAddMeal={handleAddMeal}
+          />
         </Grid>
       </Box>
     </Modal>

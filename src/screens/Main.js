@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useTheme } from "@mui/material/styles";
-import Drawer from "../components/Drawer";
-import LabelBottomNavigation from "../components/BottomMenu";
-import GoalList from "../components/GoalList";
+import Drawer from "../components/Menu/Drawer";
+import LabelBottomNavigation from "../components/Menu/BottomMenu";
+import GoalList from "../components/Lists/GoalList";
 import GoalChartContainer from "../components/Charts/GoalChartContainer";
 import { SpeedDial, SpeedDialAction, SpeedDialIcon } from "@mui/material";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";

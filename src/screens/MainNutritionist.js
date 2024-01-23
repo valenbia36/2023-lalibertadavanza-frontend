@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import DrawerNutritionist from "../components/DrawerNutritionist";
-import LabelBottomNavigationNutritionist from "../components/BottomMenuNutritionist";
+import DrawerNutritionist from "../components/Menu/DrawerNutritionist";
+import LabelBottomNavigationNutritionist from "../components/Menu/BottomMenuNutritionist";
 import { useTheme } from "@mui/material/styles";
 import { Button, Grid } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -31,7 +31,9 @@ const MainNutritionist = () => {
 
   const handleGetPatientsByNutritionist = async () => {
     const response = await fetch(
-      apiUrl + "/api/auth/patientsByNutritionistId/" + localStorage.getItem("userId"),
+      apiUrl +
+        "/api/auth/patientsByNutritionistId/" +
+        localStorage.getItem("userId"),
       {
         method: "GET",
         headers: {
@@ -79,55 +81,76 @@ const MainNutritionist = () => {
       {patients.length === 0 ? (
         <p style={noPatientsStyle}>You currently have no patients.</p>
       ) : (
-      <Grid container spacing={2} justifyContent={patients.length % 2 === 0 ? "flex-start" : "center"}>
-        {patients.map((patient) => (
-          <Grid item xs={12} sm={6} key={patient._id}>
-            <div style={boxStyle}>
-              <div style={rowStyle}>
-                <p style={{ color: "black", margin: 0 }}>
-                  Name: {patient.firstName} {patient.lastName}
-                </p>
-                <p style={{ color: "black", margin: 0 }}>
-                  Email: {patient.email}
-                </p>
-              </div>
-              <div style={rowStyle}>
-                <p style={{ color: "black", margin: 0 }}>Sex: {patient.sex}</p>
-                <p style={{ color: "black", margin: 0 }}>Age: {patient.age} years</p>
-              </div>
-              <div style={rowStyle}>
-                <p style={{ color: "black", margin: 0 }}>
-                  Height: {patient.height} cm
-                </p>
-                <p style={{ color: "black", margin: 0 }}>
-                  Weight: {patient.weight} kg
-                </p>
-              </div>
-              <div style={{ display: "flex", justifyContent: "center", marginTop: "10px" }}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => {
-                    localStorage.setItem("nutritionistUserId", localStorage.getItem("userId"));
-                    localStorage.setItem("userId", patient._id);
-                    localStorage.setItem("patientUserName", patient.firstName + " " + patient.lastName);
-                    localStorage.setItem("viewAs", true);
-                    navigate("/main", { replace: true });}}
-                  sx={{
-                    mt: 3,
-                    mb: 2,
-                    backgroundColor: "#373D20",
-                    "&:hover": { backgroundColor: "#373D20" },
-                    fontWeight: "bold",
+        <Grid
+          container
+          spacing={2}
+          justifyContent={patients.length % 2 === 0 ? "flex-start" : "center"}
+        >
+          {patients.map((patient) => (
+            <Grid item xs={12} sm={6} key={patient._id}>
+              <div style={boxStyle}>
+                <div style={rowStyle}>
+                  <p style={{ color: "black", margin: 0 }}>
+                    Name: {patient.firstName} {patient.lastName}
+                  </p>
+                  <p style={{ color: "black", margin: 0 }}>
+                    Email: {patient.email}
+                  </p>
+                </div>
+                <div style={rowStyle}>
+                  <p style={{ color: "black", margin: 0 }}>
+                    Sex: {patient.sex}
+                  </p>
+                  <p style={{ color: "black", margin: 0 }}>
+                    Age: {patient.age} years
+                  </p>
+                </div>
+                <div style={rowStyle}>
+                  <p style={{ color: "black", margin: 0 }}>
+                    Height: {patient.height} cm
+                  </p>
+                  <p style={{ color: "black", margin: 0 }}>
+                    Weight: {patient.weight} kg
+                  </p>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    marginTop: "10px",
                   }}
                 >
-                  View Patient
-                </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => {
+                      localStorage.setItem(
+                        "nutritionistUserId",
+                        localStorage.getItem("userId")
+                      );
+                      localStorage.setItem("userId", patient._id);
+                      localStorage.setItem(
+                        "patientUserName",
+                        patient.firstName + " " + patient.lastName
+                      );
+                      localStorage.setItem("viewAs", true);
+                      navigate("/main", { replace: true });
+                    }}
+                    sx={{
+                      mt: 3,
+                      mb: 2,
+                      backgroundColor: "#373D20",
+                      "&:hover": { backgroundColor: "#373D20" },
+                      fontWeight: "bold",
+                    }}
+                  >
+                    View Patient
+                  </Button>
+                </div>
               </div>
-            </div>
-          </Grid>
-        ))}
-      </Grid>
+            </Grid>
+          ))}
+        </Grid>
       )}
     </div>
   );

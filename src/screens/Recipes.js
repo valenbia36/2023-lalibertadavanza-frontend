@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useTheme } from "@mui/material/styles";
-import Drawer from "../components/Drawer";
-import LabelBottomNavigation from "../components/BottomMenu";
+import Drawer from "../components/Menu/Drawer";
+import LabelBottomNavigation from "../components/Menu/BottomMenu";
 import {
   Button,
   Grid,
@@ -15,9 +15,8 @@ import LocalDrinkIcon from "@mui/icons-material/LocalDrink";
 import Confetti from "react-confetti";
 import getApiUrl from "../helpers/apiConfig";
 import { useSnackbar } from "notistack";
-import IntermittentFastingForm from "../components/Forms/IntermittentFastingForm";
 import getUrl from "../helpers/urlConfig";
-import RecipeList from "../components/RecipeList";
+import RecipeList from "../components/Lists/RecipeList";
 
 const apiUrl = getApiUrl();
 
