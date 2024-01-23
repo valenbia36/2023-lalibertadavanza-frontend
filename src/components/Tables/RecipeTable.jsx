@@ -13,6 +13,8 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import CategoryAutocomplete from "../CategoryAutocomplete";
 import getApiUrl from "../../helpers/apiConfig";
+import EditIcon from "@mui/icons-material/Edit";
+import Rating from "@mui/material/Rating";
 
 const apiUrl = getApiUrl();
 
@@ -61,6 +63,18 @@ export default function RecipeTable({ filterOpen, modalOpen }) {
   const [totalItems, setTotalItems] = useState(0);
   const [page, setPage] = React.useState(0);
   const [noResults, setNoResults] = useState(false);
+  const [userRatings, setUserRatings] = useState({});
+
+  function ArrayAvg(myArray) {
+    var i = 0,
+      summ = 0,
+      ArrayLen = myArray.length;
+    while (i < ArrayLen) {
+      summ = summ + myArray[i++];
+    }
+
+    return summ / ArrayLen;
+  }
 
   useEffect(() => {
     getRecipes();
@@ -81,6 +95,12 @@ export default function RecipeTable({ filterOpen, modalOpen }) {
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
+  };
+  const handleRatingChange = (recipeId, newRating) => {
+    setUserRatings((prevRatings) => ({
+      ...prevRatings,
+      [recipeId]: newRating,
+    }));
   };
 
   return (
@@ -103,6 +123,9 @@ export default function RecipeTable({ filterOpen, modalOpen }) {
               <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
                 Name
               </TableCell>
+              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
+                Rating
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -124,6 +147,29 @@ export default function RecipeTable({ filterOpen, modalOpen }) {
                     >
                       {row.name}
                     </TableCell>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      style={{ width: 160 }}
+                      align="center"
+                    >
+                      <Rating
+                        name={`rating-${row._id}`}
+                        value={ArrayAvg(row.ranking)}
+                        onChange={(event, newRating) =>
+                          handleRatingChange(row._id, newRating)
+                        }
+                        precision={0.5}
+                        readOnly={modalOpen} // Set readOnly based on modalOpen
+                      />
+                    </TableCell>
+                    {row.creator === localStorage.getItem("userId") && (
+                      <TableCell align="center">
+                        <IconButton aria-label="edit row" size="small">
+                          <EditIcon />
+                        </IconButton>
+                      </TableCell>
+                    )}
                   </TableRow>
                 )
               )

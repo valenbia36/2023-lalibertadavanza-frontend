@@ -11,18 +11,18 @@ import {
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
 import { useSnackbar } from "notistack";
-import { TimePicker } from "@mui/x-date-pickers/TimePicker";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import CloseIcon from "@mui/icons-material/Close";
-import getApiUrl from "../../helpers/apiConfig";
+import getApiUrl from "../../../helpers/apiConfig";
 import { Autocomplete } from "@mui/material";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
+import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
+
 const apiUrl = getApiUrl();
 
 const initialMealState = {
   name: "",
   calories: 0,
+  steps: [{ text: "", images: [] }],
   foods: [{ name: "", calories: "", weight: "", category: "" }],
   userId: localStorage.getItem("userId"),
 };
@@ -41,6 +41,7 @@ const RecipeForm = ({ open, setOpen, initialData }) => {
       setMealData({
         name: "",
         calories: 0,
+        steps: [{ text: "", images: [] }],
         foods: [{ name: "", calories: "", weight: "", category: "" }],
         userId: localStorage.getItem("userId"),
       });
@@ -49,7 +50,7 @@ const RecipeForm = ({ open, setOpen, initialData }) => {
 
   useEffect(() => {
     getFoods();
-  }, [open]);
+  }, [open, mealData]);
 
   const getFoods = async () => {
     const response = await fetch(apiUrl + "/api/foods/", {
@@ -64,7 +65,6 @@ const RecipeForm = ({ open, setOpen, initialData }) => {
   };
 
   const handleAddMeal = () => {
-    console.log(mealData);
     if (
       mealData.name === "" ||
       !mealData.foods.every(
@@ -99,7 +99,6 @@ const RecipeForm = ({ open, setOpen, initialData }) => {
         ? apiUrl + `/api/recipes/${initialData._id}`
         : apiUrl + "/api/recipes";
       const method = initialData ? "PUT" : "POST";
-      console.log(url);
       fetch(url, {
         method: method,
         headers: {
@@ -138,6 +137,7 @@ const RecipeForm = ({ open, setOpen, initialData }) => {
     setMealData({
       name: "",
       calories: 0,
+      steps: [{ text: "", images: [] }],
       foods: [{ name: "", calories: "", weight: "", category: "" }],
       userId: localStorage.getItem("userId"),
     });
@@ -155,6 +155,63 @@ const RecipeForm = ({ open, setOpen, initialData }) => {
     const updatedFoods = [...mealData.foods];
     updatedFoods.splice(index, 1);
     setMealData({ ...mealData, foods: updatedFoods });
+  };
+  const handleAddStepInput = () => {
+    setMealData((prevMealData) => ({
+      ...prevMealData,
+      steps: [...prevMealData.steps, { text: "", images: [] }],
+    }));
+  };
+
+  const handleRemoveStepInput = (indexToRemove) => {
+    setMealData((prevMealData) => ({
+      ...prevMealData,
+      steps: prevMealData.steps.filter((_, index) => index !== indexToRemove),
+    }));
+  };
+  const handleStepChange = (index, value, images) => {
+    setMealData((prevMealData) => {
+      const newSteps = [...prevMealData.steps];
+      newSteps[index] = { text: value, images: images };
+      return { ...prevMealData, steps: newSteps };
+    });
+  };
+  const handleImageArrayChange = (e, stepIndex) => {
+    const files = e.target.files;
+    const updatedImages = [...mealData.steps[stepIndex].images];
+
+    if (files.length > 0) {
+      // Agregar nuevas imágenes
+      for (const file of files) {
+        const imageUrl = URL.createObjectURL(file);
+        updatedImages.push(imageUrl);
+      }
+    } else {
+      // Eliminar la última imagen si no se selecciona ningún archivo
+      updatedImages.pop();
+    }
+
+    setMealData((prevMealData) => {
+      const updatedSteps = [...prevMealData.steps];
+      updatedSteps[stepIndex] = {
+        ...updatedSteps[stepIndex],
+        images: updatedImages,
+      };
+      return { ...prevMealData, steps: updatedSteps };
+    });
+  };
+
+  const handleRemoveImage = (stepIndex) => {
+    console.log(mealData.steps);
+    setMealData((prevMealData) => {
+      const updatedSteps = [...prevMealData.steps];
+      updatedSteps[stepIndex] = {
+        ...updatedSteps[stepIndex],
+        images: [],
+      };
+      console.log(mealData.steps);
+      return { ...prevMealData, steps: updatedSteps };
+    });
   };
 
   const handleFoodInputChange = (newValue, index) => {
@@ -221,7 +278,6 @@ const RecipeForm = ({ open, setOpen, initialData }) => {
       );
       setMealData({ ...mealData, foods: updatedFoods });
     } else {
-      console.log("ENTRA");
       updatedFoods[index].weightConsumed = "";
     }
   };
@@ -272,6 +328,92 @@ const RecipeForm = ({ open, setOpen, initialData }) => {
               }
             />
           </Grid>
+
+          {mealData.steps.map((step, index) => (
+            <React.Fragment key={index}>
+              <Grid item xs={10}>
+                <TextField
+                  id={`step-${index}`}
+                  label={`Step ${index + 1}`}
+                  variant="outlined"
+                  fullWidth
+                  multiline
+                  rows={2}
+                  value={mealData.steps[index].text}
+                  onChange={(e) =>
+                    handleStepChange(
+                      index,
+                      e.target.value,
+                      mealData.steps[index].images
+                    )
+                  }
+                />
+              </Grid>
+              {index === 0 && (
+                <Grid
+                  item
+                  xs={1}
+                  sx={{ display: "flex", alignItems: "center" }}
+                >
+                  <IconButton color="primary" onClick={handleAddStepInput}>
+                    <AddCircleRoundedIcon />
+                  </IconButton>
+                </Grid>
+              )}
+              {index > 0 && (
+                <Grid
+                  item
+                  xs={1}
+                  sx={{ display: "flex", alignItems: "center" }}
+                >
+                  <IconButton
+                    color="primary"
+                    onClick={() => handleRemoveStepInput(index)}
+                  >
+                    <RemoveCircleRoundedIcon />
+                  </IconButton>
+                </Grid>
+              )}
+              {mealData.steps[index].images.length === 0 ? (
+                <Grid
+                  item
+                  xs={1}
+                  sx={{ display: "flex", alignItems: "center" }}
+                >
+                  <input
+                    accept="image/*"
+                    id={`icon-button-file-${index}`}
+                    type="file"
+                    style={{ display: "none" }}
+                    onChange={(e) => handleImageArrayChange(e, index)}
+                  />
+                  <label htmlFor={`icon-button-file-${index}`}>
+                    <IconButton
+                      color="primary"
+                      component="span"
+                      onClick={() => handleRemoveImage(index)} // Add this line
+                    >
+                      <AddPhotoAlternateIcon />
+                    </IconButton>
+                  </label>
+                </Grid>
+              ) : (
+                <Grid
+                  item
+                  xs={1}
+                  sx={{ display: "flex", alignItems: "center" }}
+                >
+                  <IconButton
+                    color="primary"
+                    onClick={() => handleRemoveImage(index)}
+                  >
+                    <CancelPresentationIcon />
+                  </IconButton>
+                </Grid>
+              )}
+            </React.Fragment>
+          ))}
+
           {mealData.foods.map((food, index) => (
             <React.Fragment key={index}>
               <Grid item xs={6}>

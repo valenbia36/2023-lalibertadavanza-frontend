@@ -4,7 +4,7 @@ import FoodForm from "./Forms/FoodForm";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import FilterAltRoundedIcon from "@mui/icons-material/FilterAltRounded";
 import RecipeTable from "./Tables/RecipeTable";
-import RecipeForm from "./Forms/RecipeForm";
+import RecipeForm from "./Forms/Recipe/RecipeForm";
 
 const RecipeList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
