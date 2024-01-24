@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { TextField, Modal, Box, IconButton, Grid } from "@mui/material";
+import { Modal, Box, IconButton, Grid, TableRow } from "@mui/material";
 import { useSnackbar } from "notistack";
 import getApiUrl from "../../../helpers/apiConfig";
-import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import CloseButton from "./CloseButton";
 import NameField from "./NameField";
@@ -11,6 +10,10 @@ import AddButton from "./AddButton";
 import AddMealButton from "./AddMealButton";
 import RemoveButton from "./RemoveButton";
 import FoodAutocomplete from "./FoodAutocomplete";
+import WeightField from "./WeightField";
+import AddPhoto from "./AddPhoto";
+import FoodForm from "../FoodForm";
+import FoodBankIcon from "@mui/icons-material/FoodBank";
 
 const apiUrl = getApiUrl();
 
@@ -22,10 +25,19 @@ const initialMealState = {
   userId: localStorage.getItem("userId"),
 };
 
-const RecipeForm = ({ open, setOpen, initialData }) => {
+const RecipeForm = ({
+  openRecipe,
+  setRecipeOpen,
+  initialData,
+  foodModal,
+  setOpenFoodModal,
+}) => {
   const [mealData, setMealData] = useState(initialMealState);
   const [foodOptions, setFoodOptions] = useState([]);
+  /* const [foodModal, setOpenFoodModal] = useState(false); // This controls CategoryForm */
   const { enqueueSnackbar } = useSnackbar();
+  /* console.log("Recipe: " + openRecipe);
+  console.log("Food: " + foodModal); */
 
   useEffect(() => {
     if (initialData) {
@@ -45,7 +57,7 @@ const RecipeForm = ({ open, setOpen, initialData }) => {
 
   useEffect(() => {
     getFoods();
-  }, [open, mealData]);
+  }, [openRecipe, mealData]);
 
   const getFoods = async () => {
     const response = await fetch(apiUrl + "/api/foods/", {
@@ -128,7 +140,7 @@ const RecipeForm = ({ open, setOpen, initialData }) => {
   };
 
   const closeModal = () => {
-    setOpen(false);
+    setRecipeOpen(false);
     setMealData({
       name: "",
       calories: 0,
@@ -171,21 +183,57 @@ const RecipeForm = ({ open, setOpen, initialData }) => {
       return { ...prevMealData, steps: newSteps };
     });
   };
-  const handleImageArrayChange = (e, stepIndex) => {
+  const handleImageArrayChange = async (e, stepIndex) => {
     const files = e.target.files;
     const updatedImages = [...mealData.steps[stepIndex].images];
 
-    if (files.length > 0) {
-      // Agregar nuevas imágenes
-      for (const file of files) {
-        const imageUrl = URL.createObjectURL(file);
-        updatedImages.push(imageUrl);
+    const convertToBase64 = (file) => {
+      return new Promise((resolve, reject) => {
+        const fileReader = new FileReader();
+        fileReader.readAsDataURL(file);
+        fileReader.onload = () => {
+          resolve(fileReader.result);
+        };
+        fileReader.onerror = (error) => {
+          reject(error);
+        };
+      });
+    };
+
+    const processImage = async (file) => {
+      try {
+        const base64Image = await convertToBase64(file);
+        console.log(base64Image);
+        updatedImages.push(base64Image);
+      } catch (error) {
+        console.error("Error converting image to base64:", error);
       }
+    };
+
+    if (files.length > 0) {
+      // Utilizar Promise.all para manejar las promesas de convertToBase64
+      await Promise.all(Array.from(files).map(processImage));
+
+      setMealData((prevMealData) => {
+        const updatedSteps = [...prevMealData.steps];
+        updatedSteps[stepIndex] = {
+          ...updatedSteps[stepIndex],
+          images: updatedImages,
+        };
+        return { ...prevMealData, steps: updatedSteps };
+      });
     } else {
       // Eliminar la última imagen si no se selecciona ningún archivo
       updatedImages.pop();
+      setMealData((prevMealData) => {
+        const updatedSteps = [...prevMealData.steps];
+        updatedSteps[stepIndex] = {
+          ...updatedSteps[stepIndex],
+          images: updatedImages,
+        };
+        return { ...prevMealData, steps: updatedSteps };
+      });
     }
-
     setMealData((prevMealData) => {
       const updatedSteps = [...prevMealData.steps];
       updatedSteps[stepIndex] = {
@@ -193,6 +241,18 @@ const RecipeForm = ({ open, setOpen, initialData }) => {
         images: updatedImages,
       };
       return { ...prevMealData, steps: updatedSteps };
+    });
+  };
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+      fileReader.onload = () => {
+        resolve(fileReader.result); // Resuelve la promesa con el resultado directamente
+      };
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
     });
   };
 
@@ -279,7 +339,7 @@ const RecipeForm = ({ open, setOpen, initialData }) => {
 
   return (
     <Modal
-      open={open}
+      open={openRecipe}
       onClose={closeModal}
       aria-labelledby="modal-title"
       aria-describedby="modal-description"
@@ -314,28 +374,11 @@ const RecipeForm = ({ open, setOpen, initialData }) => {
                 handleRemove={handleRemoveStepInput}
               />
               {mealData.steps[index].images.length === 0 ? (
-                <Grid
-                  item
-                  xs={1}
-                  sx={{ display: "flex", alignItems: "center" }}
-                >
-                  <input
-                    accept="image/*"
-                    id={`icon-button-file-${index}`}
-                    type="file"
-                    style={{ display: "none" }}
-                    onChange={(e) => handleImageArrayChange(e, index)}
-                  />
-                  <label htmlFor={`icon-button-file-${index}`}>
-                    <IconButton
-                      color="primary"
-                      component="span"
-                      onClick={() => handleRemoveImage(index)} // Add this line
-                    >
-                      <AddPhotoAlternateIcon />
-                    </IconButton>
-                  </label>
-                </Grid>
+                <AddPhoto
+                  index={index}
+                  handleImageArrayChange={handleImageArrayChange}
+                  handleRemoveImage={handleRemoveImage}
+                />
               ) : (
                 <Grid
                   item
@@ -350,6 +393,8 @@ const RecipeForm = ({ open, setOpen, initialData }) => {
                   </IconButton>
                 </Grid>
               )}
+              {<img src={step.images[0]} />}
+              {console.log(step)}
             </React.Fragment>
           ))}
 
@@ -361,26 +406,33 @@ const RecipeForm = ({ open, setOpen, initialData }) => {
                 index={index}
                 handleFoodInputChange={handleFoodInputChange}
               />
-              <Grid item xs={4}>
-                <TextField
-                  InputProps={{
-                    inputProps: { min: 1 },
-                  }}
-                  label={`Weight (gr/ml)`}
-                  type="number"
-                  variant="outlined"
-                  fullWidth
-                  value={food.weightConsumed}
-                  onChange={(e) => handleQuantityInputChange(e, index)}
-                />
-              </Grid>
+              <WeightField
+                food={food}
+                index={index}
+                handleQuantityInputChange={handleQuantityInputChange}
+              />
               <AddButton index={index} handleInput={handleAddFoodInput} />
               <RemoveButton
                 index={index}
                 handleRemove={handleRemoveFoodInput}
               />
+              {food.name === "" && (
+                <Grid
+                  item
+                  xs={1}
+                  sx={{ display: "flex", alignItems: "center" }}
+                >
+                  <IconButton
+                    color="primary"
+                    onClick={() => setOpenFoodModal(true)}
+                  >
+                    <FoodBankIcon />
+                  </IconButton>
+                </Grid>
+              )}
             </React.Fragment>
           ))}
+          <FoodForm open={foodModal} setOpen={setOpenFoodModal} />
           <AddMealButton
             initialData={initialData}
             handleAddMeal={handleAddMeal}

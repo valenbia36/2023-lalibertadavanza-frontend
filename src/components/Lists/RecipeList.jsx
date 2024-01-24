@@ -7,8 +7,10 @@ import RecipeTable from "../Tables/RecipeTable";
 import RecipeForm from "../Forms/Recipe/RecipeForm";
 
 const RecipeList = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalRecipeOpen, setIsModalRecipeOpen] = useState(false);
+  const [isModalFoodOpen, setIsModalFoodOpen] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
+  console.log(isModalFoodOpen);
 
   return (
     <div style={{ textAlign: "center", color: "black" }}>
@@ -27,15 +29,20 @@ const RecipeList = () => {
           maxWidth: "100%",
         }}
       >
-        <RecipeTable filterOpen={filterOpen} modalOpen={isModalOpen} />
+        <RecipeTable filterOpen={filterOpen} />
       </div>
       <React.Fragment>
-        <RecipeForm open={isModalOpen} setOpen={setIsModalOpen} />
+        <RecipeForm
+          openRecipe={isModalRecipeOpen}
+          setRecipeOpen={setIsModalRecipeOpen}
+          setOpenFoodModal={setIsModalFoodOpen}
+          foodModal={isModalFoodOpen}
+        />
       </React.Fragment>
       {localStorage.getItem("viewAs") === "false" && (
         <IconButton
           onClick={() => {
-            setIsModalOpen(true);
+            setIsModalRecipeOpen(true);
           }}
         >
           <AddCircleRoundedIcon />

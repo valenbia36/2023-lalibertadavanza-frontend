@@ -11,7 +11,7 @@ import IconButton from "@mui/material/IconButton";
 import { TableHead } from "@mui/material";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import CategoryAutocomplete from "../CategoryAutocomplete";
+import InfoIcon from "@mui/icons-material/Info";
 import getApiUrl from "../../helpers/apiConfig";
 import EditIcon from "@mui/icons-material/Edit";
 import Rating from "@mui/material/Rating";
@@ -64,21 +64,23 @@ export default function RecipeTable({ filterOpen, modalOpen }) {
   const [page, setPage] = React.useState(0);
   const [noResults, setNoResults] = useState(false);
   const [userRatings, setUserRatings] = useState({});
+  const [userRatedRecipes, setUserRatedRecipes] = useState(new Set());
 
-  function ArrayAvg(myArray) {
-    var i = 0,
-      summ = 0,
-      ArrayLen = myArray.length;
-    while (i < ArrayLen) {
-      summ = summ + myArray[i++];
+  function calculateAverageRating(ratingsArray) {
+    if (!Array.isArray(ratingsArray) || ratingsArray.length === 0) {
+      return 0; // Manejar el caso en que el array esté vacío o no sea un array
     }
 
-    return summ / ArrayLen;
+    const totalRatings = ratingsArray.reduce((accumulator, ratingObj) => {
+      return accumulator + ratingObj.rate;
+    }, 0);
+
+    return totalRatings / ratingsArray.length;
   }
 
   useEffect(() => {
     getRecipes();
-  }, []);
+  }, [recipes]);
 
   const getRecipes = async () => {
     const response = await fetch(apiUrl + "/api/recipes/", {
@@ -96,11 +98,43 @@ export default function RecipeTable({ filterOpen, modalOpen }) {
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-  const handleRatingChange = (recipeId, newRating) => {
-    setUserRatings((prevRatings) => ({
-      ...prevRatings,
-      [recipeId]: newRating,
-    }));
+  const handleRatingChange = async (recipeId, newRating) => {
+    try {
+      // Verificar si el usuario ya calificó esta receta
+      if (userRatedRecipes.has(recipeId)) {
+        console.log("Ya has calificado esta receta");
+        return;
+      }
+      console.log(localStorage.getItem("userId"));
+
+      // Llamar al endpoint para agregar la calificación
+      const response = await fetch(apiUrl + `/api/recipes/rate/${recipeId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+        body: JSON.stringify({
+          rate: newRating,
+          userId: localStorage.getItem("userId"),
+          id: recipeId,
+        }),
+      });
+
+      const data = await response.json();
+
+      // Actualizar el estado de las calificaciones del usuario
+      setUserRatedRecipes(new Set([...userRatedRecipes, recipeId]));
+
+      // Puedes mantener la lógica anterior para actualizar el estado visual
+      setUserRatings((prevRatings) => ({
+        ...prevRatings,
+        [recipeId]: newRating,
+      }));
+    } catch (error) {
+      console.error("Error al calificar la receta", error);
+      // Manejar el error según tus necesidades
+    }
   };
 
   return (
@@ -125,6 +159,14 @@ export default function RecipeTable({ filterOpen, modalOpen }) {
               </TableCell>
               <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
                 Rating
+              </TableCell>
+              {
+                <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
+                  Actions
+                </TableCell>
+              }
+              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
+                Info
               </TableCell>
             </TableRow>
           </TableHead>
@@ -155,7 +197,7 @@ export default function RecipeTable({ filterOpen, modalOpen }) {
                     >
                       <Rating
                         name={`rating-${row._id}`}
-                        value={ArrayAvg(row.ranking)}
+                        value={calculateAverageRating(row.ranking)}
                         onChange={(event, newRating) =>
                           handleRatingChange(row._id, newRating)
                         }
@@ -170,6 +212,11 @@ export default function RecipeTable({ filterOpen, modalOpen }) {
                         </IconButton>
                       </TableCell>
                     )}
+                    <TableCell align="center">
+                      <IconButton aria-label="edit row" size="small">
+                        <InfoIcon />
+                      </IconButton>
+                    </TableCell>
                   </TableRow>
                 )
               )
