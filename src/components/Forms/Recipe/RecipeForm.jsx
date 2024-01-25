@@ -34,10 +34,7 @@ const RecipeForm = ({
 }) => {
   const [mealData, setMealData] = useState(initialMealState);
   const [foodOptions, setFoodOptions] = useState([]);
-  /* const [foodModal, setOpenFoodModal] = useState(false); // This controls CategoryForm */
   const { enqueueSnackbar } = useSnackbar();
-  /* console.log("Recipe: " + openRecipe);
-  console.log("Food: " + foodModal); */
 
   useEffect(() => {
     if (initialData) {
@@ -86,6 +83,15 @@ const RecipeForm = ({
       });
       return;
     } else {
+      const requestBody = JSON.stringify(mealData);
+
+      // Imprimir el tamaño del cuerpo de la solicitud en bytes
+      console.log(
+        "Tamaño del cuerpo de la solicitud:",
+        new Blob([requestBody]).size,
+        "bytes"
+      );
+
       mealData.calories = mealData.foods
         .map((food) => parseInt(food.totalCalories))
         .reduce((acc, calories) => acc + calories, 0);
@@ -118,21 +124,21 @@ const RecipeForm = ({
           if (response.status === 200) {
             enqueueSnackbar(
               initialData
-                ? "The meal was updated successfully."
-                : "The meal was created successfully.",
+                ? "The recipe was updated successfully."
+                : "The recipe was created successfully.",
               {
                 variant: "success",
               }
             );
             closeModal();
           } else {
-            enqueueSnackbar("An error occurred while saving the meal.", {
+            enqueueSnackbar("An error occurred while saving the recipe.", {
               variant: "error",
             });
           }
         })
         .catch(function (error) {
-          enqueueSnackbar("An error occurred while saving the meal.", {
+          enqueueSnackbar("An error occurred while saving the recipe.", {
             variant: "error",
           });
         });
@@ -185,86 +191,85 @@ const RecipeForm = ({
   };
   const handleImageArrayChange = async (e, stepIndex) => {
     const files = e.target.files;
-    const updatedImages = [...mealData.steps[stepIndex].images];
 
-    const convertToBase64 = (file) => {
-      return new Promise((resolve, reject) => {
-        const fileReader = new FileReader();
-        fileReader.readAsDataURL(file);
-        fileReader.onload = () => {
-          resolve(fileReader.result);
-        };
-        fileReader.onerror = (error) => {
-          reject(error);
-        };
-      });
+    const compressAndConvertToBase64 = async (file) => {
+      try {
+        const compressedBase64 = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+
+            img.onload = () => {
+              const canvas = document.createElement("canvas");
+              const ctx = canvas.getContext("2d");
+
+              const maxWidth = 400;
+              const maxHeight = 400;
+
+              let width = img.width;
+              let height = img.height;
+
+              if (width > maxWidth || height > maxHeight) {
+                const aspectRatio = width / height;
+                if (width > maxWidth) {
+                  width = maxWidth;
+                  height = width / aspectRatio;
+                }
+                if (height > maxHeight) {
+                  height = maxHeight;
+                  width = height * aspectRatio;
+                }
+              }
+
+              canvas.width = width;
+              canvas.height = height;
+              ctx.drawImage(img, 0, 0, width, height);
+
+              const compressedBase64 = canvas.toDataURL("image/jpeg", 0.2);
+              resolve(compressedBase64);
+            };
+          };
+
+          reader.readAsDataURL(file);
+        });
+
+        return compressedBase64;
+      } catch (error) {
+        console.error("Error converting image to base64:", error);
+        throw error;
+      }
     };
 
     const processImage = async (file) => {
       try {
-        const base64Image = await convertToBase64(file);
-        console.log(base64Image);
-        updatedImages.push(base64Image);
+        const base64Image = await compressAndConvertToBase64(file);
+        setMealData((prevMealData) => {
+          const updatedSteps = [...prevMealData.steps];
+          updatedSteps[stepIndex] = {
+            ...updatedSteps[stepIndex],
+            images: [...updatedSteps[stepIndex].images, base64Image],
+          };
+          return { ...prevMealData, steps: updatedSteps };
+        });
       } catch (error) {
-        console.error("Error converting image to base64:", error);
+        console.error("Error processing image:", error);
       }
     };
 
     if (files.length > 0) {
-      // Utilizar Promise.all para manejar las promesas de convertToBase64
       await Promise.all(Array.from(files).map(processImage));
-
-      setMealData((prevMealData) => {
-        const updatedSteps = [...prevMealData.steps];
-        updatedSteps[stepIndex] = {
-          ...updatedSteps[stepIndex],
-          images: updatedImages,
-        };
-        return { ...prevMealData, steps: updatedSteps };
-      });
-    } else {
-      // Eliminar la última imagen si no se selecciona ningún archivo
-      updatedImages.pop();
-      setMealData((prevMealData) => {
-        const updatedSteps = [...prevMealData.steps];
-        updatedSteps[stepIndex] = {
-          ...updatedSteps[stepIndex],
-          images: updatedImages,
-        };
-        return { ...prevMealData, steps: updatedSteps };
-      });
     }
-    setMealData((prevMealData) => {
-      const updatedSteps = [...prevMealData.steps];
-      updatedSteps[stepIndex] = {
-        ...updatedSteps[stepIndex],
-        images: updatedImages,
-      };
-      return { ...prevMealData, steps: updatedSteps };
-    });
-  };
-  const convertToBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const fileReader = new FileReader();
-      fileReader.readAsDataURL(file);
-      fileReader.onload = () => {
-        resolve(fileReader.result); // Resuelve la promesa con el resultado directamente
-      };
-      fileReader.onerror = (error) => {
-        reject(error);
-      };
-    });
   };
 
   const handleRemoveImage = (stepIndex) => {
-    console.log(mealData.steps);
     setMealData((prevMealData) => {
       const updatedSteps = [...prevMealData.steps];
       updatedSteps[stepIndex] = {
         ...updatedSteps[stepIndex],
         images: [],
       };
-      console.log(mealData.steps);
+
       return { ...prevMealData, steps: updatedSteps };
     });
   };
@@ -361,42 +366,42 @@ const RecipeForm = ({
         <CloseButton closeModal={closeModal} />
         <Grid container spacing={2}>
           <NameField mealData={mealData} setMealData={setMealData} />
-          {mealData.steps.map((step, index) => (
-            <React.Fragment key={index}>
-              <StepField
-                mealData={mealData}
-                handleStepChange={handleStepChange}
-                index={index}
-              />
-              <AddButton index={index} handleInput={handleAddStepInput} />
-              <RemoveButton
-                index={index}
-                handleRemove={handleRemoveStepInput}
-              />
-              {mealData.steps[index].images.length === 0 ? (
-                <AddPhoto
+          {mealData.steps &&
+            mealData.steps.map((step, index) => (
+              <React.Fragment key={index}>
+                <StepField
+                  mealData={mealData}
+                  handleStepChange={handleStepChange}
                   index={index}
-                  handleImageArrayChange={handleImageArrayChange}
-                  handleRemoveImage={handleRemoveImage}
                 />
-              ) : (
-                <Grid
-                  item
-                  xs={1}
-                  sx={{ display: "flex", alignItems: "center" }}
-                >
-                  <IconButton
-                    color="primary"
-                    onClick={() => handleRemoveImage(index)}
+                <AddButton index={index} handleInput={handleAddStepInput} />
+                <RemoveButton
+                  index={index}
+                  handleRemove={handleRemoveStepInput}
+                />
+                {mealData.steps[index] &&
+                mealData.steps[index].images.length === 0 ? (
+                  <AddPhoto
+                    index={index}
+                    handleImageArrayChange={handleImageArrayChange}
+                    handleRemoveImage={handleRemoveImage}
+                  />
+                ) : (
+                  <Grid
+                    item
+                    xs={1}
+                    sx={{ display: "flex", alignItems: "center" }}
                   >
-                    <CancelPresentationIcon />
-                  </IconButton>
-                </Grid>
-              )}
-              {<img src={step.images[0]} />}
-              {console.log(step)}
-            </React.Fragment>
-          ))}
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleRemoveImage(index)}
+                    >
+                      <CancelPresentationIcon />
+                    </IconButton>
+                  </Grid>
+                )}
+              </React.Fragment>
+            ))}
 
           {mealData.foods.map((food, index) => (
             <React.Fragment key={index}>

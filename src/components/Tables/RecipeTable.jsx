@@ -15,6 +15,11 @@ import InfoIcon from "@mui/icons-material/Info";
 import getApiUrl from "../../helpers/apiConfig";
 import EditIcon from "@mui/icons-material/Edit";
 import Rating from "@mui/material/Rating";
+import RecipeForm from "../Forms/Recipe/RecipeForm";
+import PicsModal from "../Forms/Recipe/PicsModal";
+import SearchBar from "../SearchBar";
+import ThumbsUpDownIcon from "@mui/icons-material/ThumbsUpDown";
+import RateModal from "../RateModal";
 
 const apiUrl = getApiUrl();
 
@@ -58,13 +63,23 @@ function TablePaginationActions(props) {
   );
 }
 
-export default function RecipeTable({ filterOpen, modalOpen }) {
+export default function RecipeTable({ filterOpen, modalOpen, setModalOpen }) {
   const [recipes, setRecipes] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
   const [page, setPage] = React.useState(0);
   const [noResults, setNoResults] = useState(false);
-  const [userRatings, setUserRatings] = useState({});
-  const [userRatedRecipes, setUserRatedRecipes] = useState(new Set());
+  const [editMeal, setEditMeal] = useState(null);
+  const [isModalRecipeOpen, setIsModalRecipeOpen] = useState(false);
+  const [isModalFoodOpen, setIsModalFoodOpen] = useState(false);
+  const [isPicModalOpen, setIsPicModalOpen] = useState(false);
+  const [infoMeal, setInfoMeal] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isRateModalOpen, setIsRateModalOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
+
+  const filteredRecipes = recipes.filter((row) =>
+    row.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   function calculateAverageRating(ratingsArray) {
     if (!Array.isArray(ratingsArray) || ratingsArray.length === 0) {
@@ -81,6 +96,9 @@ export default function RecipeTable({ filterOpen, modalOpen }) {
   useEffect(() => {
     getRecipes();
   }, [recipes]);
+  useEffect(() => {
+    setNoResults(filteredRecipes.length === 0);
+  }, [filteredRecipes]);
 
   const getRecipes = async () => {
     const response = await fetch(apiUrl + "/api/recipes/", {
@@ -98,43 +116,17 @@ export default function RecipeTable({ filterOpen, modalOpen }) {
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-  const handleRatingChange = async (recipeId, newRating) => {
-    try {
-      // Verificar si el usuario ya calificó esta receta
-      if (userRatedRecipes.has(recipeId)) {
-        console.log("Ya has calificado esta receta");
-        return;
-      }
-      console.log(localStorage.getItem("userId"));
 
-      // Llamar al endpoint para agregar la calificación
-      const response = await fetch(apiUrl + `/api/recipes/rate/${recipeId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-        body: JSON.stringify({
-          rate: newRating,
-          userId: localStorage.getItem("userId"),
-          id: recipeId,
-        }),
-      });
-
-      const data = await response.json();
-
-      // Actualizar el estado de las calificaciones del usuario
-      setUserRatedRecipes(new Set([...userRatedRecipes, recipeId]));
-
-      // Puedes mantener la lógica anterior para actualizar el estado visual
-      setUserRatings((prevRatings) => ({
-        ...prevRatings,
-        [recipeId]: newRating,
-      }));
-    } catch (error) {
-      console.error("Error al calificar la receta", error);
-      // Manejar el error según tus necesidades
-    }
+  const handleEditClick = (meal) => {
+    setEditMeal(meal);
+    setIsModalRecipeOpen(true);
+  };
+  const handleInfoClick = (meal) => {
+    setInfoMeal(meal);
+    setIsPicModalOpen(true);
+  };
+  const handleSearch = (query) => {
+    setSearchQuery(query);
   };
 
   return (
@@ -144,12 +136,16 @@ export default function RecipeTable({ filterOpen, modalOpen }) {
         maxWidth: "100%",
         margin: "auto",
         minHeight: "400px",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
         overflowY: "auto",
       }}
     >
+      <SearchBar setSearchQuery={handleSearch} />
       <TableContainer
         component={Paper}
-        sx={{ overflowX: "auto", minHeight: "450px" }}
+        sx={{ overflowX: "auto", minHeight: "450px", minWidth: "200px" }}
       >
         <Table aria-label="custom pagination table">
           <TableHead sx={{ fontWeight: "bold" }}>
@@ -178,48 +174,81 @@ export default function RecipeTable({ filterOpen, modalOpen }) {
                 </TableCell>
               </TableRow>
             ) : (
-              (5 > 0 ? recipes.slice(page * 5, page * 5 + 5) : recipes).map(
-                (row) => (
-                  <TableRow key={row.name}>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      style={{ width: 160 }}
-                      align="center"
-                    >
-                      {row.name}
-                    </TableCell>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      style={{ width: 160 }}
-                      align="center"
-                    >
-                      <Rating
-                        name={`rating-${row._id}`}
-                        value={calculateAverageRating(row.ranking)}
-                        onChange={(event, newRating) =>
-                          handleRatingChange(row._id, newRating)
-                        }
-                        precision={0.5}
-                        readOnly={modalOpen} // Set readOnly based on modalOpen
-                      />
-                    </TableCell>
-                    {row.creator === localStorage.getItem("userId") && (
-                      <TableCell align="center">
-                        <IconButton aria-label="edit row" size="small">
-                          <EditIcon />
-                        </IconButton>
-                      </TableCell>
-                    )}
-                    <TableCell align="center">
-                      <IconButton aria-label="edit row" size="small">
-                        <InfoIcon />
+              (filteredRecipes && 5 > 0
+                ? filteredRecipes.slice(page * 5, page * 5 + 5)
+                : filteredRecipes
+              ).map((row) => (
+                <TableRow key={row.name}>
+                  <TableCell
+                    component="th"
+                    scope="row"
+                    style={{ width: 160 }}
+                    align="center"
+                  >
+                    {row.name}
+                  </TableCell>
+                  <TableCell
+                    component="th"
+                    scope="row"
+                    style={{ width: 160 }}
+                    align="center"
+                  >
+                    <Rating
+                      name={`rating-${row._id}`}
+                      value={calculateAverageRating(row.ratings)}
+                      precision={0.5}
+                      readOnly={true}
+                    />
+                    {!row.ratings.find(
+                      (rating) =>
+                        rating.userId === localStorage.getItem("userId")
+                    ) && (
+                      <IconButton
+                        aria-label="edit row"
+                        size="small"
+                        onClick={() => {
+                          setSelectedRow(row);
+                          console.log(row);
+                          setIsRateModalOpen(true);
+                        }}
+                      >
+                        <ThumbsUpDownIcon />
                       </IconButton>
-                    </TableCell>
-                  </TableRow>
-                )
-              )
+                    )}
+                  </TableCell>
+
+                  <TableCell align="center">
+                    {row.creator === localStorage.getItem("userId") ? (
+                      <IconButton
+                        aria-label="edit row"
+                        size="small"
+                        onClick={() => handleEditClick(row)}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                    ) : (
+                      <IconButton
+                        aria-label="edit row"
+                        size="small"
+                        onClick={() => handleEditClick(row)}
+                        disabled
+                      >
+                        <EditIcon />
+                      </IconButton>
+                    )}
+                  </TableCell>
+
+                  <TableCell align="center">
+                    <IconButton
+                      aria-label="edit row"
+                      size="small"
+                      onClick={() => handleInfoClick(row)}
+                    >
+                      <InfoIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))
             )}
           </TableBody>
         </Table>
@@ -230,6 +259,23 @@ export default function RecipeTable({ filterOpen, modalOpen }) {
             onPageChange={handleChangePage}
           />
         </Box>
+        <RecipeForm
+          openRecipe={isModalRecipeOpen}
+          setRecipeOpen={setIsModalRecipeOpen}
+          initialData={editMeal}
+          foodModal={isModalFoodOpen}
+          setOpenFoodModal={setIsModalFoodOpen}
+        />
+        <PicsModal
+          open={isPicModalOpen}
+          setOpen={setIsPicModalOpen}
+          initialData={infoMeal}
+        />
+        <RateModal
+          open={isRateModalOpen}
+          setOpen={setIsRateModalOpen}
+          row={selectedRow}
+        />
       </TableContainer>
     </div>
   );

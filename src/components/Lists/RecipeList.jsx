@@ -5,12 +5,10 @@ import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import FilterAltRoundedIcon from "@mui/icons-material/FilterAltRounded";
 import RecipeTable from "../Tables/RecipeTable";
 import RecipeForm from "../Forms/Recipe/RecipeForm";
-
 const RecipeList = () => {
   const [isModalRecipeOpen, setIsModalRecipeOpen] = useState(false);
   const [isModalFoodOpen, setIsModalFoodOpen] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
-  console.log(isModalFoodOpen);
 
   return (
     <div style={{ textAlign: "center", color: "black" }}>
@@ -18,10 +16,11 @@ const RecipeList = () => {
         variant="h5"
         fontWeight="bold"
         align="center"
-        marginBottom="2%"
+        marginBottom="0%"
       >
         RECIPES TABLE
       </Typography>
+      <br />
       <div
         style={{
           display: "flex",
@@ -29,7 +28,11 @@ const RecipeList = () => {
           maxWidth: "100%",
         }}
       >
-        <RecipeTable filterOpen={filterOpen} />
+        <RecipeTable
+          filterOpen={filterOpen}
+          modalOpen={isModalRecipeOpen}
+          setModalOpen={setIsModalRecipeOpen}
+        />
       </div>
       <React.Fragment>
         <RecipeForm

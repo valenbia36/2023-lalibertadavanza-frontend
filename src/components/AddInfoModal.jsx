@@ -6,10 +6,10 @@ import {
   Box,
   IconButton,
   Grid,
+  Rating,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 const InfoModal = ({ open, setOpen, newFood, setNewFood }) => {
-  
   const closeModal = () => {
     setOpen(false);
   };

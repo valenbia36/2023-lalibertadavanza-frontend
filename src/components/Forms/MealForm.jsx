@@ -72,7 +72,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
   };
 
   const handleAddMeal = () => {
-    console.log(mealData)
+    console.log(mealData);
     if (
       mealData.name === "" ||
       mealData.date === "" ||
@@ -149,14 +149,16 @@ const MealForm = ({ open, setOpen, initialData }) => {
 
   const closeModal = () => {
     setOpen(false);
-    setMealData({
-      name: "",
-      date: new Date(),
-      hour: new Date(),
-      calories: 0,
-      foods: [{ name: "", calories: "", weight: "", category: "" }],
-      userId: localStorage.getItem("userId"),
-    });
+    if (!initialData) {
+      setMealData({
+        name: "",
+        date: new Date(),
+        hour: new Date(),
+        calories: 0,
+        foods: [{ name: "", calories: "", weight: "", category: "" }],
+        userId: localStorage.getItem("userId"),
+      });
+    }
   };
 
   const handleAddFoodInput = () => {
@@ -187,22 +189,22 @@ const MealForm = ({ open, setOpen, initialData }) => {
         updatedFoods[index].totalCalories = Math.round(
           updatedFoods[index].weightConsumed *
             (updatedFoods[index].calories / updatedFoods[index].weight)
-        )
+        );
 
         updatedFoods[index].totalCarbs = Math.round(
           updatedFoods[index].weightConsumed *
             (updatedFoods[index].carbs / updatedFoods[index].weight)
-        )
+        );
 
         updatedFoods[index].totalProteins = Math.round(
           updatedFoods[index].weightConsumed *
             (updatedFoods[index].proteins / updatedFoods[index].weight)
-        )
+        );
 
         updatedFoods[index].totalFats = Math.round(
           updatedFoods[index].weightConsumed *
             (updatedFoods[index].fats / updatedFoods[index].weight)
-        )
+        );
       }
     } else {
       updatedFoods[index].name = "";
@@ -224,20 +226,20 @@ const MealForm = ({ open, setOpen, initialData }) => {
       updatedFoods[index].totalCarbs = Math.round(
         updatedFoods[index].weightConsumed *
           (updatedFoods[index].carbs / updatedFoods[index].weight)
-      )
+      );
 
       updatedFoods[index].totalProteins = Math.round(
         updatedFoods[index].weightConsumed *
           (updatedFoods[index].proteins / updatedFoods[index].weight)
-      )
+      );
 
       updatedFoods[index].totalFats = Math.round(
         updatedFoods[index].weightConsumed *
           (updatedFoods[index].fats / updatedFoods[index].weight)
-      )
+      );
       setMealData({ ...mealData, foods: updatedFoods });
-    }else {
-      console.log("ENTRA")
+    } else {
+      console.log("ENTRA");
       updatedFoods[index].weightConsumed = "";
     }
   };
