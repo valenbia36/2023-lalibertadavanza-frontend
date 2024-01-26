@@ -20,6 +20,8 @@ import PicsModal from "../Forms/Recipe/PicsModal";
 import SearchBar from "../SearchBar";
 import ThumbsUpDownIcon from "@mui/icons-material/ThumbsUpDown";
 import RateModal from "../RateModal";
+import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
+import DialogMessage from "../DialogMessage";
 
 const apiUrl = getApiUrl();
 
@@ -76,6 +78,7 @@ export default function RecipeTable({ filterOpen, modalOpen, setModalOpen }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isRateModalOpen, setIsRateModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
+  const [openDialog, setDialogOpen] = useState(false);
 
   const filteredRecipes = recipes.filter((row) =>
     row.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -109,6 +112,12 @@ export default function RecipeTable({ filterOpen, modalOpen, setModalOpen }) {
       },
     });
     const data = await response.json();
+    const sortedRecipes = data.data.sort((a, b) => {
+      const ratingA = calculateAverageRating(a.ratings);
+      const ratingB = calculateAverageRating(b.ratings);
+      return ratingB - ratingA; // Sort in descending order
+    });
+
     setRecipes(data.data);
     setTotalItems(data.data.length);
   };
@@ -128,7 +137,10 @@ export default function RecipeTable({ filterOpen, modalOpen, setModalOpen }) {
   const handleSearch = (query) => {
     setSearchQuery(query);
   };
-
+  const handleOpenDialog = (row) => {
+    setSelectedRow(row);
+    setDialogOpen(true);
+  };
   return (
     <div
       style={{
@@ -161,6 +173,9 @@ export default function RecipeTable({ filterOpen, modalOpen, setModalOpen }) {
                   Actions
                 </TableCell>
               }
+              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
+                Ingredients
+              </TableCell>
               <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
                 Info
               </TableCell>
@@ -208,7 +223,6 @@ export default function RecipeTable({ filterOpen, modalOpen, setModalOpen }) {
                         size="small"
                         onClick={() => {
                           setSelectedRow(row);
-                          console.log(row);
                           setIsRateModalOpen(true);
                         }}
                       >
@@ -236,6 +250,20 @@ export default function RecipeTable({ filterOpen, modalOpen, setModalOpen }) {
                         <EditIcon />
                       </IconButton>
                     )}
+                  </TableCell>
+                  <TableCell align="center">
+                    <IconButton
+                      aria-label="edit row"
+                      size="small"
+                      onClick={() => setDialogOpen(true)}
+                    >
+                      <ReceiptLongIcon />
+                    </IconButton>
+                    <DialogMessage
+                      open={openDialog}
+                      setOpen={setDialogOpen}
+                      ingredients={row.ingredients}
+                    />
                   </TableCell>
 
                   <TableCell align="center">

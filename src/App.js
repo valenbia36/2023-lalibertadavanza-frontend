@@ -14,6 +14,7 @@ import { SnackbarProvider } from "notistack";
 import Meals from "./screens/Meals";
 import { ThemeProvider, createTheme } from "@mui/material";
 import RelationshipRequestInbox from "./screens/RelationshipRequestInbox";
+import Planner from "./screens/Planner";
 
 const customTheme = createTheme({
   typography: {
@@ -34,6 +35,7 @@ export default function App() {
             <Route path="meals" element={<Meals />} />
             {/*<Route path="nutritionist" element={<Nutritionist />} />*/}
             <Route path="recipes" element={<Recipes />} />
+            <Route path="myPlanner" element={<Planner />} />
             <Route path="resetPassword" element={<ResetPassword />} />
             <Route path="statistics" element={<Statistics />} />
             <Route path="myProfile" element={<MyProfile />} />

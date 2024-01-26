@@ -3,9 +3,15 @@ import { IconButton, Typography } from "@mui/material";
 import MealForm from "../Forms/MealForm";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import MealTable from "../Tables/MealTable";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import { useNavigate } from "react-router-dom";
 
 const MealList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
+  const navigatePlanerScreen = () => {
+    navigate("/myPlanner", { replace: true });
+  };
 
   return (
     <div style={{ textAlign: "center", marginBottom: "250px", color: "black" }}>
@@ -39,6 +45,13 @@ const MealList = () => {
           <AddCircleRoundedIcon />
         </IconButton>
       )}
+      <IconButton
+        onClick={() => {
+          navigatePlanerScreen();
+        }}
+      >
+        <CalendarMonthIcon />
+      </IconButton>
     </div>
   );
 };
