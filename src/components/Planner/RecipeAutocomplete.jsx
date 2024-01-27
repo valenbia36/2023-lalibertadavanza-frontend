@@ -17,7 +17,7 @@ const RecipeAutocomplete = ({
 
   return (
     <Autocomplete
-      style={{ width: "100%", maxWidth: 400, minWidth: 200 }}
+      style={{ width: "120%", maxWidth: 400, minWidth: 200 }}
       value={selectedRecipe}
       onChange={(event, newValue) => {
         handleRecipeChange(newValue);
