@@ -51,13 +51,6 @@ const RecipeList = () => {
           <AddCircleRoundedIcon />
         </IconButton>
       )}
-      <IconButton
-        onClick={() => {
-          setFilterOpen(!filterOpen);
-        }}
-      >
-        <FilterAltRoundedIcon />
-      </IconButton>
     </div>
   );
 };

@@ -10,7 +10,7 @@ export default function SearchBar({ setSearchQuery }) {
   };
 
   return (
-    <form style={{ marginBottom: "10px" }}>
+    <div>
       <TextField
         id="search-bar"
         className="text"
@@ -21,9 +21,9 @@ export default function SearchBar({ setSearchQuery }) {
         size="small"
         sx={{ maxWidth: 450, left: "5%" }}
       />
-      <IconButton type="submit" aria-label="search" sx={{ left: "5%" }}>
+      <IconButton type="button" aria-label="search" sx={{ left: "5%" }}>
         <SearchIcon />
       </IconButton>
-    </form>
+      </div>
   );
 }

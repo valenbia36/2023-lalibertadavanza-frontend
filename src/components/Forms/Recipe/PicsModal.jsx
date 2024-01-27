@@ -51,6 +51,7 @@ export default function PicsModal({ open, setOpen, initialData }) {
         >
           <CloseIcon />
         </IconButton>
+        
         <TitlebarBelowImageList data={initialData} />
       </Box>
     </Modal>

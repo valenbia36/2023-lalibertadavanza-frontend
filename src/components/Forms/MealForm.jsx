@@ -33,6 +33,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
   const [mealData, setMealData] = useState(initialMealState);
   const [foodOptions, setFoodOptions] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
+  
 
   useEffect(() => {
     if (initialData) {
@@ -265,6 +266,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
           borderRadius: "2%",
         }}
       >
+        
         <IconButton
           aria-label="Close"
           onClick={closeModal}

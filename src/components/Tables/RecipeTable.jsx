@@ -252,28 +252,36 @@ export default function RecipeTable({ filterOpen, modalOpen, setModalOpen }) {
                     )}
                   </TableCell>
                   <TableCell align="center">
-                    <IconButton
+                    
+                    { <IconButton
                       aria-label="edit row"
                       size="small"
                       onClick={() => setDialogOpen(true)}
                     >
                       <ReceiptLongIcon />
-                    </IconButton>
+                    </IconButton>}
                     <DialogMessage
                       open={openDialog}
                       setOpen={setDialogOpen}
-                      ingredients={row.ingredients}
+                      ingredients={row.foods}
                     />
                   </TableCell>
-
                   <TableCell align="center">
+                  {!(row.steps.length === 1 && row.steps[0].images.length===0 && row.steps[0].text ==="")?
                     <IconButton
                       aria-label="edit row"
                       size="small"
                       onClick={() => handleInfoClick(row)}
                     >
                       <InfoIcon />
-                    </IconButton>
+                    </IconButton>:<IconButton
+                      aria-label="edit row"
+                      size="small"
+                      onClick={() => handleInfoClick(row)}
+                      disabled
+                    >
+                      <InfoIcon />
+                    </IconButton>}
                   </TableCell>
                 </TableRow>
               ))
