@@ -78,7 +78,7 @@ export default function RecipeTable({ filterOpen, modalOpen, setModalOpen }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isRateModalOpen, setIsRateModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
-  const [openDialog, setDialogOpen] = useState(false);
+  const [openDialogs, setOpenDialogs] = useState({});
 
   const filteredRecipes = recipes.filter((row) =>
     row.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -98,7 +98,7 @@ export default function RecipeTable({ filterOpen, modalOpen, setModalOpen }) {
 
   useEffect(() => {
     getRecipes();
-  }, [recipes]);
+  }, [modalOpen]);
   useEffect(() => {
     setNoResults(filteredRecipes.length === 0);
   }, [filteredRecipes]);
@@ -139,7 +139,13 @@ export default function RecipeTable({ filterOpen, modalOpen, setModalOpen }) {
   };
   const handleOpenDialog = (row) => {
     setSelectedRow(row);
-    setDialogOpen(true);
+    // Set the state for the specific row to true
+    setOpenDialogs((prev) => ({ ...prev, [row._id]: true }));
+  };
+
+  const handleCloseDialog = () => {
+    // Close the dialog for the current row
+    setOpenDialogs((prev) => ({ ...prev, [selectedRow._id]: false }));
   };
   return (
     <div
@@ -193,7 +199,7 @@ export default function RecipeTable({ filterOpen, modalOpen, setModalOpen }) {
                 ? filteredRecipes.slice(page * 5, page * 5 + 5)
                 : filteredRecipes
               ).map((row) => (
-                <TableRow key={row.name}>
+                <TableRow key={row._id}>
                   <TableCell
                     component="th"
                     scope="row"
@@ -252,36 +258,44 @@ export default function RecipeTable({ filterOpen, modalOpen, setModalOpen }) {
                     )}
                   </TableCell>
                   <TableCell align="center">
-                    
-                    { <IconButton
-                      aria-label="edit row"
-                      size="small"
-                      onClick={() => setDialogOpen(true)}
-                    >
-                      <ReceiptLongIcon />
-                    </IconButton>}
+                    {
+                      <IconButton
+                        aria-label="edit row"
+                        size="small"
+                        onClick={() => handleOpenDialog(row)}
+                      >
+                        <ReceiptLongIcon />
+                      </IconButton>
+                    }
                     <DialogMessage
-                      open={openDialog}
-                      setOpen={setDialogOpen}
+                      open={openDialogs[row._id] || false}
+                      setOpen={handleCloseDialog}
                       ingredients={row.foods}
                     />
                   </TableCell>
                   <TableCell align="center">
-                  {!(row.steps.length === 1 && row.steps[0].images.length===0 && row.steps[0].text ==="")?
-                    <IconButton
-                      aria-label="edit row"
-                      size="small"
-                      onClick={() => handleInfoClick(row)}
-                    >
-                      <InfoIcon />
-                    </IconButton>:<IconButton
-                      aria-label="edit row"
-                      size="small"
-                      onClick={() => handleInfoClick(row)}
-                      disabled
-                    >
-                      <InfoIcon />
-                    </IconButton>}
+                    {!(
+                      row.steps.length === 1 &&
+                      row.steps[0].images.length === 0 &&
+                      row.steps[0].text === ""
+                    ) ? (
+                      <IconButton
+                        aria-label="edit row"
+                        size="small"
+                        onClick={() => handleInfoClick(row)}
+                      >
+                        <InfoIcon />
+                      </IconButton>
+                    ) : (
+                      <IconButton
+                        aria-label="edit row"
+                        size="small"
+                        onClick={() => handleInfoClick(row)}
+                        disabled
+                      >
+                        <InfoIcon />
+                      </IconButton>
+                    )}
                   </TableCell>
                 </TableRow>
               ))
@@ -296,8 +310,8 @@ export default function RecipeTable({ filterOpen, modalOpen, setModalOpen }) {
           />
         </Box>
         <RecipeForm
-          openRecipe={isModalRecipeOpen}
-          setRecipeOpen={setIsModalRecipeOpen}
+          openRecipe={modalOpen}
+          setRecipeOpen={setModalOpen}
           initialData={editMeal}
           foodModal={isModalFoodOpen}
           setOpenFoodModal={setIsModalFoodOpen}

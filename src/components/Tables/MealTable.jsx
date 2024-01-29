@@ -126,7 +126,7 @@ function Row(props) {
                 </TableHead>
                 <TableBody>
                   {row.foods.map((foodRow) => (
-                    <TableRow key={foodRow.name}>
+                    <TableRow key={foodRow._id}>
                       <TableCell component="th" scope="row" align="center">
                         {foodRow.name}
                       </TableCell>
@@ -246,7 +246,7 @@ export default function MealTable({ modalOpen }) {
               .slice(startIndex, endIndex)
               .map((row) => (
                 <Row
-                  key={row.name}
+                  key={row._id}
                   row={row}
                   sx={{ textAlign: "center" }}
                   onEditClick={handleEditClick}

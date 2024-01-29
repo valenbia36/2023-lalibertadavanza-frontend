@@ -119,8 +119,8 @@ const Calendar = ({ initialData, recipes }) => {
   return (
     <Container maxWidth="lg" style={{ marginTop: "20px" }}>
       <Grid container spacing={2}>
-        {daysOfWeek.map((day) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={day}>
+        {daysOfWeek.map((day, index) => (
+          <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
             <Paper elevation={3} style={{ padding: "10px" }}>
               <Typography variant="h6" align="center" gutterBottom>
                 {day}

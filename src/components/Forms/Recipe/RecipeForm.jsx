@@ -367,9 +367,8 @@ const RecipeForm = ({
         <Grid container spacing={2}>
           <NameField mealData={mealData} setMealData={setMealData} />
           {mealData.steps &&
-          mealData.steps.map((step, index) => (
+            mealData.steps.map((step, index) => (
               <React.Fragment key={index}>
-                
                 <StepField
                   mealData={mealData}
                   handleStepChange={handleStepChange}
@@ -380,10 +379,9 @@ const RecipeForm = ({
                   index={index}
                   handleRemove={handleRemoveStepInput}
                 />
-                
+
                 {mealData.steps[index] &&
                 mealData.steps[index].images.length === 0 ? (
-                 
                   <AddPhoto
                     index={index}
                     handleImageArrayChange={handleImageArrayChange}
@@ -403,13 +401,11 @@ const RecipeForm = ({
                     </IconButton>
                   </Grid>
                 )}
-                
               </React.Fragment>
             ))}
           {/* {console.log( JSON.stringify(mealData.foods))} */}
           {mealData.foods.map((food, index) => (
             <React.Fragment key={index}>
-              
               <FoodAutocomplete
                 food={food}
                 foodOptions={foodOptions}

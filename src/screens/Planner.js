@@ -118,7 +118,7 @@ const Planner = () => {
   useEffect(() => {
     getPlan();
     getRecipes();
-  }, [recipes]);
+  }, []);
 
   const actions = [
     { icon: <LocalDrinkIcon />, name: "Water", onClick: handleWaterGlassClick },
