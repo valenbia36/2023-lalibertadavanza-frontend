@@ -7,6 +7,7 @@ import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import CheckIcon from "@mui/icons-material/Check";
 import ConfirmButton from "./ConfirmButton";
 import { useSnackbar } from "notistack";
+import { ShoppingList } from "./ShoppingList";
 
 const apiUrl = getApiUrl();
 
@@ -31,31 +32,60 @@ const initialPlanState = {
 
 const Calendar = ({ initialData, recipes }) => {
   const { enqueueSnackbar } = useSnackbar();
+  const [openList, setOpenList] = useState(false);
   const [selectedRecipes, setSelectedRecipes] = useState([]);
-
+  const [shoppingListData, setShoppingListData] = useState({});
+  const [weeklyTotalPerFood, setWeeklyTotalPerFood] = useState({});
   useEffect(() => {
     if (initialData && Object.keys(initialData).length > 0) {
       setSelectedRecipes({ ...initialData });
-      //console.log(initialData);
     } else {
       setSelectedRecipes({ ...initialPlanState });
-      //console.log(initialData);
     }
   }, []);
 
   const handleRecipeChange = (day, meal, recipe) => {
-    /* setSelectedRecipes((prevSelectedRecipes) => ({
-      ...prevSelectedRecipes,
-      [day]: {
-        ...prevSelectedRecipes[day],
-        [meal]: recipe,
-      },
-    })); */
-
     setSelectedRecipes({
       ...selectedRecipes,
       [day]: { ...selectedRecipes[day], [meal]: recipe },
     });
+  };
+  const handleShoppingList = () => {
+    const shoppingListData = {};
+    const weeklyTotalPerFood = {}; // Objeto para almacenar la suma total de cada alimento por semana
+
+    for (const day of daysOfWeek) {
+      const breakfast = selectedRecipes[day]?.breakfast;
+      const lunch = selectedRecipes[day]?.lunch;
+      const snack = selectedRecipes[day]?.snack;
+      const dinner = selectedRecipes[day]?.dinner;
+
+      shoppingListData[day] = {};
+
+      // Función para calcular la suma total de peso para una comida específica
+      const calculateTotalPerFood = (meal) => {
+        if (selectedRecipes[day][meal] && selectedRecipes[day][meal].foods) {
+          const foods = selectedRecipes[day][meal].foods;
+          foods.forEach((food) => {
+            if (!weeklyTotalPerFood[food.name]) {
+              weeklyTotalPerFood[food.name] = 0;
+            }
+            weeklyTotalPerFood[food.name] += food.weight; // Actualizar la suma total del alimento
+          });
+
+          shoppingListData[day][meal] = foods;
+        }
+      };
+
+      calculateTotalPerFood("breakfast");
+      calculateTotalPerFood("lunch");
+      calculateTotalPerFood("snack");
+      calculateTotalPerFood("dinner");
+    }
+
+    setOpenList(true);
+    setShoppingListData(shoppingListData);
+    setWeeklyTotalPerFood(weeklyTotalPerFood); // Actualizar el estado de la suma total por alimento
   };
 
   const handleAddToCalendar = () => {
@@ -152,7 +182,11 @@ const Calendar = ({ initialData, recipes }) => {
           zIndex: "1000",
         }}
       >
-        <IconButton type="submit" aria-label="search">
+        <IconButton
+          type="submit"
+          aria-label="search"
+          onClick={handleShoppingList}
+        >
           <ShoppingCartCheckoutIcon fontSize="large" />
         </IconButton>
       </div>
@@ -172,6 +206,14 @@ const Calendar = ({ initialData, recipes }) => {
           <SaveAltIcon fontSize="large" />
         </IconButton>
       </div>
+      <ShoppingList
+        open={openList}
+        setOpen={setOpenList}
+        initialData={selectedRecipes}
+        daysOfWeek={daysOfWeek}
+        shoppingListData={shoppingListData}
+        weeklyTotalPerFood={weeklyTotalPerFood} // Pasar las foods al componente ShoppingList
+      />
     </Container>
   );
 };

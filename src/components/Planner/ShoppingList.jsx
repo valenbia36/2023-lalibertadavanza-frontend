@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   TextField,
   Button,
@@ -13,11 +13,17 @@ import {
   RadioGroup,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import TitlebarBelowImageList from "./TitlebarBelowImageList";
-export default function PicsModal({ open, setOpen, initialData }) {
+import BuyList from "./BuyList";
+export function ShoppingList({
+  open,
+  setOpen,
+  shoppingListData,
+  weeklyTotalPerFood,
+}) {
   const closeModal = () => {
     setOpen(false);
   };
+
   return (
     <Modal
       open={open}
@@ -52,7 +58,11 @@ export default function PicsModal({ open, setOpen, initialData }) {
           <CloseIcon />
         </IconButton>
 
-        <TitlebarBelowImageList data={initialData} />
+        {/* Componente para mostrar las foods */}
+        <BuyList
+          shoppingListData={shoppingListData}
+          weeklyTotalPerFood={weeklyTotalPerFood}
+        />
       </Box>
     </Modal>
   );
