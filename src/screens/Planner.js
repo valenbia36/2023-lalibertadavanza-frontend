@@ -19,6 +19,9 @@ const Planner = () => {
   const theme = useTheme();
   const [isMobile, setIsMobile] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [plan, setPlan] = useState({});
+  const [recipes, setRecipes] = useState([]);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   const [openIntermittentFastingModal, setOpenIntermittentFastingModal] =
     useState(false);
@@ -33,6 +36,22 @@ const Planner = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, [theme]);
+  useEffect(() => {
+    async function fetchData() {
+      await Promise.all([getPlan(), getRecipes()]);
+      setIsDataLoaded(true);
+    }
+
+    fetchData();
+  }, []);
+  const renderCalendar = () => {
+    if (isDataLoaded) {
+      return <Calendar initialData={plan} recipes={recipes} />;
+    } else {
+      // Puedes mostrar un mensaje de carga o cualquier otro indicador mientras esperas los datos
+      return <p>Loading...</p>;
+    }
+  };
 
   const handleCreateWaterGlass = () => {
     fetch(apiUrl + "/api/waterGlass", {
@@ -69,6 +88,37 @@ const Planner = () => {
   const handleIntermittentFasting = () => {
     setOpenIntermittentFastingModal(true);
   };
+  const getPlan = async () => {
+    const response = await fetch(
+      apiUrl + `/api/weeks/${localStorage.getItem("userId")}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        setPlan(data[0]);
+      });
+  };
+  const getRecipes = async () => {
+    const response = await fetch(apiUrl + "/api/recipes/", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => setRecipes(data.data));
+  };
+  useEffect(() => {
+    getPlan();
+    getRecipes();
+  }, [recipes]);
 
   const actions = [
     { icon: <LocalDrinkIcon />, name: "Water", onClick: handleWaterGlassClick },
@@ -114,7 +164,9 @@ const Planner = () => {
           patientUserName={localStorage.getItem("patientUserName")}
         />
       )}
-      <Calendar />
+
+      {renderCalendar()}
+
       <IntermittentFastingForm
         openIntermittentFastingModal={openIntermittentFastingModal}
         closeModal={closeModal}

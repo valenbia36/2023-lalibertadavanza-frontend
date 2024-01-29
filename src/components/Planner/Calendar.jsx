@@ -4,8 +4,9 @@ import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
 import RecipeAutocomplete from "./RecipeAutocomplete";
 import getApiUrl from "../../helpers/apiConfig";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
-import FoodBankIcon from "@mui/icons-material/FoodBank";
-import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
+import CheckIcon from "@mui/icons-material/Check";
+import ConfirmButton from "./ConfirmButton";
+import { useSnackbar } from "notistack";
 
 const apiUrl = getApiUrl();
 
@@ -18,101 +19,71 @@ const daysOfWeek = [
   "Saturday",
   "Sunday",
 ];
+const initialPlanState = {
+  Monday: { breakfast: null, lunch: null, snack: null, dinner: null },
+  Tuesday: { breakfast: null, lunch: null, snack: null, dinner: null },
+  Wednesday: { breakfast: null, lunch: null, snack: null, dinner: null },
+  Thursday: { breakfast: null, lunch: null, snack: null, dinner: null },
+  Friday: { breakfast: null, lunch: null, snack: null, dinner: null },
+  Saturday: { breakfast: null, lunch: null, snack: null, dinner: null },
+  Sunday: { breakfast: null, lunch: null, snack: null, dinner: null },
+};
 
-const Calendar = ({}) => {
-  const [recipes, setRecipes] = useState([]);
-  const [meals, setMeals] = useState([]);
-  const [selectedIcon, setSelectedIcon] = useState("FoodBankIcon");
-  const [currentRecipes, setCurrentRecipes] = useState([]);
-  const [selectedRecipes, setSelectedRecipes] = useState({
-    Monday: { breakfast: null, lunch: null, snack: null, dinner: null },
-    Tuesday: { breakfast: null, lunch: null, snack: null, dinner: null },
-    Wednesday: { breakfast: null, lunch: null, snack: null, dinner: null },
-    Thursday: { breakfast: null, lunch: null, snack: null, dinner: null },
-    Friday: { breakfast: null, lunch: null, snack: null, dinner: null },
-    Saturday: { breakfast: null, lunch: null, snack: null, dinner: null },
-    Sunday: { breakfast: null, lunch: null, snack: null, dinner: null },
-  });
+const Calendar = ({ initialData, recipes }) => {
+  const { enqueueSnackbar } = useSnackbar();
+  const [selectedRecipes, setSelectedRecipes] = useState([]);
 
   useEffect(() => {
-    // Actualiza currentRecipes según el ícono seleccionado
-    setCurrentRecipes(
-      selectedIcon === "FoodBankIcon" ? getMeals() : getRecipes()
-    );
-  }, [selectedIcon]);
-  const toggleIcon = () => {
-    setSelectedIcon((prevIcon) =>
-      prevIcon === "FoodBankIcon" ? "ReceiptLongIcon" : "FoodBankIcon"
-    );
+    if (initialData && Object.keys(initialData).length > 0) {
+      setSelectedRecipes({ ...initialData });
+      //console.log(initialData);
+    } else {
+      setSelectedRecipes({ ...initialPlanState });
+      //console.log(initialData);
+    }
+  }, []);
+
+  const handleRecipeChange = (day, meal, recipe) => {
+    /* setSelectedRecipes((prevSelectedRecipes) => ({
+      ...prevSelectedRecipes,
+      [day]: {
+        ...prevSelectedRecipes[day],
+        [meal]: recipe,
+      },
+    })); */
+
+    setSelectedRecipes({
+      ...selectedRecipes,
+      [day]: { ...selectedRecipes[day], [meal]: recipe },
+    });
   };
 
-  const getRecipes = async () => {
-    const response = await fetch(apiUrl + "/api/recipes/", {
-      method: "GET",
+  const handleAddToCalendar = () => {
+    fetch(apiUrl + "/api/weeks/", {
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
-    });
-    const data = await response.json();
-    setRecipes(data.data);
-  };
-
-  const handleRecipeChange = (day, meal, recipe) => {
-    setSelectedRecipes((prevSelectedRecipes) => ({
-      ...prevSelectedRecipes,
-      [day]: {
-        ...(prevSelectedRecipes[day] || {}),
-        [meal]: recipe,
-      },
-    }));
-  };
-  const saveWeek = async () => {
-    try {
-      const response = await fetch(apiUrl + "/api/saveWeek", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-        body: JSON.stringify({
-          startDate: new Date(),
-          selectedRecipes,
-        }),
+      body: JSON.stringify({
+        ...selectedRecipes,
+        userId: localStorage.getItem("userId"),
+      }),
+    })
+      .then(function (response) {
+        if (response.status === 200) {
+          enqueueSnackbar("The plan was created successfully.", {
+            variant: "success",
+          });
+        } else {
+          enqueueSnackbar("An error occurred while creating the plan.", {
+            variant: "error",
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("Error during fetch:", error);
       });
-      console.log(response);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      console.log(result); // Maneja la respuesta como desees
-    } catch (error) {
-      console.error("Error saving week:", error);
-    }
-  };
-  const getMeals = async () => {
-    const response = await fetch(
-      apiUrl + "/api/meals/user/" + localStorage.getItem("userId"),
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      }
-    );
-    const data = await response.json();
-
-    const mealsWithShortenedDates = data.data.map((meal) => {
-      return {
-        ...meal,
-        date: meal.date.substring(0, 10),
-      };
-    });
-
-    setMeals(mealsWithShortenedDates);
   };
 
   return (
@@ -124,86 +95,50 @@ const Calendar = ({}) => {
               <Typography variant="h6" align="center" gutterBottom>
                 {day}
               </Typography>
+
               <div>
                 <Typography variant="subtitle1">Desayuno:</Typography>
-                <Grid container alignItems="center" spacing={6}>
-                  <Grid item>
-                    <RecipeAutocomplete
-                      selectedRecipe={(selectedRecipes[day] || {}).breakfast}
-                      recipes={currentRecipes}
-                      handleRecipeChange={(recipe) =>
-                        handleRecipeChange(day, "breakfast", recipe)
-                      }
-                    />
-                  </Grid>
-                  <Grid item>
-                    <IconButton onClick={toggleIcon}>
-                      {selectedIcon === "FoodBankIcon" ? (
-                        <FoodBankIcon />
-                      ) : (
-                        <ReceiptLongIcon />
-                      )}
-                    </IconButton>
-                  </Grid>
-                </Grid>
+
+                <RecipeAutocomplete
+                  selectedRecipe={(selectedRecipes[day] || {}).breakfast}
+                  recipes={recipes}
+                  handleRecipeChange={(recipe) =>
+                    handleRecipeChange(day, "breakfast", recipe)
+                  }
+                />
               </div>
+
               <div>
                 <Typography variant="subtitle1">Almuerzo:</Typography>
-                <Grid container alignItems="center" spacing={6}>
-                  <Grid item>
-                    <RecipeAutocomplete
-                      selectedRecipe={(selectedRecipes[day] || {}).lunch}
-                      recipes={recipes}
-                      handleRecipeChange={(recipe) =>
-                        handleRecipeChange(day, "lunch", recipe)
-                      }
-                    />
-                  </Grid>
-                  <Grid item>
-                    <IconButton>
-                      <FoodBankIcon />
-                    </IconButton>
-                  </Grid>
-                </Grid>
+
+                <RecipeAutocomplete
+                  selectedRecipe={(selectedRecipes[day] || {}).lunch}
+                  recipes={recipes}
+                  handleRecipeChange={(recipe) =>
+                    handleRecipeChange(day, "lunch", recipe)
+                  }
+                />
               </div>
               <div>
                 <Typography variant="subtitle1">Snack:</Typography>
-                <Grid container alignItems="center" spacing={6}>
-                  <Grid item>
-                    <RecipeAutocomplete
-                      selectedRecipe={(selectedRecipes[day] || {}).snack}
-                      recipes={recipes}
-                      handleRecipeChange={(recipe) =>
-                        handleRecipeChange(day, "snack", recipe)
-                      }
-                    />
-                  </Grid>
-                  {console.log(selectedRecipes[day])}
-                  <Grid item>
-                    <IconButton>
-                      <FoodBankIcon />
-                    </IconButton>
-                  </Grid>
-                </Grid>
+                <RecipeAutocomplete
+                  selectedRecipe={(selectedRecipes[day] || {}).snack}
+                  recipes={recipes}
+                  handleRecipeChange={(recipe) =>
+                    handleRecipeChange(day, "snack", recipe)
+                  }
+                />
               </div>
               <div>
                 <Typography variant="subtitle1">Cena:</Typography>
-                <Grid container alignItems="center" spacing={6}>
-                  <Grid item>
-                    <RecipeAutocomplete
-                      selectedRecipe={(selectedRecipes[day] || {}).dinner}
-                      recipes={recipes}
-                      handleRecipeChange={(recipe) =>
-                        handleRecipeChange(day, "dinner", recipe)
-                      }
-                    />
-                  </Grid>
-                  <Grid item>
-                    <IconButton>
-                      <FoodBankIcon />
-                    </IconButton>
-                  </Grid>
-                </Grid>
+
+                <RecipeAutocomplete
+                  selectedRecipe={(selectedRecipes[day] || {}).dinner}
+                  recipes={recipes}
+                  handleRecipeChange={(recipe) =>
+                    handleRecipeChange(day, "dinner", recipe)
+                  }
+                />
               </div>
             </Paper>
           </Grid>
@@ -232,7 +167,7 @@ const Calendar = ({}) => {
         <IconButton
           type="submit"
           aria-label="search"
-          onClick={() => saveWeek()}
+          onClick={handleAddToCalendar}
         >
           <SaveAltIcon fontSize="large" />
         </IconButton>

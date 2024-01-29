@@ -9,7 +9,6 @@ const RecipeAutocomplete = ({
   const [options, setOptions] = useState([]);
 
   useEffect(() => {
-    // Check if recipes is not empty before setting options
     if (recipes && recipes.length > 0) {
       setOptions(recipes);
     }
@@ -17,8 +16,8 @@ const RecipeAutocomplete = ({
 
   return (
     <Autocomplete
-      style={{ width: "120%", maxWidth: 400, minWidth: 200 }}
-      value={selectedRecipe}
+      style={{ width: "80%", maxWidth: 400, minWidth: 200 }}
+      value={selectedRecipe ?? null}
       onChange={(event, newValue) => {
         handleRecipeChange(newValue);
       }}
