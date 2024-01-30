@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Container, Grid, IconButton, Paper, Typography } from "@mui/material";
+import {
+  Container,
+  Grid,
+  IconButton,
+  Paper,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
 import RecipeAutocomplete from "./RecipeAutocomplete";
 import getApiUrl from "../../helpers/apiConfig";
@@ -115,6 +122,62 @@ const Calendar = ({ initialData, recipes }) => {
         console.error("Error during fetch:", error);
       });
   };
+  const handleAddMeal = (meal, timeOfTheDay, hour) => {
+    console.log(meal);
+    if (meal && meal != []) {
+      const mealToAdd = {
+        name: timeOfTheDay + meal.name,
+        foods: meal.foods,
+        date: new Date(),
+        hour: hour,
+        userId: localStorage.getItem("userId"),
+      };
+      mealToAdd.calories = meal.foods
+        .map((food) => parseInt(food.totalCalories))
+        .reduce((acc, calories) => acc + calories, 0);
+
+      mealToAdd.carbs = meal.foods
+        .map((food) => parseInt(food.totalCarbs))
+        .reduce((acc, carbs) => acc + carbs, 0);
+
+      mealToAdd.proteins = meal.foods
+        .map((food) => parseInt(food.totalProteins))
+        .reduce((acc, proteins) => acc + proteins, 0);
+
+      mealToAdd.fats = meal.foods
+        .map((food) => parseInt(food.totalFats))
+        .reduce((acc, fats) => acc + fats, 0);
+
+      fetch(apiUrl + "/api/meals", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+        body: JSON.stringify(mealToAdd),
+      })
+        .then(function (response) {
+          if (response.status === 200) {
+            enqueueSnackbar("The meal was created successfully.", {
+              variant: "success",
+            });
+          } else {
+            enqueueSnackbar("An error occurred while saving the meal.", {
+              variant: "error",
+            });
+          }
+        })
+        .catch(function (error) {
+          enqueueSnackbar("An error occurred while saving the meal.", {
+            variant: "error",
+          });
+        });
+    } else {
+      enqueueSnackbar("An error occurred while saving the meal.", {
+        variant: "error",
+      });
+    }
+  };
 
   return (
     <Container
@@ -135,7 +198,22 @@ const Calendar = ({ initialData, recipes }) => {
               </Typography>
 
               <div>
-                <Typography variant="subtitle1">Desayuno:</Typography>
+                <Typography variant="subtitle1">
+                  Desayuno:{" "}
+                  <Tooltip title="Add to meals">
+                    <IconButton
+                      onClick={() => {
+                        handleAddMeal(
+                          (selectedRecipes[day] || {}).breakfast,
+                          "Desayuno: ",
+                          "10:00"
+                        );
+                      }}
+                    >
+                      <CheckIcon />
+                    </IconButton>
+                  </Tooltip>
+                </Typography>
 
                 <RecipeAutocomplete
                   selectedRecipe={(selectedRecipes[day] || {}).breakfast}
@@ -147,7 +225,22 @@ const Calendar = ({ initialData, recipes }) => {
               </div>
 
               <div>
-                <Typography variant="subtitle1">Almuerzo:</Typography>
+                <Typography variant="subtitle1">
+                  Almuerzo:
+                  <Tooltip title="Add to meals">
+                    <IconButton
+                      onClick={() => {
+                        handleAddMeal(
+                          (selectedRecipes[day] || {}).lunch,
+                          "Almuerzo: ",
+                          "12:00"
+                        );
+                      }}
+                    >
+                      <CheckIcon />
+                    </IconButton>
+                  </Tooltip>
+                </Typography>
 
                 <RecipeAutocomplete
                   selectedRecipe={(selectedRecipes[day] || {}).lunch}
@@ -158,7 +251,22 @@ const Calendar = ({ initialData, recipes }) => {
                 />
               </div>
               <div>
-                <Typography variant="subtitle1">Snack:</Typography>
+                <Typography variant="subtitle1">
+                  Snack:
+                  <Tooltip title="Add to meals">
+                    <IconButton
+                      onClick={() => {
+                        handleAddMeal(
+                          (selectedRecipes[day] || {}).snack,
+                          "Snack: ",
+                          "16:00"
+                        );
+                      }}
+                    >
+                      <CheckIcon />
+                    </IconButton>
+                  </Tooltip>
+                </Typography>
                 <RecipeAutocomplete
                   selectedRecipe={(selectedRecipes[day] || {}).snack}
                   recipes={recipes}
@@ -168,7 +276,22 @@ const Calendar = ({ initialData, recipes }) => {
                 />
               </div>
               <div>
-                <Typography variant="subtitle1">Cena:</Typography>
+                <Typography variant="subtitle1">
+                  Cena:
+                  <Tooltip title="Add to meals">
+                    <IconButton
+                      onClick={() => {
+                        handleAddMeal(
+                          (selectedRecipes[day] || {}).dinner,
+                          "Cena: ",
+                          "20:00"
+                        );
+                      }}
+                    >
+                      <CheckIcon />
+                    </IconButton>
+                  </Tooltip>
+                </Typography>
 
                 <RecipeAutocomplete
                   selectedRecipe={(selectedRecipes[day] || {}).dinner}
