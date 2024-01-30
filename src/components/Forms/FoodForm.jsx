@@ -18,7 +18,7 @@ const initialFoodState = {
   category: "",
   carbs: "",
   proteins: "",
-  fats: ""
+  fats: "",
 };
 
 const FoodForm = ({ open, setOpen }) => {
@@ -91,7 +91,11 @@ const FoodForm = ({ open, setOpen }) => {
   };
 
   const shouldBlink = () => {
-    return newFood.carbs === '' && newFood.proteins === '' && newFood.fats === '' ? 'blinkingIcon' : '';
+    return newFood.carbs === "" &&
+      newFood.proteins === "" &&
+      newFood.fats === ""
+      ? "blinkingIcon"
+      : "";
   };
 
   return (
@@ -178,7 +182,7 @@ const FoodForm = ({ open, setOpen }) => {
               </IconButton>
             </Grid>
           </Grid>
-          <Grid container spacing={1} alignItems="center" sx={{ mt: 0.05 }} >
+          <Grid container spacing={1} alignItems="center" sx={{ mt: 0.05 }}>
             <Grid item xs={10}>
               <TextField
                 InputProps={{

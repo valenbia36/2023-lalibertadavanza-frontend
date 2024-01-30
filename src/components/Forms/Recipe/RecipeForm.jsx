@@ -54,7 +54,7 @@ const RecipeForm = ({
 
   useEffect(() => {
     getFoods();
-  }, [openRecipe, mealData]);
+  }, []);
 
   const getFoods = async () => {
     const response = await fetch(apiUrl + "/api/foods/", {
@@ -144,9 +144,13 @@ const RecipeForm = ({
         });
     }
   };
+  const handleOpenFoodModal = () => {
+    setOpenFoodModal(true);
+  };
 
   const closeModal = () => {
     setRecipeOpen(false);
+
     setMealData({
       name: "",
       calories: 0,
@@ -348,6 +352,7 @@ const RecipeForm = ({
       onClose={closeModal}
       aria-labelledby="modal-title"
       aria-describedby="modal-description"
+      disableScrollLock={true}
     >
       <Box
         sx={{
@@ -359,6 +364,9 @@ const RecipeForm = ({
           maxWidth: 500,
           bgcolor: "background.paper",
           boxShadow: 24,
+          maxHeight: "80vh !important",
+          overflowY: "auto !important",
+
           p: 4,
           borderRadius: "2%",
         }}
@@ -403,7 +411,7 @@ const RecipeForm = ({
                 )}
               </React.Fragment>
             ))}
-          {/* {console.log( JSON.stringify(mealData.foods))} */}
+
           {mealData.foods.map((food, index) => (
             <React.Fragment key={index}>
               <FoodAutocomplete
@@ -429,10 +437,7 @@ const RecipeForm = ({
                   xs={1}
                   sx={{ display: "flex", alignItems: "center" }}
                 >
-                  <IconButton
-                    color="primary"
-                    onClick={() => setOpenFoodModal(true)}
-                  >
+                  <IconButton color="primary" onClick={handleOpenFoodModal}>
                     <FoodBankIcon />
                   </IconButton>
                 </Grid>

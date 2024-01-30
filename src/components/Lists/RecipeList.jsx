@@ -9,6 +9,9 @@ const RecipeList = () => {
   const [isModalRecipeOpen, setIsModalRecipeOpen] = useState(false);
   const [isModalFoodOpen, setIsModalFoodOpen] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
+  const handleOpenForm = () => {
+    setIsModalRecipeOpen(true);
+  };
 
   return (
     <div style={{ textAlign: "center", color: "black" }}>
@@ -35,22 +38,13 @@ const RecipeList = () => {
         />
       </div>
       <React.Fragment>
-        <RecipeForm
+        {/* <RecipeForm
           openRecipe={isModalRecipeOpen}
           setRecipeOpen={setIsModalRecipeOpen}
           setOpenFoodModal={setIsModalFoodOpen}
           foodModal={isModalFoodOpen}
-        />
+        /> */}
       </React.Fragment>
-      {localStorage.getItem("viewAs") === "false" && (
-        <IconButton
-          onClick={() => {
-            setIsModalRecipeOpen(true);
-          }}
-        >
-          <AddCircleRoundedIcon />
-        </IconButton>
-      )}
     </div>
   );
 };

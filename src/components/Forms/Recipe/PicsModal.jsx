@@ -36,6 +36,8 @@ export default function PicsModal({ open, setOpen, initialData }) {
           bgcolor: "background.paper",
           boxShadow: 24,
           p: 5,
+          maxHeight: "80vh !important",
+          overflowY: "auto !important",
           borderRadius: "2%",
         }}
       >

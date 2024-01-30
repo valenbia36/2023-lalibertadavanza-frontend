@@ -70,7 +70,7 @@ const Calendar = ({ initialData, recipes }) => {
             if (!weeklyTotalPerFood[food.name]) {
               weeklyTotalPerFood[food.name] = 0;
             }
-            weeklyTotalPerFood[food.name] += food.weight; // Actualizar la suma total del alimento
+            weeklyTotalPerFood[food.name] += food.weightConsumed; // Actualizar la suma total del alimento
           });
 
           shoppingListData[day][meal] = foods;
@@ -117,10 +117,18 @@ const Calendar = ({ initialData, recipes }) => {
   };
 
   return (
-    <Container maxWidth="lg" style={{ marginTop: "20px" }}>
+    <Container
+      maxWidth="lg"
+      style={{
+        marginTop: "20px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       <Grid container spacing={2}>
         {daysOfWeek.map((day, index) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+          <Grid item xs={12} sm={9} md={8} lg={3} key={index}>
             <Paper elevation={3} style={{ padding: "10px" }}>
               <Typography variant="h6" align="center" gutterBottom>
                 {day}
@@ -174,38 +182,22 @@ const Calendar = ({ initialData, recipes }) => {
           </Grid>
         ))}
       </Grid>
-      <div
-        style={{
-          position: "fixed",
-          bottom: "15%",
-          right: "20%",
-          zIndex: "1000",
-        }}
+      <IconButton
+        type="submit"
+        aria-label="search"
+        onClick={handleShoppingList}
       >
-        <IconButton
-          type="submit"
-          aria-label="search"
-          onClick={handleShoppingList}
-        >
-          <ShoppingCartCheckoutIcon fontSize="large" />
-        </IconButton>
-      </div>
-      <div
-        style={{
-          position: "fixed",
-          bottom: "15%",
-          right: "15%",
-          zIndex: "1000",
-        }}
+        <ShoppingCartCheckoutIcon fontSize="large" />
+      </IconButton>
+
+      <IconButton
+        type="submit"
+        aria-label="search"
+        onClick={handleAddToCalendar}
       >
-        <IconButton
-          type="submit"
-          aria-label="search"
-          onClick={handleAddToCalendar}
-        >
-          <SaveAltIcon fontSize="large" />
-        </IconButton>
-      </div>
+        <SaveAltIcon fontSize="large" />
+      </IconButton>
+
       <ShoppingList
         open={openList}
         setOpen={setOpenList}

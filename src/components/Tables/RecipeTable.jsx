@@ -22,7 +22,7 @@ import ThumbsUpDownIcon from "@mui/icons-material/ThumbsUpDown";
 import RateModal from "../RateModal";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import DialogMessage from "../DialogMessage";
-
+import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 const apiUrl = getApiUrl();
 
 function TablePaginationActions(props) {
@@ -65,7 +65,7 @@ function TablePaginationActions(props) {
   );
 }
 
-export default function RecipeTable({ filterOpen, modalOpen, setModalOpen }) {
+export default function RecipeTable({}) {
   const [recipes, setRecipes] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
   const [page, setPage] = React.useState(0);
@@ -79,7 +79,11 @@ export default function RecipeTable({ filterOpen, modalOpen, setModalOpen }) {
   const [isRateModalOpen, setIsRateModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [openDialogs, setOpenDialogs] = useState({});
-
+  const handleOpenForm = () => {
+    // Open the RecipeForm modal when the button is clicked
+    setIsModalRecipeOpen(true);
+    setEditMeal(null);
+  };
   const filteredRecipes = recipes.filter((row) =>
     row.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -98,7 +102,7 @@ export default function RecipeTable({ filterOpen, modalOpen, setModalOpen }) {
 
   useEffect(() => {
     getRecipes();
-  }, [modalOpen]);
+  }, [isModalRecipeOpen, isRateModalOpen]);
   useEffect(() => {
     setNoResults(filteredRecipes.length === 0);
   }, [filteredRecipes]);
@@ -310,11 +314,23 @@ export default function RecipeTable({ filterOpen, modalOpen, setModalOpen }) {
           />
         </Box>
         <RecipeForm
-          openRecipe={modalOpen}
-          setRecipeOpen={setModalOpen}
+          openRecipe={isModalRecipeOpen}
+          setRecipeOpen={(value) => {
+            setIsModalRecipeOpen(value);
+            // Call getRecipes when the RecipeForm is closed
+            if (!value) {
+              getRecipes();
+            }
+          }}
           initialData={editMeal}
           foodModal={isModalFoodOpen}
-          setOpenFoodModal={setIsModalFoodOpen}
+          setOpenFoodModal={(value) => {
+            setIsModalFoodOpen(value);
+            // Call getRecipes when the RecipeForm is closed
+            if (!value) {
+              getRecipes();
+            }
+          }}
         />
         <PicsModal
           open={isPicModalOpen}
@@ -323,10 +339,19 @@ export default function RecipeTable({ filterOpen, modalOpen, setModalOpen }) {
         />
         <RateModal
           open={isRateModalOpen}
-          setOpen={setIsRateModalOpen}
+          setOpen={(value) => {
+            setIsRateModalOpen(value);
+            // Call getRecipes when the RateModal is closed
+            if (!value) {
+              getRecipes();
+            }
+          }}
           row={selectedRow}
         />
       </TableContainer>
+      <IconButton onClick={handleOpenForm}>
+        <AddCircleRoundedIcon />
+      </IconButton>
     </div>
   );
 }

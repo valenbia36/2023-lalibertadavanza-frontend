@@ -164,7 +164,6 @@ const Planner = () => {
           patientUserName={localStorage.getItem("patientUserName")}
         />
       )}
-
       {renderCalendar()}
 
       <IntermittentFastingForm

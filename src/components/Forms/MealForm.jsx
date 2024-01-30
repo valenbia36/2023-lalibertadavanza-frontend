@@ -33,7 +33,6 @@ const MealForm = ({ open, setOpen, initialData }) => {
   const [mealData, setMealData] = useState(initialMealState);
   const [foodOptions, setFoodOptions] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
-  
 
   useEffect(() => {
     if (initialData) {
@@ -262,11 +261,12 @@ const MealForm = ({ open, setOpen, initialData }) => {
           maxWidth: 500,
           bgcolor: "background.paper",
           boxShadow: 24,
+          maxHeight: "80vh !important",
+          overflowY: "auto !important",
           p: 4,
           borderRadius: "2%",
         }}
       >
-        
         <IconButton
           aria-label="Close"
           onClick={closeModal}

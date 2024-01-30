@@ -96,6 +96,7 @@ export default function RateModal({ open, setOpen, row }) {
           fullWidth
           onClick={() => {
             handleRatingChange(row._id, value);
+            setValue(0);
             setOpen(false);
           }}
         >
