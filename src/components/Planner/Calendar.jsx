@@ -193,8 +193,11 @@ const Calendar = ({ initialData, recipes }) => {
     >
       <Grid container spacing={2}>
         {daysOfWeek.map((day, index) => (
+          
           <Grid item xs={12} sm={9} md={8} lg={3} key={index}>
-            <Paper elevation={3} style={{ padding: "10px" }}>
+            <Paper elevation={(today.toLocaleDateString('en', { weekday: 'long' }) === day)?10:3} style={{ padding: "10px",
+          transition: "box-shadow 0.3s ease",
+          boxShadow: (today.toLocaleDateString('en', { weekday: 'long' }) === day) ? "0 0 15px rgba(255, 0, 0, 0.8)" : "none", }}>
               <Typography variant="h6" align="center" gutterBottom>
                 {day}
               </Typography>
