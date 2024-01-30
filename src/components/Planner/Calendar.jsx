@@ -17,6 +17,7 @@ import { useSnackbar } from "notistack";
 import { ShoppingList } from "./ShoppingList";
 
 const apiUrl = getApiUrl();
+const today = new Date;
 
 const daysOfWeek = [
   "Monday",
@@ -200,8 +201,8 @@ const Calendar = ({ initialData, recipes }) => {
 
               <div>
                 <Typography variant="subtitle1">
-                  Desayuno:{" "}
-                  <Tooltip title="Add to meals">
+                  Desayuno:{}
+                  {today.toLocaleDateString('en', { weekday: 'long' }) === day && <Tooltip title="Add to meals">
                     <IconButton
                       onClick={() => {
                         handleAddMeal(
@@ -213,7 +214,7 @@ const Calendar = ({ initialData, recipes }) => {
                     >
                       <CheckIcon />
                     </IconButton>
-                  </Tooltip>
+                  </Tooltip>}
                 </Typography>
 
                 <RecipeAutocomplete
@@ -228,7 +229,7 @@ const Calendar = ({ initialData, recipes }) => {
               <div>
                 <Typography variant="subtitle1">
                   Almuerzo:
-                  <Tooltip title="Add to meals">
+                  {today.toLocaleDateString('en', { weekday: 'long' }) === day && <Tooltip title="Add to meals">
                     <IconButton
                       onClick={() => {
                         handleAddMeal(
@@ -240,7 +241,7 @@ const Calendar = ({ initialData, recipes }) => {
                     >
                       <CheckIcon />
                     </IconButton>
-                  </Tooltip>
+                  </Tooltip>}
                 </Typography>
 
                 <RecipeAutocomplete
@@ -254,7 +255,7 @@ const Calendar = ({ initialData, recipes }) => {
               <div>
                 <Typography variant="subtitle1">
                   Snack:
-                  <Tooltip title="Add to meals">
+                  {today.toLocaleDateString('en', { weekday: 'long' }) === day &&<Tooltip title="Add to meals">
                     <IconButton
                       onClick={() => {
                         handleAddMeal(
@@ -266,7 +267,7 @@ const Calendar = ({ initialData, recipes }) => {
                     >
                       <CheckIcon />
                     </IconButton>
-                  </Tooltip>
+                  </Tooltip>}
                 </Typography>
                 <RecipeAutocomplete
                   selectedRecipe={(selectedRecipes[day] || {}).snack}
@@ -279,7 +280,7 @@ const Calendar = ({ initialData, recipes }) => {
               <div>
                 <Typography variant="subtitle1">
                   Cena:
-                  <Tooltip title="Add to meals">
+                  {today.toLocaleDateString('en', { weekday: 'long' }) === day &&<Tooltip title="Add to meals">
                     <IconButton
                       onClick={() => {
                         handleAddMeal(
@@ -291,7 +292,7 @@ const Calendar = ({ initialData, recipes }) => {
                     >
                       <CheckIcon />
                     </IconButton>
-                  </Tooltip>
+                  </Tooltip>}
                 </Typography>
 
                 <RecipeAutocomplete
