@@ -183,9 +183,10 @@ const Calendar = ({ initialData, recipes }) => {
     <Container
       maxWidth="lg"
       style={{
-        marginTop: "20px",
+        paddingBottom: "60px",
         display: "flex",
         justifyContent: "center",
+        flexDirection: "column",
         alignItems: "center",
       }}
     >
@@ -305,21 +306,23 @@ const Calendar = ({ initialData, recipes }) => {
           </Grid>
         ))}
       </Grid>
-      <IconButton
-        type="submit"
-        aria-label="search"
-        onClick={handleShoppingList}
-      >
-        <ShoppingCartCheckoutIcon fontSize="large" />
-      </IconButton>
+      <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px" }}>
+    <IconButton
+      type="submit"
+      aria-label="search"
+      onClick={handleShoppingList}
+    >
+      <ShoppingCartCheckoutIcon fontSize="large" />
+    </IconButton>
 
-      <IconButton
-        type="submit"
-        aria-label="search"
-        onClick={handleAddToCalendar}
-      >
-        <SaveAltIcon fontSize="large" />
-      </IconButton>
+    <IconButton
+      type="submit"
+      aria-label="search"
+      onClick={handleAddToCalendar}
+    >
+      <SaveAltIcon fontSize="large" />
+    </IconButton>
+  </div>
 
       <ShoppingList
         open={openList}
