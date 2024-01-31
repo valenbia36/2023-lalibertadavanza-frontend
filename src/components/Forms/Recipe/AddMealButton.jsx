@@ -17,7 +17,7 @@ export default function AddMealButton({ initialData, handleAddMeal }) {
         }}
         fullWidth
       >
-        {initialData ? "Update Meal" : "Add Meal"}
+        {initialData ? "Update Recipe" : "Add Recipe"}
       </Button>
     </Grid>
   );

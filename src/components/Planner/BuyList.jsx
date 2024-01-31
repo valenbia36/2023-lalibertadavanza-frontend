@@ -6,7 +6,7 @@ const BuyList = ({ shoppingListData, weeklyTotalPerFood }) => {
     <div>
       {/* Mostrar la suma total de cada alimento */}
       <Typography variant="h6" gutterBottom>
-        Weekly Total Per Food:
+        Shopping List:
       </Typography>
       <ul>
         {Object.keys(weeklyTotalPerFood).map((foodName, index) => (

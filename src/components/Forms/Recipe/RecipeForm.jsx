@@ -85,12 +85,12 @@ const RecipeForm = ({
     } else {
       const requestBody = JSON.stringify(mealData);
 
-      // Imprimir el tamaño del cuerpo de la solicitud en bytes
+      /*  // Imprimir el tamaño del cuerpo de la solicitud en bytes
       console.log(
         "Tamaño del cuerpo de la solicitud:",
         new Blob([requestBody]).size,
         "bytes"
-      );
+      ); */
 
       mealData.calories = mealData.foods
         .map((food) => parseInt(food.totalCalories))

@@ -123,6 +123,7 @@ export default function RecipeTable({}) {
     });
 
     setRecipes(data.data);
+    console.log(recipes);
     setTotalItems(data.data.length);
   };
 

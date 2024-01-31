@@ -17,7 +17,7 @@ import { useSnackbar } from "notistack";
 import { ShoppingList } from "./ShoppingList";
 
 const apiUrl = getApiUrl();
-const today = new Date;
+const today = new Date();
 
 const daysOfWeek = [
   "Monday",
@@ -46,6 +46,7 @@ const Calendar = ({ initialData, recipes }) => {
   const [weeklyTotalPerFood, setWeeklyTotalPerFood] = useState({});
   useEffect(() => {
     if (initialData && Object.keys(initialData).length > 0) {
+      console.log(initialData);
       setSelectedRecipes({ ...initialData });
     } else {
       setSelectedRecipes({ ...initialPlanState });
@@ -60,7 +61,7 @@ const Calendar = ({ initialData, recipes }) => {
   };
   const handleShoppingList = () => {
     const shoppingListData = {};
-    const weeklyTotalPerFood = {}; // Objeto para almacenar la suma total de cada alimento por semana
+    const weeklyTotalPerFood = {};
 
     for (const day of daysOfWeek) {
       const breakfast = selectedRecipes[day]?.breakfast;
@@ -70,7 +71,6 @@ const Calendar = ({ initialData, recipes }) => {
 
       shoppingListData[day] = {};
 
-      // Función para calcular la suma total de peso para una comida específica
       const calculateTotalPerFood = (meal) => {
         if (selectedRecipes[day][meal] && selectedRecipes[day][meal].foods) {
           const foods = selectedRecipes[day][meal].foods;
@@ -78,7 +78,7 @@ const Calendar = ({ initialData, recipes }) => {
             if (!weeklyTotalPerFood[food.name]) {
               weeklyTotalPerFood[food.name] = 0;
             }
-            weeklyTotalPerFood[food.name] += food.weightConsumed; // Actualizar la suma total del alimento
+            weeklyTotalPerFood[food.name] += food.weightConsumed;
           });
 
           shoppingListData[day][meal] = foods;
@@ -193,11 +193,22 @@ const Calendar = ({ initialData, recipes }) => {
     >
       <Grid container spacing={2}>
         {daysOfWeek.map((day, index) => (
-          
           <Grid item xs={12} sm={9} md={8} lg={3} key={index}>
-            <Paper elevation={(today.toLocaleDateString('en', { weekday: 'long' }) === day)?10:3} style={{ padding: "10px",
-          transition: "box-shadow 0.3s ease",
-          boxShadow: (today.toLocaleDateString('en', { weekday: 'long' }) === day) ? "0 0 15px rgba(255, 0, 0, 0.8)" : "none", }}>
+            <Paper
+              elevation={
+                today.toLocaleDateString("en", { weekday: "long" }) === day
+                  ? 10
+                  : 3
+              }
+              style={{
+                padding: "10px",
+                transition: "box-shadow 0.3s ease",
+                boxShadow:
+                  today.toLocaleDateString("en", { weekday: "long" }) === day
+                    ? "0 0 15px rgba(255, 0, 0, 0.8)"
+                    : "none",
+              }}
+            >
               <Typography variant="h6" align="center" gutterBottom>
                 {day}
               </Typography>
@@ -205,19 +216,22 @@ const Calendar = ({ initialData, recipes }) => {
               <div>
                 <Typography variant="subtitle1">
                   Desayuno:{}
-                  {today.toLocaleDateString('en', { weekday: 'long' }) === day && <Tooltip title="Add to meals">
-                    <IconButton
-                      onClick={() => {
-                        handleAddMeal(
-                          (selectedRecipes[day] || {}).breakfast,
-                          "Desayuno: ",
-                          "10:00"
-                        );
-                      }}
-                    >
-                      <CheckIcon />
-                    </IconButton>
-                  </Tooltip>}
+                  {today.toLocaleDateString("en", { weekday: "long" }) ===
+                    day && (
+                    <Tooltip title="Add to meals">
+                      <IconButton
+                        onClick={() => {
+                          handleAddMeal(
+                            (selectedRecipes[day] || {}).breakfast,
+                            "Desayuno: ",
+                            "10:00"
+                          );
+                        }}
+                      >
+                        <CheckIcon />
+                      </IconButton>
+                    </Tooltip>
+                  )}
                 </Typography>
 
                 <RecipeAutocomplete
@@ -232,19 +246,22 @@ const Calendar = ({ initialData, recipes }) => {
               <div>
                 <Typography variant="subtitle1">
                   Almuerzo:
-                  {today.toLocaleDateString('en', { weekday: 'long' }) === day && <Tooltip title="Add to meals">
-                    <IconButton
-                      onClick={() => {
-                        handleAddMeal(
-                          (selectedRecipes[day] || {}).lunch,
-                          "Almuerzo: ",
-                          "12:00"
-                        );
-                      }}
-                    >
-                      <CheckIcon />
-                    </IconButton>
-                  </Tooltip>}
+                  {today.toLocaleDateString("en", { weekday: "long" }) ===
+                    day && (
+                    <Tooltip title="Add to meals">
+                      <IconButton
+                        onClick={() => {
+                          handleAddMeal(
+                            (selectedRecipes[day] || {}).lunch,
+                            "Almuerzo: ",
+                            "12:00"
+                          );
+                        }}
+                      >
+                        <CheckIcon />
+                      </IconButton>
+                    </Tooltip>
+                  )}
                 </Typography>
 
                 <RecipeAutocomplete
@@ -258,19 +275,22 @@ const Calendar = ({ initialData, recipes }) => {
               <div>
                 <Typography variant="subtitle1">
                   Snack:
-                  {today.toLocaleDateString('en', { weekday: 'long' }) === day &&<Tooltip title="Add to meals">
-                    <IconButton
-                      onClick={() => {
-                        handleAddMeal(
-                          (selectedRecipes[day] || {}).snack,
-                          "Snack: ",
-                          "16:00"
-                        );
-                      }}
-                    >
-                      <CheckIcon />
-                    </IconButton>
-                  </Tooltip>}
+                  {today.toLocaleDateString("en", { weekday: "long" }) ===
+                    day && (
+                    <Tooltip title="Add to meals">
+                      <IconButton
+                        onClick={() => {
+                          handleAddMeal(
+                            (selectedRecipes[day] || {}).snack,
+                            "Snack: ",
+                            "16:00"
+                          );
+                        }}
+                      >
+                        <CheckIcon />
+                      </IconButton>
+                    </Tooltip>
+                  )}
                 </Typography>
                 <RecipeAutocomplete
                   selectedRecipe={(selectedRecipes[day] || {}).snack}
@@ -283,19 +303,22 @@ const Calendar = ({ initialData, recipes }) => {
               <div>
                 <Typography variant="subtitle1">
                   Cena:
-                  {today.toLocaleDateString('en', { weekday: 'long' }) === day &&<Tooltip title="Add to meals">
-                    <IconButton
-                      onClick={() => {
-                        handleAddMeal(
-                          (selectedRecipes[day] || {}).dinner,
-                          "Cena: ",
-                          "20:00"
-                        );
-                      }}
-                    >
-                      <CheckIcon />
-                    </IconButton>
-                  </Tooltip>}
+                  {today.toLocaleDateString("en", { weekday: "long" }) ===
+                    day && (
+                    <Tooltip title="Add to meals">
+                      <IconButton
+                        onClick={() => {
+                          handleAddMeal(
+                            (selectedRecipes[day] || {}).dinner,
+                            "Cena: ",
+                            "20:00"
+                          );
+                        }}
+                      >
+                        <CheckIcon />
+                      </IconButton>
+                    </Tooltip>
+                  )}
                 </Typography>
 
                 <RecipeAutocomplete
@@ -310,23 +333,29 @@ const Calendar = ({ initialData, recipes }) => {
           </Grid>
         ))}
       </Grid>
-      <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px" }}>
-    <IconButton
-      type="submit"
-      aria-label="search"
-      onClick={handleShoppingList}
-    >
-      <ShoppingCartCheckoutIcon fontSize="large" />
-    </IconButton>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginTop: "20px",
+        }}
+      >
+        <IconButton
+          type="submit"
+          aria-label="search"
+          onClick={handleShoppingList}
+        >
+          <ShoppingCartCheckoutIcon fontSize="large" />
+        </IconButton>
 
-    <IconButton
-      type="submit"
-      aria-label="search"
-      onClick={handleAddToCalendar}
-    >
-      <SaveAltIcon fontSize="large" />
-    </IconButton>
-  </div>
+        <IconButton
+          type="submit"
+          aria-label="search"
+          onClick={handleAddToCalendar}
+        >
+          <SaveAltIcon fontSize="large" />
+        </IconButton>
+      </div>
 
       <ShoppingList
         open={openList}
