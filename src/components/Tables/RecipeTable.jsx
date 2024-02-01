@@ -8,7 +8,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import IconButton from "@mui/material/IconButton";
-import { TableHead } from "@mui/material";
+import { TableHead, Tooltip } from "@mui/material";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import InfoIcon from "@mui/icons-material/Info";
@@ -23,6 +23,8 @@ import RateModal from "../RateModal";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import DialogMessage from "../DialogMessage";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
+import RestaurantIcon from "@mui/icons-material/Restaurant";
+import { useSnackbar } from "notistack";
 const apiUrl = getApiUrl();
 
 function TablePaginationActions(props) {
@@ -79,6 +81,7 @@ export default function RecipeTable({}) {
   const [isRateModalOpen, setIsRateModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [openDialogs, setOpenDialogs] = useState({});
+  const { enqueueSnackbar } = useSnackbar();
   const handleOpenForm = () => {
     // Open the RecipeForm modal when the button is clicked
     setIsModalRecipeOpen(true);
@@ -152,6 +155,68 @@ export default function RecipeTable({}) {
     // Close the dialog for the current row
     setOpenDialogs((prev) => ({ ...prev, [selectedRow._id]: false }));
   };
+  const handleAddMeal = (meal) => {
+    const fechaActual = new Date();
+    const horas = fechaActual.getHours();
+    const minutos = fechaActual.getMinutes();
+    const horaFormateada = `${horas < 10 ? "0" : ""}${horas}:${
+      minutos < 10 ? "0" : ""
+    }${minutos}`;
+    console.log(meal);
+    if (meal && meal != []) {
+      const mealToAdd = {
+        name: meal.name,
+        foods: meal.foods,
+        date: fechaActual,
+        hour: horaFormateada,
+        userId: localStorage.getItem("userId"),
+      };
+      mealToAdd.calories = meal.foods
+        .map((food) => parseInt(food.totalCalories))
+        .reduce((acc, calories) => acc + calories, 0);
+
+      mealToAdd.carbs = meal.foods
+        .map((food) => parseInt(food.totalCarbs))
+        .reduce((acc, carbs) => acc + carbs, 0);
+
+      mealToAdd.proteins = meal.foods
+        .map((food) => parseInt(food.totalProteins))
+        .reduce((acc, proteins) => acc + proteins, 0);
+
+      mealToAdd.fats = meal.foods
+        .map((food) => parseInt(food.totalFats))
+        .reduce((acc, fats) => acc + fats, 0);
+
+      fetch(apiUrl + "/api/meals", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+        body: JSON.stringify(mealToAdd),
+      })
+        .then(function (response) {
+          if (response.status === 200) {
+            enqueueSnackbar("The meal was created successfully.", {
+              variant: "success",
+            });
+          } else {
+            enqueueSnackbar("An error occurred while saving the meal.", {
+              variant: "error",
+            });
+          }
+        })
+        .catch(function (error) {
+          enqueueSnackbar("An error occurred while saving the meal.", {
+            variant: "error",
+          });
+        });
+    } else {
+      enqueueSnackbar("An error occurred while saving the meal.", {
+        variant: "error",
+      });
+    }
+  };
   return (
     <div
       style={{
@@ -189,6 +254,9 @@ export default function RecipeTable({}) {
               </TableCell>
               <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
                 Info
+              </TableCell>
+              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
+                Add to Meals
               </TableCell>
             </TableRow>
           </TableHead>
@@ -301,6 +369,17 @@ export default function RecipeTable({}) {
                         <InfoIcon />
                       </IconButton>
                     )}
+                  </TableCell>
+                  <TableCell align="center">
+                    <Tooltip title="Add Meal">
+                      <IconButton
+                        aria-label="edit row"
+                        size="small"
+                        onClick={() => handleAddMeal(row)}
+                      >
+                        <RestaurantIcon />
+                      </IconButton>
+                    </Tooltip>
                   </TableCell>
                 </TableRow>
               ))

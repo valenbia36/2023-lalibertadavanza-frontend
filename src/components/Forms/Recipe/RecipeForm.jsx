@@ -68,7 +68,7 @@ const RecipeForm = ({
     setFoodOptions(data.data);
   };
 
-  const handleAddMeal = () => {
+  const handleAddRecipe = () => {
     if (
       mealData.name === "" ||
       !mealData.foods.every(
@@ -447,7 +447,7 @@ const RecipeForm = ({
           <FoodForm open={foodModal} setOpen={setOpenFoodModal} />
           <AddMealButton
             initialData={initialData}
-            handleAddMeal={handleAddMeal}
+            handleAddMeal={handleAddRecipe}
           />
         </Grid>
       </Box>
