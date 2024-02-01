@@ -81,6 +81,7 @@ export default function RecipeTable({}) {
   const [isRateModalOpen, setIsRateModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [openDialogs, setOpenDialogs] = useState({});
+  const [loaded, setLoaded] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const handleOpenForm = () => {
     // Open the RecipeForm modal when the button is clicked
@@ -105,7 +106,8 @@ export default function RecipeTable({}) {
 
   useEffect(() => {
     getRecipes();
-  }, [isModalRecipeOpen, isRateModalOpen]);
+    setLoaded(false);
+  }, [isModalRecipeOpen, loaded]);
   useEffect(() => {
     setNoResults(filteredRecipes.length === 0);
   }, [filteredRecipes]);
@@ -126,7 +128,6 @@ export default function RecipeTable({}) {
     });
 
     setRecipes(data.data);
-    console.log(recipes);
     setTotalItems(data.data.length);
   };
 
@@ -217,6 +218,7 @@ export default function RecipeTable({}) {
       });
     }
   };
+
   return (
     <div
       style={{
@@ -427,6 +429,7 @@ export default function RecipeTable({}) {
             }
           }}
           row={selectedRow}
+          setLoaded={setLoaded}
         />
       </TableContainer>
       <IconButton onClick={handleOpenForm}>

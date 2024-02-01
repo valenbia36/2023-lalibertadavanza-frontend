@@ -54,7 +54,7 @@ const RecipeForm = ({
 
   useEffect(() => {
     getFoods();
-  }, [foodOptions]);
+  }, [foodModal]);
 
   const getFoods = async () => {
     const response = await fetch(apiUrl + "/api/foods/", {

@@ -54,7 +54,12 @@ const Planner = () => {
   const renderCalendar = () => {
     if (isDataLoaded) {
       return (
-        <Calendar initialData={plan} recipes={recipes} isMobile={isMobile} />
+        <Calendar
+          initialData={plan}
+          recipes={recipes}
+          isMobile={isMobile}
+          setPlan={setPlan}
+        />
       );
     } else {
       // Puedes mostrar un mensaje de carga o cualquier otro indicador mientras esperas los datos

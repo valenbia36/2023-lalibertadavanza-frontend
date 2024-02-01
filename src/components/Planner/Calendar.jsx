@@ -38,15 +38,15 @@ const initialPlanState = {
   Sunday: { breakfast: null, lunch: null, snack: null, dinner: null },
 };
 
-const Calendar = ({ initialData, recipes, isMobile }) => {
+const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [openList, setOpenList] = useState(false);
   const [selectedRecipes, setSelectedRecipes] = useState([]);
   const [shoppingListData, setShoppingListData] = useState({});
   const [weeklyTotalPerFood, setWeeklyTotalPerFood] = useState({});
+  const [refresh, setRefresh] = useState(false);
   useEffect(() => {
     if (initialData && Object.keys(initialData).length > 0) {
-      console.log(initialData);
       setSelectedRecipes({ ...initialData });
     } else {
       setSelectedRecipes({ ...initialPlanState });
@@ -120,6 +120,7 @@ const Calendar = ({ initialData, recipes, isMobile }) => {
           enqueueSnackbar("The plan was created successfully.", {
             variant: "success",
           });
+          setPlan({ ...initialData, lastUpdate: new Date() });
         } else {
           enqueueSnackbar("An error occurred while creating the plan.", {
             variant: "error",
@@ -197,8 +198,10 @@ const Calendar = ({ initialData, recipes, isMobile }) => {
     minutos = minutos < 10 ? "0" + minutos : minutos;
     var resultado = hora + ":" + minutos + " " + dia + "/" + mes + "/" + anio;
 
-    // Devolver la cadena
-    return resultado;
+    if (fecha) return resultado;
+    else {
+      return "---";
+    }
   }
 
   return (
@@ -379,12 +382,17 @@ const Calendar = ({ initialData, recipes, isMobile }) => {
           <SaveAltIcon fontSize="large" />
         </IconButton>
       </div>
-      <Typography variant="h6" align="center" gutterBottom margin={-1}>
-        {"Last Update: "}
-      </Typography>
-      <Typography variant="h6" align="center" gutterBottom>
-        {getFecha(initialData.lastUpdate)}
-      </Typography>
+      {initialData?.lastUpdate && (
+        <Typography variant="h6" align="center" gutterBottom>
+          {"Last Update: "}
+        </Typography>
+      )}
+
+      {initialData?.lastUpdate && (
+        <Typography variant="h6" align="center" gutterBottom>
+          {getFecha(initialData.lastUpdate)}
+        </Typography>
+      )}
 
       <ShoppingList
         open={openList}

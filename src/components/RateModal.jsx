@@ -3,7 +3,7 @@ import { Button, Modal, Box, IconButton, Rating } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import getApiUrl from "../helpers/apiConfig";
 const apiUrl = getApiUrl();
-export default function RateModal({ open, setOpen, row }) {
+export default function RateModal({ open, setOpen, row, setLoaded }) {
   const [value, setValue] = React.useState(0);
   const [userRatings, setUserRatings] = useState({});
   const [userRatedRecipes, setUserRatedRecipes] = useState(new Set());
@@ -33,9 +33,8 @@ export default function RateModal({ open, setOpen, row }) {
           id: recipeId,
         }),
       });
-
       const data = await response.json();
-      console.log(data);
+      setLoaded(true);
     } catch (error) {
       console.error("Error al calificar la receta", error);
       // Manejar el error según tus necesidades
