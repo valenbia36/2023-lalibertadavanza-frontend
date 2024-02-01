@@ -179,6 +179,20 @@ const Calendar = ({ initialData, recipes }) => {
       });
     }
   };
+  function getFecha(fecha) {
+    var cadenaFecha = fecha;
+    var fechaObjeto = new Date(cadenaFecha);
+    var hora = fechaObjeto.getHours();
+    var minutos = fechaObjeto.getMinutes();
+    var dia = fechaObjeto.getDate();
+    var mes = fechaObjeto.getMonth() + 1;
+    var anio = fechaObjeto.getFullYear();
+    minutos = minutos < 10 ? "0" + minutos : minutos;
+    var resultado = hora + ":" + minutos + " " + dia + "/" + mes + "/" + anio;
+
+    // Devolver la cadena
+    return resultado;
+  }
 
   return (
     <Container
@@ -356,6 +370,9 @@ const Calendar = ({ initialData, recipes }) => {
           <SaveAltIcon fontSize="large" />
         </IconButton>
       </div>
+      <Typography variant="h6" align="center" gutterBottom>
+        {"Ultima Actualizacion: " + getFecha(initialData.lastUpdate)}
+      </Typography>
 
       <ShoppingList
         open={openList}
