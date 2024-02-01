@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { IconButton, Typography } from "@mui/material";
+import { IconButton, Tooltip, Typography } from "@mui/material";
 import MealForm from "../Forms/MealForm";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import MealTable from "../Tables/MealTable";
@@ -45,13 +45,15 @@ const MealList = () => {
           <AddCircleRoundedIcon />
         </IconButton>
       )}
-      <IconButton
-        onClick={() => {
-          navigatePlanerScreen();
-        }}
-      >
-        <CalendarMonthIcon />
-      </IconButton>
+      <Tooltip title="Plan Meals">
+        <IconButton
+          onClick={() => {
+            navigatePlanerScreen();
+          }}
+        >
+          <CalendarMonthIcon />
+        </IconButton>
+      </Tooltip>
     </div>
   );
 };

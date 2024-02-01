@@ -38,7 +38,7 @@ const initialPlanState = {
   Sunday: { breakfast: null, lunch: null, snack: null, dinner: null },
 };
 
-const Calendar = ({ initialData, recipes }) => {
+const Calendar = ({ initialData, recipes, isMobile }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [openList, setOpenList] = useState(false);
   const [selectedRecipes, setSelectedRecipes] = useState([]);
@@ -61,7 +61,7 @@ const Calendar = ({ initialData, recipes }) => {
   };
   const handleShoppingList = () => {
     const shoppingListData = {};
-    const weeklyTotalPerFood = {};
+    const dailyTotalPerFood = {}; // New object to store daily total consumption for each food
 
     for (const day of daysOfWeek) {
       const breakfast = selectedRecipes[day]?.breakfast;
@@ -75,13 +75,20 @@ const Calendar = ({ initialData, recipes }) => {
         if (selectedRecipes[day][meal] && selectedRecipes[day][meal].foods) {
           const foods = selectedRecipes[day][meal].foods;
           foods.forEach((food) => {
-            if (!weeklyTotalPerFood[food.name]) {
-              weeklyTotalPerFood[food.name] = 0;
+            // Initialize daily total for each food if not present
+            if (!dailyTotalPerFood[food.name]) {
+              dailyTotalPerFood[food.name] = 0;
             }
-            weeklyTotalPerFood[food.name] += food.weightConsumed;
-          });
 
-          shoppingListData[day][meal] = foods;
+            // Increment daily total for each food
+            dailyTotalPerFood[food.name] += food.weightConsumed;
+
+            // Add food to shopping list data
+            if (!shoppingListData[day][meal]) {
+              shoppingListData[day][meal] = [];
+            }
+            shoppingListData[day][meal].push(food);
+          });
         }
       };
 
@@ -93,7 +100,7 @@ const Calendar = ({ initialData, recipes }) => {
 
     setOpenList(true);
     setShoppingListData(shoppingListData);
-    setWeeklyTotalPerFood(weeklyTotalPerFood); // Actualizar el estado de la suma total por alimento
+    setWeeklyTotalPerFood(dailyTotalPerFood); // Update the state with the daily total consumption per food
   };
 
   const handleAddToCalendar = () => {
@@ -124,7 +131,7 @@ const Calendar = ({ initialData, recipes }) => {
       });
   };
   const handleAddMeal = (meal, timeOfTheDay, hour) => {
-    console.log(meal);
+    handleAddToCalendar();
     if (meal && meal != []) {
       const mealToAdd = {
         name: timeOfTheDay + meal.name,
@@ -198,11 +205,12 @@ const Calendar = ({ initialData, recipes }) => {
     <Container
       maxWidth="lg"
       style={{
-        paddingBottom: "60px",
+        paddingBottom: isMobile ? "45px" : "0",
         display: "flex",
         justifyContent: "center",
         flexDirection: "column",
         alignItems: "center",
+        marginBottom: 0, // Ajusta este valor según tus necesidades
       }}
     >
       <Grid container spacing={2}>
@@ -221,6 +229,7 @@ const Calendar = ({ initialData, recipes }) => {
                   today.toLocaleDateString("en", { weekday: "long" }) === day
                     ? "0 0 15px rgba(255, 0, 0, 0.8)"
                     : "none",
+                marginBottom: 0, // Ajusta este valor según tus necesidades
               }}
             >
               <Typography variant="h6" align="center" gutterBottom>
@@ -229,7 +238,7 @@ const Calendar = ({ initialData, recipes }) => {
 
               <div>
                 <Typography variant="subtitle1">
-                  Desayuno:{}
+                  Breakfast:{}
                   {today.toLocaleDateString("en", { weekday: "long" }) ===
                     day && (
                     <Tooltip title="Add to meals">
@@ -237,7 +246,7 @@ const Calendar = ({ initialData, recipes }) => {
                         onClick={() => {
                           handleAddMeal(
                             (selectedRecipes[day] || {}).breakfast,
-                            "Desayuno: ",
+                            "Breakfast: ",
                             "10:00"
                           );
                         }}
@@ -259,7 +268,7 @@ const Calendar = ({ initialData, recipes }) => {
 
               <div>
                 <Typography variant="subtitle1">
-                  Almuerzo:
+                  Lunch:
                   {today.toLocaleDateString("en", { weekday: "long" }) ===
                     day && (
                     <Tooltip title="Add to meals">
@@ -267,7 +276,7 @@ const Calendar = ({ initialData, recipes }) => {
                         onClick={() => {
                           handleAddMeal(
                             (selectedRecipes[day] || {}).lunch,
-                            "Almuerzo: ",
+                            "Lunch: ",
                             "12:00"
                           );
                         }}
@@ -316,7 +325,7 @@ const Calendar = ({ initialData, recipes }) => {
               </div>
               <div>
                 <Typography variant="subtitle1">
-                  Cena:
+                  Dinner:
                   {today.toLocaleDateString("en", { weekday: "long" }) ===
                     day && (
                     <Tooltip title="Add to meals">
@@ -324,7 +333,7 @@ const Calendar = ({ initialData, recipes }) => {
                         onClick={() => {
                           handleAddMeal(
                             (selectedRecipes[day] || {}).dinner,
-                            "Cena: ",
+                            "Dinner: ",
                             "20:00"
                           );
                         }}
@@ -351,7 +360,7 @@ const Calendar = ({ initialData, recipes }) => {
         style={{
           display: "flex",
           justifyContent: "space-between",
-          marginTop: "20px",
+          marginTop: "10px",
         }}
       >
         <IconButton
@@ -370,8 +379,11 @@ const Calendar = ({ initialData, recipes }) => {
           <SaveAltIcon fontSize="large" />
         </IconButton>
       </div>
+      <Typography variant="h6" align="center" gutterBottom margin={-1}>
+        {"Last Update: "}
+      </Typography>
       <Typography variant="h6" align="center" gutterBottom>
-        {"Ultima Actualizacion: " + getFecha(initialData.lastUpdate)}
+        {getFecha(initialData.lastUpdate)}
       </Typography>
 
       <ShoppingList

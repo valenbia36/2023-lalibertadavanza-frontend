@@ -40,6 +40,8 @@ export function ShoppingList({
           width: "100%",
           maxWidth: 580,
           bgcolor: "background.paper",
+          maxHeight: "80vh !important",
+          overflowY: "auto !important",
           boxShadow: 24,
           p: 5,
           borderRadius: "2%",

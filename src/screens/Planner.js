@@ -2,7 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useTheme } from "@mui/material/styles";
 import Drawer from "../components/Menu/Drawer";
 import LabelBottomNavigation from "../components/Menu/BottomMenu";
-import { SpeedDial, SpeedDialAction, SpeedDialIcon } from "@mui/material";
+import {
+  CircularProgress,
+  SpeedDial,
+  SpeedDialAction,
+  SpeedDialIcon,
+  Box,
+} from "@mui/material";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import LocalDrinkIcon from "@mui/icons-material/LocalDrink";
 import Confetti from "react-confetti";
@@ -47,10 +53,23 @@ const Planner = () => {
   }, []);
   const renderCalendar = () => {
     if (isDataLoaded) {
-      return <Calendar initialData={plan} recipes={recipes} />;
+      return (
+        <Calendar initialData={plan} recipes={recipes} isMobile={isMobile} />
+      );
     } else {
       // Puedes mostrar un mensaje de carga o cualquier otro indicador mientras esperas los datos
-      return <p>Loading...</p>;
+      return (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+          }}
+        >
+          <CircularProgress size={60} />
+        </Box>
+      );
     }
   };
 
