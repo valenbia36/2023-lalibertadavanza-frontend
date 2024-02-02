@@ -56,7 +56,7 @@ function TablePaginationActions(props) {
   );
 }
 
-export default function FoodTable({ filterOpen, modalOpen  }) {
+export default function FoodTable({ filterOpen, modalOpen }) {
   const [foods, setFoods] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -186,7 +186,7 @@ export default function FoodTable({ filterOpen, modalOpen  }) {
             ) : (
               (5 > 0 ? foods.slice(page * 5, page * 5 + 5) : foods).map(
                 (row) => (
-                  <TableRow key={row.name}>
+                  <TableRow key={row._id}>
                     <TableCell
                       component="th"
                       scope="row"

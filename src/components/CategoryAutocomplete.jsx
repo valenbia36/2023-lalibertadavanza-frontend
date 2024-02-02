@@ -2,7 +2,11 @@ import React, { useState, useEffect } from "react";
 import { TextField, Autocomplete } from "@mui/material";
 import getApiUrl from "../helpers/apiConfig";
 
-const CategoryAutocomplete = ({ selectedCategory, onCategoryChange, addModalOpen }) => {
+const CategoryAutocomplete = ({
+  selectedCategory,
+  onCategoryChange,
+  addModalOpen,
+}) => {
   const [categoriesOptions, setCategoriesOptions] = useState([]);
 
   const apiUrl = getApiUrl();

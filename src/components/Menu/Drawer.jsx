@@ -16,14 +16,15 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
-import SettingsIcon from '@mui/icons-material/Settings';
+import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
+import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import HomeIcon from "@mui/icons-material/Home";
-import RestaurantIcon from '@mui/icons-material/Restaurant';
+import RestaurantIcon from "@mui/icons-material/Restaurant";
 import { useNavigate } from "react-router-dom";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
 
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
   ({ theme, open }) => ({
@@ -163,8 +164,8 @@ export default function MiniDrawer({ user }) {
     navigate("/meals", { replace: true });
   };
 
-  const navigateToNutritionistScreen = () => {
-    navigate("/nutritionist", { replace: true });
+  const navigateToRecipesScreen = () => {
+    navigate("/recipes", { replace: true });
   };
 
   return (
@@ -307,7 +308,7 @@ export default function MiniDrawer({ user }) {
                   justifyContent: open ? "initial" : "center",
                   px: 2.5,
                 }}
-                onClick={navigateToNutritionistScreen}
+                onClick={navigateToRecipesScreen}
               >
                 <ListItemIcon
                   sx={{
@@ -316,14 +317,15 @@ export default function MiniDrawer({ user }) {
                     justifyContent: "center",
                   }}
                 >
-                  <AssignmentIndIcon />
+                  <MenuBookIcon />
                 </ListItemIcon>
                 <ListItemText
-                  primary="Nutritionist"
+                  primary="Recipes"
                   sx={{ opacity: open ? 1 : 0 }}
                 />
               </ListItemButton>
-            </ListItem>)}
+            </ListItem>
+          )}
           {localStorage.getItem("viewAs") === "false" && (
             <ListItem disablePadding sx={{ display: "block" }}>
               <ListItemButton
@@ -348,7 +350,8 @@ export default function MiniDrawer({ user }) {
                   sx={{ opacity: open ? 1 : 0 }}
                 />
               </ListItemButton>
-            </ListItem>)}
+            </ListItem>
+          )}
           {localStorage.getItem("viewAs") === "false" && (
             <ListItem disablePadding sx={{ display: "block" }}>
               <ListItemButton
@@ -370,7 +373,8 @@ export default function MiniDrawer({ user }) {
                 </ListItemIcon>
                 <ListItemText primary="Logout" sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
-            </ListItem>)}
+            </ListItem>
+          )}
         </List>
       </Drawer>
       <Main open={open}>

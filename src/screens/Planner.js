@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useTheme } from "@mui/material/styles";
 import Drawer from "../components/Menu/Drawer";
-import MealList from "../components/Lists/MealList";
-import FoodList from "../components/Lists/FoodList";
 import LabelBottomNavigation from "../components/Menu/BottomMenu";
-import { SpeedDial, SpeedDialAction, SpeedDialIcon } from "@mui/material";
+import {
+  CircularProgress,
+  SpeedDial,
+  SpeedDialAction,
+  SpeedDialIcon,
+  Box,
+} from "@mui/material";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import LocalDrinkIcon from "@mui/icons-material/LocalDrink";
 import Confetti from "react-confetti";
@@ -12,14 +16,20 @@ import getApiUrl from "../helpers/apiConfig";
 import { useSnackbar } from "notistack";
 import IntermittentFastingForm from "../components/Forms/IntermittentFastingForm";
 import ViewingMessage from "../components/ViewingMessage";
+import Calendar from "../components/Planner/Calendar";
+import { getWeek } from "date-fns";
 
 const apiUrl = getApiUrl();
 
-const Meals = () => {
+const Planner = () => {
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
   const [isMobile, setIsMobile] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [plan, setPlan] = useState({});
+  const [recipes, setRecipes] = useState([]);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
+
   const [openIntermittentFastingModal, setOpenIntermittentFastingModal] =
     useState(false);
 
@@ -33,6 +43,40 @@ const Meals = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, [theme]);
+  useEffect(() => {
+    async function fetchData() {
+      await Promise.all([getPlan(), getRecipes()]);
+      setIsDataLoaded(true);
+    }
+
+    fetchData();
+  }, []);
+  const renderCalendar = () => {
+    if (isDataLoaded) {
+      return (
+        <Calendar
+          initialData={plan}
+          recipes={recipes}
+          isMobile={isMobile}
+          setPlan={setPlan}
+        />
+      );
+    } else {
+      // Puedes mostrar un mensaje de carga o cualquier otro indicador mientras esperas los datos
+      return (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+          }}
+        >
+          <CircularProgress size={60} />
+        </Box>
+      );
+    }
+  };
 
   const handleCreateWaterGlass = () => {
     fetch(apiUrl + "/api/waterGlass", {
@@ -69,10 +113,37 @@ const Meals = () => {
   const handleIntermittentFasting = () => {
     setOpenIntermittentFastingModal(true);
   };
-
-  const closeModal = () => {
-    setOpenIntermittentFastingModal(false);
+  const getPlan = async () => {
+    const response = await fetch(
+      apiUrl + `/api/weeks/${localStorage.getItem("userId")}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        setPlan(data[0]);
+      });
   };
+  const getRecipes = async () => {
+    const response = await fetch(apiUrl + "/api/recipes/", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => setRecipes(data.data));
+  };
+  useEffect(() => {
+    getPlan();
+    getRecipes();
+  }, []);
 
   const actions = [
     { icon: <LocalDrinkIcon />, name: "Water", onClick: handleWaterGlassClick },
@@ -82,6 +153,10 @@ const Meals = () => {
       onClick: handleIntermittentFasting,
     },
   ];
+
+  const closeModal = () => {
+    setOpenIntermittentFastingModal(false);
+  };
 
   return (
     <div className="container">
@@ -95,7 +170,7 @@ const Meals = () => {
       )}
       {localStorage.getItem("viewAs") === "false" && (
         <SpeedDial
-          ariaLabel="SpeedDial basic example"
+          ariaLabel="SpeedDial"
           sx={{ position: "fixed", bottom: "70px", right: "25px" }}
           icon={<SpeedDialIcon />}
         >
@@ -114,18 +189,8 @@ const Meals = () => {
           patientUserName={localStorage.getItem("patientUserName")}
         />
       )}
-      <div className="row justify-content-center">
-        <div className="col-lg-10">
-          <div className="row justify-content-center">
-            <div className="col-lg-6 col-md-6">
-              <FoodList />
-            </div>
-            <div className="col-lg-6 col-md-6">
-              <MealList />
-            </div>
-          </div>
-        </div>
-      </div>
+      {renderCalendar()}
+
       <IntermittentFastingForm
         openIntermittentFastingModal={openIntermittentFastingModal}
         closeModal={closeModal}
@@ -134,4 +199,4 @@ const Meals = () => {
   );
 };
 
-export default Meals;
+export default Planner;

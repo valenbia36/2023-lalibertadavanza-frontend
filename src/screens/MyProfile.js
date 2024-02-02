@@ -1,4 +1,4 @@
-import Drawer from "../components/Drawer";
+import Drawer from "../components/Menu/Drawer";
 import React, { useState, useEffect } from "react";
 import { useTheme } from "@mui/material/styles";
 import Button from "@mui/material/Button";
@@ -8,9 +8,9 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import LabelBottomNavigation from "../components/BottomMenu";
-import LabelBottomNavigationNutritionist from "../components/BottomMenuNutritionist";
-import DrawerNutritionist from "../components/DrawerNutritionist";
+import LabelBottomNavigation from "../components/Menu/BottomMenu";
+import LabelBottomNavigationNutritionist from "../components/Menu/BottomMenuNutritionist";
+import DrawerNutritionist from "../components/Menu/DrawerNutritionist";
 import {
   FormControl,
   FormControlLabel,
@@ -139,12 +139,12 @@ const MyProfile = () => {
     <div className="container">
       {isMobile ? (
         localStorage.getItem("roles") === "nutritionist" ? (
-          <LabelBottomNavigationNutritionist/>
-        ) :(
-          <LabelBottomNavigation/>
+          <LabelBottomNavigationNutritionist />
+        ) : (
+          <LabelBottomNavigation />
         )
       ) : localStorage.getItem("roles") === "nutritionist" ? (
-        <DrawerNutritionist user={localStorage.getItem("username")} />   
+        <DrawerNutritionist user={localStorage.getItem("username")} />
       ) : (
         <Drawer user={localStorage.getItem("username")} />
       )}

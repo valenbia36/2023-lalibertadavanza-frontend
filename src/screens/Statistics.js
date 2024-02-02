@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import Drawer from "../components/Drawer";
+import Drawer from "../components/Menu/Drawer";
 import { useTheme } from "@mui/material/styles";
-import LabelBottomNavigation from "../components/BottomMenu";
+import LabelBottomNavigation from "../components/Menu/BottomMenu";
 import PieChartContainer from "../components/Charts/PieChartContainer";
 import LineChartContainer from "../components/Charts/LineChartContainer";
 import WaterGlassBarChartContainer from "../components/Charts/WaterGlassBarChartContainer";
@@ -114,7 +114,9 @@ const Statistics = () => {
         </SpeedDial>
       )}
       {localStorage.getItem("viewAs") === "true" && (
-        <ViewingMessage patientUserName={localStorage.getItem("patientUserName")} />
+        <ViewingMessage
+          patientUserName={localStorage.getItem("patientUserName")}
+        />
       )}
       <Row>
         <Col

@@ -24,6 +24,7 @@ const apiUrl = getApiUrl();
 function Row(props) {
   const { row, onEditClick } = props;
   const [open, setOpen] = React.useState(false);
+  const [isModalRecipeOpen, setIsModalRecipeOpen] = useState(false);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -78,22 +79,22 @@ function Row(props) {
         <TableCell align="center">{row.date}</TableCell>
         <TableCell align="center">{row.hour}</TableCell>
         {localStorage.getItem("viewAs") === "false" && (
-        <TableCell align="center">
-          <IconButton
-            aria-label="edit row"
-            size="small"
-            onClick={() => onEditClick(row)}
-          >
-            <EditIcon />
-          </IconButton>
-          <IconButton
-            aria-label="delete row"
-            size="small"
-            onClick={() => handleDeleteClick(row)}
-          >
-            <DeleteIcon />
-          </IconButton>
-        </TableCell>
+          <TableCell align="center">
+            <IconButton
+              aria-label="edit row"
+              size="small"
+              onClick={() => onEditClick(row)}
+            >
+              <EditIcon />
+            </IconButton>
+            <IconButton
+              aria-label="delete row"
+              size="small"
+              onClick={() => handleDeleteClick(row)}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </TableCell>
         )}
       </TableRow>
       <TableRow>
@@ -125,7 +126,7 @@ function Row(props) {
                 </TableHead>
                 <TableBody>
                   {row.foods.map((foodRow) => (
-                    <TableRow key={foodRow.name}>
+                    <TableRow key={foodRow._id}>
                       <TableCell component="th" scope="row" align="center">
                         {foodRow.name}
                       </TableCell>
@@ -163,7 +164,7 @@ function Row(props) {
 
 const rowsPerPage = 5;
 
-export default function MealTable({modalOpen  })  {
+export default function MealTable({ modalOpen }) {
   const [page, setPage] = useState(0);
   const [meals, setMeals] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -175,7 +176,7 @@ export default function MealTable({modalOpen  })  {
 
   useEffect(() => {
     getMeals();
-  }, [modalOpen]);
+  }, [isModalOpen, modalOpen]);
 
   const getMeals = async () => {
     const response = await fetch(
@@ -233,9 +234,10 @@ export default function MealTable({modalOpen  })  {
               Hours&nbsp;
             </TableCell>
             {localStorage.getItem("viewAs") === "false" && (
-            <TableCell sx={{ fontWeight: "bold" }} align="center">
-              Actions&nbsp;
-            </TableCell>)}
+              <TableCell sx={{ fontWeight: "bold" }} align="center">
+                Actions&nbsp;
+              </TableCell>
+            )}
           </TableRow>
         </TableHead>
         <TableBody sx={{ textAlign: "center" }}>
@@ -244,7 +246,7 @@ export default function MealTable({modalOpen  })  {
               .slice(startIndex, endIndex)
               .map((row) => (
                 <Row
-                  key={row.name}
+                  key={row._id}
                   row={row}
                   sx={{ textAlign: "center" }}
                   onEditClick={handleEditClick}

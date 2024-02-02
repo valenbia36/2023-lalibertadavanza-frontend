@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import Drawer from "../components/Drawer";
+import Drawer from "../components/Menu/Drawer";
 import { useTheme } from "@mui/material/styles";
-import LabelBottomNavigation from "../components/BottomMenu";
+import LabelBottomNavigation from "../components/Menu/BottomMenu";
 import {
   Button,
   Grid,
@@ -172,7 +172,7 @@ const Nutritionist = () => {
             nutritionistFirstName + " " + nutritionistLastName,
           nutritionistEmail: nutritionistEmail,
           userName: localStorage.getItem("username"),
-          url: url
+          url: url,
         }),
       }).then(function (response) {
         if (response.status === 200) {

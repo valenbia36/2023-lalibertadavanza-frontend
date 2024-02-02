@@ -1,28 +1,32 @@
 import React, { useState, useEffect } from "react";
 import { useTheme } from "@mui/material/styles";
 import Drawer from "../components/Menu/Drawer";
-import MealList from "../components/Lists/MealList";
-import FoodList from "../components/Lists/FoodList";
 import LabelBottomNavigation from "../components/Menu/BottomMenu";
-import { SpeedDial, SpeedDialAction, SpeedDialIcon } from "@mui/material";
+import {
+  Button,
+  Grid,
+  SpeedDial,
+  SpeedDialAction,
+  SpeedDialIcon,
+  TextField,
+} from "@mui/material";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import LocalDrinkIcon from "@mui/icons-material/LocalDrink";
 import Confetti from "react-confetti";
 import getApiUrl from "../helpers/apiConfig";
 import { useSnackbar } from "notistack";
-import IntermittentFastingForm from "../components/Forms/IntermittentFastingForm";
-import ViewingMessage from "../components/ViewingMessage";
+import getUrl from "../helpers/urlConfig";
+import RecipeList from "../components/Lists/RecipeList";
 
 const apiUrl = getApiUrl();
 
-const Meals = () => {
+const Recipes = () => {
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
   const [isMobile, setIsMobile] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
   const [openIntermittentFastingModal, setOpenIntermittentFastingModal] =
     useState(false);
-
   useEffect(() => {
     function handleResize() {
       setIsMobile(window.innerWidth <= theme.breakpoints.values.sm);
@@ -82,7 +86,6 @@ const Meals = () => {
       onClick: handleIntermittentFasting,
     },
   ];
-
   return (
     <div className="container">
       {isMobile ? (
@@ -109,29 +112,17 @@ const Meals = () => {
           ))}
         </SpeedDial>
       )}
-      {localStorage.getItem("viewAs") === "true" && (
-        <ViewingMessage
-          patientUserName={localStorage.getItem("patientUserName")}
-        />
-      )}
       <div className="row justify-content-center">
         <div className="col-lg-10">
           <div className="row justify-content-center">
             <div className="col-lg-6 col-md-6">
-              <FoodList />
-            </div>
-            <div className="col-lg-6 col-md-6">
-              <MealList />
+              <RecipeList />
             </div>
           </div>
         </div>
       </div>
-      <IntermittentFastingForm
-        openIntermittentFastingModal={openIntermittentFastingModal}
-        closeModal={closeModal}
-      />
     </div>
   );
 };
 
-export default Meals;
+export default Recipes;
