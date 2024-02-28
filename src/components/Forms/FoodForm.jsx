@@ -26,6 +26,7 @@ const FoodForm = ({ open, setOpen }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newFood, setNewFood] = useState(initialFoodState);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleAddFood = () => {
     if (
@@ -41,6 +42,7 @@ const FoodForm = ({ open, setOpen }) => {
       });
       return;
     } else {
+      setIsLoading(true);
       fetch(apiUrl + "/api/foods", {
         method: "POST",
         headers: {
@@ -53,8 +55,10 @@ const FoodForm = ({ open, setOpen }) => {
           enqueueSnackbar("The food was created successfully.", {
             variant: "success",
           });
+          setIsLoading(false);
           closeModal();
         } else {
+          setIsLoading(false);
           enqueueSnackbar("An error occurred while creating the food.", {
             variant: "error",
           });
@@ -248,6 +252,7 @@ const FoodForm = ({ open, setOpen }) => {
               fontWeight: "bold",
             }}
             fullWidth
+            disabled={isLoading}
           >
             Add Food
           </Button>

@@ -32,19 +32,18 @@ const MealList = () => {
       >
         <MealTable modalOpen={isModalOpen} />
       </div>
-
       <React.Fragment>
         <MealForm open={isModalOpen} setOpen={setIsModalOpen} />
       </React.Fragment>
-      {localStorage.getItem("viewAs") === "false" && (
-        <IconButton
-          onClick={() => {
-            setIsModalOpen(true);
-          }}
-        >
-          <AddCircleRoundedIcon />
-        </IconButton>
-      )}
+
+      <IconButton
+        onClick={() => {
+          setIsModalOpen(true);
+        }}
+      >
+        <AddCircleRoundedIcon />
+      </IconButton>
+
       <Tooltip title="Plan Meals">
         <IconButton
           onClick={() => {

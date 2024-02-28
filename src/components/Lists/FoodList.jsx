@@ -31,7 +31,7 @@ const FoodList = () => {
       <React.Fragment>
         <FoodForm open={isModalOpen} setOpen={setIsModalOpen} />
       </React.Fragment>
-      {localStorage.getItem("viewAs") === "false" && (
+      {
         <IconButton
           onClick={() => {
             setIsModalOpen(true);
@@ -39,7 +39,7 @@ const FoodList = () => {
         >
           <AddCircleRoundedIcon />
         </IconButton>
-      )}
+      }
       <IconButton
         onClick={() => {
           setFilterOpen(!filterOpen);

@@ -9,8 +9,6 @@ import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import LabelBottomNavigation from "../components/Menu/BottomMenu";
-import LabelBottomNavigationNutritionist from "../components/Menu/BottomMenuNutritionist";
-import DrawerNutritionist from "../components/Menu/DrawerNutritionist";
 import {
   FormControl,
   FormControlLabel,
@@ -138,13 +136,7 @@ const MyProfile = () => {
   return (
     <div className="container">
       {isMobile ? (
-        localStorage.getItem("roles") === "nutritionist" ? (
-          <LabelBottomNavigationNutritionist />
-        ) : (
-          <LabelBottomNavigation />
-        )
-      ) : localStorage.getItem("roles") === "nutritionist" ? (
-        <DrawerNutritionist user={localStorage.getItem("username")} />
+        <LabelBottomNavigation />
       ) : (
         <Drawer user={localStorage.getItem("username")} />
       )}

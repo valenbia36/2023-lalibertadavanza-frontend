@@ -40,6 +40,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const theme = useTheme();
   const [isMobile, setIsMobile] = useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
   useEffect(() => {
     function handleResize() {
       setIsMobile(window.innerWidth <= theme.breakpoints.values.sm);
@@ -124,6 +125,7 @@ const Login = () => {
       enqueueSnackbar("Email or password is empty.", { variant: "error" });
       return;
     } else {
+      setIsLoading(true);
       fetch(apiUrl + "/api/auth/login", {
         method: "POST",
         headers: {
@@ -142,14 +144,13 @@ const Login = () => {
               data.user.firstName + " " + data.user.lastName
             );
             localStorage.setItem("userMail", data.user.email);
-            localStorage.setItem("viewAs", false);
             localStorage.setItem("roles", data.user.role);
-            if (data.user.role === "user"|| data.user.role === "admin") {
+            if (data.user.role === "user" || data.user.role === "admin") {
               window.location.replace("/main");
-            } else if (data.user.role === "nutritionist") {
-              window.location.replace("/mainNutritionist");
             }
+            setIsLoading(false);
           } else {
+            setIsLoading(false);
             enqueueSnackbar("Wrong Email or Password.", { variant: "error" });
           }
         });
@@ -272,8 +273,9 @@ const Login = () => {
                 fontWeight: "bold",
               }}
               onClick={() => handleLogin()}
+              disabled={isLoading}
             >
-              Sign In
+              {isLoading ? "Signing In..." : "Sign In"}
             </Button>
             <Grid container justifyContent="center">
               <Grid container>

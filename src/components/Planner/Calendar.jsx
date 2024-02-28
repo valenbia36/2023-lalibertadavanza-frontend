@@ -6,6 +6,7 @@ import {
   Paper,
   Tooltip,
   Typography,
+  Button,
 } from "@mui/material";
 import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
 import RecipeAutocomplete from "./RecipeAutocomplete";
@@ -366,13 +367,22 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
           marginTop: "10px",
         }}
       >
-        <IconButton
+        {/* <IconButton
           type="submit"
           aria-label="search"
           onClick={handleShoppingList}
         >
           <ShoppingCartCheckoutIcon fontSize="large" />
-        </IconButton>
+        </IconButton> */}
+        <Button
+          variant="outlined"
+          type="submit"
+          aria-label="search"
+          onClick={handleShoppingList}
+          endIcon={<ShoppingCartCheckoutIcon />}
+        >
+          View Cart
+        </Button>
 
         <IconButton
           type="submit"
