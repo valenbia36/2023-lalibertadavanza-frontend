@@ -410,7 +410,7 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
         initialData={selectedRecipes}
         daysOfWeek={daysOfWeek}
         shoppingListData={shoppingListData}
-        weeklyTotalPerFood={weeklyTotalPerFood} // Pasar las foods al componente ShoppingList
+        weeklyTotalPerFood={weeklyTotalPerFood}
       />
     </Container>
   );

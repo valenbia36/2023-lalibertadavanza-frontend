@@ -93,7 +93,7 @@ const Meals = () => {
       {showConfetti && (
         <Confetti width={window.innerWidth} height={window.innerHeight} />
       )}
-      {localStorage.getItem("viewAs") === "false" && (
+      {
         <SpeedDial
           ariaLabel="SpeedDial basic example"
           sx={{ position: "fixed", bottom: "70px", right: "25px" }}
@@ -108,7 +108,7 @@ const Meals = () => {
             />
           ))}
         </SpeedDial>
-      )}
+      }
       {localStorage.getItem("viewAs") === "true" && (
         <ViewingMessage
           patientUserName={localStorage.getItem("patientUserName")}

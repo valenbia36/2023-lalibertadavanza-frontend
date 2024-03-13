@@ -82,7 +82,8 @@ export default function RecipeTable({}) {
   const [selectedRow, setSelectedRow] = useState(null);
   const [openDialogs, setOpenDialogs] = useState({});
   const [loaded, setLoaded] = useState(false);
-  const { enqueueSnackbar } = useSnackbar();
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const [isLoading, setIsLoading] = useState(false);
   const handleOpenForm = () => {
     // Open the RecipeForm modal when the button is clicked
     setIsModalRecipeOpen(true);
@@ -113,6 +114,7 @@ export default function RecipeTable({}) {
   }, [filteredRecipes]);
 
   const getRecipes = async () => {
+    setIsLoading(true);
     const response = await fetch(apiUrl + "/api/recipes/", {
       method: "GET",
       headers: {
@@ -121,14 +123,17 @@ export default function RecipeTable({}) {
       },
     });
     const data = await response.json();
-    const sortedRecipes = data.data.sort((a, b) => {
-      const ratingA = calculateAverageRating(a.ratings);
-      const ratingB = calculateAverageRating(b.ratings);
-      return ratingB - ratingA; // Sort in descending order
-    });
+    if (data.length > 0) {
+      const sortedRecipes = data.data.sort((a, b) => {
+        const ratingA = calculateAverageRating(a.ratings);
+        const ratingB = calculateAverageRating(b.ratings);
+        return ratingB - ratingA; // Sort in descending order
+      });
+    }
 
     setRecipes(data.data);
     setTotalItems(data.data.length);
+    setIsLoading(false);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -163,14 +168,13 @@ export default function RecipeTable({}) {
     const horaFormateada = `${horas < 10 ? "0" : ""}${horas}:${
       minutos < 10 ? "0" : ""
     }${minutos}`;
-    console.log(meal);
     if (meal && meal != []) {
       const mealToAdd = {
         name: meal.name,
         foods: meal.foods,
         date: fechaActual,
         hour: horaFormateada,
-        userId: localStorage.getItem("userId"),
+        //userId: localStorage.getItem("userId"),
       };
       mealToAdd.calories = meal.foods
         .map((food) => parseInt(food.totalCalories))
@@ -187,7 +191,7 @@ export default function RecipeTable({}) {
       mealToAdd.fats = meal.foods
         .map((food) => parseInt(food.totalFats))
         .reduce((acc, fats) => acc + fats, 0);
-
+      setIsLoading(true);
       fetch(apiUrl + "/api/meals", {
         method: "POST",
         headers: {
@@ -212,7 +216,9 @@ export default function RecipeTable({}) {
             variant: "error",
           });
         });
+      setIsLoading(false);
     } else {
+      setIsLoading(false);
       enqueueSnackbar("An error occurred while saving the meal.", {
         variant: "error",
       });
@@ -295,21 +301,22 @@ export default function RecipeTable({}) {
                       precision={0.5}
                       readOnly={true}
                     />
-                    {!row.ratings.find(
-                      (rating) =>
-                        rating.userId === localStorage.getItem("userId")
-                    ) && (
-                      <IconButton
-                        aria-label="edit row"
-                        size="small"
-                        onClick={() => {
-                          setSelectedRow(row);
-                          setIsRateModalOpen(true);
-                        }}
-                      >
-                        <ThumbsUpDownIcon />
-                      </IconButton>
-                    )}
+                    {row.ratings &&
+                      !row.ratings.find(
+                        (rating) =>
+                          rating.userId === localStorage.getItem("userId")
+                      ) && (
+                        <IconButton
+                          aria-label="edit row"
+                          size="small"
+                          onClick={() => {
+                            setSelectedRow(row);
+                            setIsRateModalOpen(true);
+                          }}
+                        >
+                          <ThumbsUpDownIcon />
+                        </IconButton>
+                      )}
                   </TableCell>
 
                   <TableCell align="center">

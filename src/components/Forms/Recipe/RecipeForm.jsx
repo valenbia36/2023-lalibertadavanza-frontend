@@ -34,6 +34,7 @@ const RecipeForm = ({
 }) => {
   const [mealData, setMealData] = useState(initialMealState);
   const [foodOptions, setFoodOptions] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
@@ -69,6 +70,7 @@ const RecipeForm = ({
   };
 
   const handleAddRecipe = () => {
+    setIsLoading(true);
     if (
       mealData.name === "" ||
       !mealData.foods.every(
@@ -78,6 +80,7 @@ const RecipeForm = ({
           Number(food.weightConsumed) > 0
       )
     ) {
+      setIsLoading(false);
       enqueueSnackbar("Please complete all the fields correctly.", {
         variant: "error",
       });
@@ -142,6 +145,7 @@ const RecipeForm = ({
             variant: "error",
           });
         });
+      setIsLoading(false);
     }
   };
   const handleOpenFoodModal = () => {
@@ -448,6 +452,7 @@ const RecipeForm = ({
           <AddMealButton
             initialData={initialData}
             handleAddMeal={handleAddRecipe}
+            disable={isLoading}
           />
         </Grid>
       </Box>

@@ -26,7 +26,6 @@ const initialMealState = {
   hour: new Date(),
   calories: 0,
   foods: [{ name: "", calories: "", weight: "", category: "" }],
-  userId: localStorage.getItem("userId"),
 };
 
 const MealForm = ({ open, setOpen, initialData }) => {
@@ -50,7 +49,6 @@ const MealForm = ({ open, setOpen, initialData }) => {
         hour: new Date(),
         calories: 0,
         foods: [{ name: "", calories: "", weight: "", category: "" }],
-        userId: localStorage.getItem("userId"),
       });
     }
   }, [initialData]);
@@ -72,7 +70,6 @@ const MealForm = ({ open, setOpen, initialData }) => {
   };
 
   const handleAddMeal = () => {
-    console.log(mealData);
     if (
       mealData.name === "" ||
       mealData.date === "" ||
@@ -113,7 +110,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
         ? apiUrl + `/api/meals/${initialData._id}`
         : apiUrl + "/api/meals";
       const method = initialData ? "PUT" : "POST";
-
+      console.log(localStorage.getItem("token"));
       fetch(url, {
         method: method,
         headers: {
@@ -156,7 +153,6 @@ const MealForm = ({ open, setOpen, initialData }) => {
         hour: new Date(),
         calories: 0,
         foods: [{ name: "", calories: "", weight: "", category: "" }],
-        userId: localStorage.getItem("userId"),
       });
     }
   };
@@ -239,7 +235,6 @@ const MealForm = ({ open, setOpen, initialData }) => {
       );
       setMealData({ ...mealData, foods: updatedFoods });
     } else {
-      console.log("ENTRA");
       updatedFoods[index].weightConsumed = "";
     }
   };

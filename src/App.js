@@ -8,7 +8,7 @@ import Statistics from "./screens/Statistics";
 import MyProfile from "./screens/MyProfile";
 import Recipes from "./screens/Recipes";
 import "./styles/Home.css";
-import { SnackbarProvider } from "notistack";
+import { SnackbarProvider, closeSnackbar } from "notistack";
 import Meals from "./screens/Meals";
 import { ThemeProvider, createTheme } from "@mui/material";
 import Planner from "./screens/Planner";
@@ -23,7 +23,17 @@ export default function App() {
   return (
     <ThemeProvider theme={customTheme}>
       <div className="Home-header" style={{ backgroundColor: "#CECFC7" }}>
-        <SnackbarProvider>
+        <SnackbarProvider
+          action={(snackbarId) => (
+            <button
+              onClick={() => {
+                closeSnackbar(snackbarId);
+              }}
+            >
+              Dismiss
+            </button>
+          )}
+        >
           <Routes>
             <Route path="/" element={<Login />} />
             <Route path="signUp" element={<SignUp />} />

@@ -78,7 +78,7 @@ function Row(props) {
         </TableCell>
         <TableCell align="center">{row.date}</TableCell>
         <TableCell align="center">{row.hour}</TableCell>
-        {localStorage.getItem("viewAs") === "false" && (
+        {
           <TableCell align="center">
             <IconButton
               aria-label="edit row"
@@ -95,7 +95,7 @@ function Row(props) {
               <DeleteIcon />
             </IconButton>
           </TableCell>
-        )}
+        }
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
@@ -179,16 +179,13 @@ export default function MealTable({ modalOpen }) {
   }, [isModalOpen, modalOpen]);
 
   const getMeals = async () => {
-    const response = await fetch(
-      apiUrl + "/api/meals/user/" + localStorage.getItem("userId"),
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      }
-    );
+    const response = await fetch(apiUrl + "/api/meals/user/", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    });
     const data = await response.json();
 
     const mealsWithShortenedDates = data.data.map((meal) => {
@@ -233,11 +230,11 @@ export default function MealTable({ modalOpen }) {
             <TableCell sx={{ fontWeight: "bold" }} align="center">
               Hours&nbsp;
             </TableCell>
-            {localStorage.getItem("viewAs") === "false" && (
+            {
               <TableCell sx={{ fontWeight: "bold" }} align="center">
                 Actions&nbsp;
               </TableCell>
-            )}
+            }
           </TableRow>
         </TableHead>
         <TableBody sx={{ textAlign: "center" }}>

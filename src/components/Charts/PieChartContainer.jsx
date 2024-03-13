@@ -3,7 +3,7 @@ import { TextField, Grid } from "@mui/material";
 import { format } from "date-fns";
 import MyResponsivePie from "./PieChart";
 import CircularProgress from "@mui/material/CircularProgress";
-import getApiUrl from '../../helpers/apiConfig';
+import getApiUrl from "../../helpers/apiConfig";
 import CategoryAutocomplete from "../CategoryAutocomplete";
 
 const apiUrl = getApiUrl();
@@ -16,19 +16,13 @@ const getMealsByUserIdAndDay = async (
 ) => {
   setData("");
   setLoading(true);
-  const response = await fetch(
-    apiUrl + "/api/meals/user/" +
-    localStorage.getItem("userId") +
-    "/date/" +
-    date,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-    }
-  );
+  const response = await fetch(apiUrl + "/api/meals/user/date/" + date, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + localStorage.getItem("token"),
+    },
+  });
   const data = await response.json();
   const groupedFoods = {};
   if (data.data && data.data.length > 0) {
@@ -38,7 +32,11 @@ const getMealsByUserIdAndDay = async (
         if (groupedFoods[name]) {
           groupedFoods[name].value += weightConsumed;
         } else {
-          groupedFoods[name] = { id: category, value: weightConsumed, label: name };
+          groupedFoods[name] = {
+            id: category,
+            value: weightConsumed,
+            label: name,
+          };
         }
       });
     });
@@ -86,8 +84,15 @@ const PieChartContainer = () => {
         maxWidth: 400,
       }}
     >
-      <Grid sx={{ maxHeight: "450px", minWidth: "320px", alignContent: 'center', textAlign: 'center' }}>
-        <h2 style={{ fontWeight: 'bold' }}>Foods by Day</h2>
+      <Grid
+        sx={{
+          maxHeight: "450px",
+          minWidth: "320px",
+          alignContent: "center",
+          textAlign: "center",
+        }}
+      >
+        <h2 style={{ fontWeight: "bold" }}>Foods by Day</h2>
         <TextField
           style={{ width: "73%", minWidth: 200 }}
           InputLabelProps={{ shrink: true }}
@@ -98,7 +103,7 @@ const PieChartContainer = () => {
           value={date}
           onChange={(e) => setDate(e.target.value)}
         />
-        <Grid sx={{ width: "73%", minWidth: 200, marginLeft: '13.5%' }}>
+        <Grid sx={{ width: "73%", minWidth: 200, marginLeft: "13.5%" }}>
           <CategoryAutocomplete
             selectedCategory={selectedCategory}
             onCategoryChange={handleCategoryChange}
@@ -110,9 +115,7 @@ const PieChartContainer = () => {
           ) : data && data.length > 0 ? (
             <MyResponsivePie data={data} />
           ) : (
-            <p style={noPatientsStyle}>
-              No foods to show
-            </p>
+            <p style={noPatientsStyle}>No foods to show</p>
           )}
         </div>
       </Grid>
