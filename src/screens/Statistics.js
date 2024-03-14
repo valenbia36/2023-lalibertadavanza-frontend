@@ -113,11 +113,7 @@ const Statistics = () => {
           ))}
         </SpeedDial>
       }
-      {localStorage.getItem("viewAs") === "true" && (
-        <ViewingMessage
-          patientUserName={localStorage.getItem("patientUserName")}
-        />
-      )}
+
       <Row>
         <Col
           xs={12}

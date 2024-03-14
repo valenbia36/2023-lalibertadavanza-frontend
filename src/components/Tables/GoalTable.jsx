@@ -93,16 +93,13 @@ export default function GoalTable({ filterOpen, isCreateModalOpen }) {
   ]);
 
   const handleGetGoals = async () => {
-    const response = await fetch(
-      apiUrl + "/api/goals/goalsWithProgress/" + localStorage.getItem("userId"),
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      }
-    );
+    const response = await fetch(apiUrl + "/api/goals/goalsWithProgress/", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    });
 
     const data = await response.json();
     if (selectedFilter !== "" && filterOpen) {

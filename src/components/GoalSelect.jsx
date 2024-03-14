@@ -20,16 +20,13 @@ const GoalSelect = ({ onChangeGoal }) => {
   }, [isSelectOpen]);
 
   const handleGetActiveGoals = async () => {
-    const response = await fetch(
-      apiUrl + "/api/goals/activeGoals/" + localStorage.getItem("userId"),
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      }
-    );
+    const response = await fetch(apiUrl + "/api/goals/activeGoals/", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    });
     const data = await response.json();
     if (data.filteredData.length > 0) {
       if (selectedGoal === "") {

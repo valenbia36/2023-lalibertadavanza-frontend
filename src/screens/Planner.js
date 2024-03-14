@@ -168,7 +168,7 @@ const Planner = () => {
       {showConfetti && (
         <Confetti width={window.innerWidth} height={window.innerHeight} />
       )}
-      {localStorage.getItem("viewAs") === "false" && (
+      {
         <SpeedDial
           ariaLabel="SpeedDial"
           sx={{ position: "fixed", bottom: "70px", right: "25px" }}
@@ -183,12 +183,8 @@ const Planner = () => {
             />
           ))}
         </SpeedDial>
-      )}
-      {localStorage.getItem("viewAs") === "true" && (
-        <ViewingMessage
-          patientUserName={localStorage.getItem("patientUserName")}
-        />
-      )}
+      }
+
       {renderCalendar()}
 
       <IntermittentFastingForm
