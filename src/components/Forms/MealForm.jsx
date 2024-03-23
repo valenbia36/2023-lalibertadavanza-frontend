@@ -25,7 +25,7 @@ const initialMealState = {
   date: new Date(),
   hour: new Date(),
   calories: 0,
-  foods: [{ name: "", calories: "", weight: "", category: "" }],
+  foods: [],
 };
 
 const MealForm = ({ open, setOpen, initialData }) => {
@@ -86,7 +86,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
       });
       return;
     } else {
-      mealData.calories = mealData.foods
+      /* mealData.calories = mealData.foods
         .map((food) => parseInt(food.totalCalories))
         .reduce((acc, calories) => acc + calories, 0);
 
@@ -100,7 +100,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
 
       mealData.fats = mealData.foods
         .map((food) => parseInt(food.totalFats))
-        .reduce((acc, fats) => acc + fats, 0);
+        .reduce((acc, fats) => acc + fats, 0); */
 
       mealData.hour = mealData.hour.toTimeString().slice(0, 5);
 
@@ -110,7 +110,6 @@ const MealForm = ({ open, setOpen, initialData }) => {
         ? apiUrl + `/api/meals/${initialData._id}`
         : apiUrl + "/api/meals";
       const method = initialData ? "PUT" : "POST";
-      console.log(localStorage.getItem("token"));
       fetch(url, {
         method: method,
         headers: {
@@ -151,8 +150,8 @@ const MealForm = ({ open, setOpen, initialData }) => {
         name: "",
         date: new Date(),
         hour: new Date(),
-        calories: 0,
-        foods: [{ name: "", calories: "", weight: "", category: "" }],
+        //calories: 0,
+        foods: [],
       });
     }
   };

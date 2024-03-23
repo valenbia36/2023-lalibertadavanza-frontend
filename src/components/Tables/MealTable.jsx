@@ -194,7 +194,6 @@ export default function MealTable({ modalOpen }) {
         date: meal.date.substring(0, 10),
       };
     });
-
     setMeals(mealsWithShortenedDates);
     setTotalMeals(mealsWithShortenedDates.length);
   };
