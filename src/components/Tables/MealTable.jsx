@@ -179,7 +179,7 @@ export default function MealTable({ modalOpen }) {
   }, [isModalOpen, modalOpen]);
 
   const getMeals = async () => {
-    const response = await fetch(apiUrl + "/api/meals/user/", {
+    const response = await fetch(apiUrl + "/api/meals2/user/", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

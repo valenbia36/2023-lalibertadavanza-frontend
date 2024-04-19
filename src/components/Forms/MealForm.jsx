@@ -105,10 +105,9 @@ const MealForm = ({ open, setOpen, initialData }) => {
       mealData.hour = mealData.hour.toTimeString().slice(0, 5);
 
       mealData.date.setHours(1, 0);
-
       const url = initialData
         ? apiUrl + `/api/meals/${initialData._id}`
-        : apiUrl + "/api/meals";
+        : apiUrl + "/api/meals2";
       const method = initialData ? "PUT" : "POST";
       fetch(url, {
         method: method,
