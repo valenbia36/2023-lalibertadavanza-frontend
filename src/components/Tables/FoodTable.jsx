@@ -15,6 +15,9 @@ import CategoryAutocomplete from "../CategoryAutocomplete";
 import getApiUrl from "../../helpers/apiConfig";
 
 const apiUrl = getApiUrl();
+const initialSelectedCategoryState = {
+  name: "",
+};
 
 function TablePaginationActions(props) {
   const theme = useTheme();
@@ -59,17 +62,20 @@ function TablePaginationActions(props) {
 export default function FoodTable({ filterOpen, modalOpen }) {
   const [foods, setFoods] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState(
+    initialSelectedCategoryState
+  );
   const [page, setPage] = React.useState(0);
   const [noResults, setNoResults] = useState(false);
 
   useEffect(() => {
-    selectedCategory ? getFoodByCategory() : getFoods();
+    selectedCategory && filterOpen == true ? getFoodByCategory() : getFoods();
   }, [selectedCategory]);
 
   useEffect(() => {
     if (filterOpen === false) {
-      setSelectedCategory("");
+      setSelectedCategory(initialSelectedCategoryState);
+      console.log(selectedCategory);
       getFoods();
     }
   }, [filterOpen, modalOpen]);
@@ -87,14 +93,19 @@ export default function FoodTable({ filterOpen, modalOpen }) {
       },
     });
     const data = await response.json();
-    setFoods(data.data);
-    setTotalItems(data.data.length);
+    if (data.data.length === 0) {
+      setNoResults(true);
+    } else {
+      setNoResults(false);
+      setFoods(data.data);
+      setTotalItems(data.data.length);
+    }
   };
 
   const getFoodByCategory = async () => {
-    if (selectedCategory !== "") {
+    if (selectedCategory.name != "") {
       const response = await fetch(
-        apiUrl + "/api/foods/category/" + selectedCategory,
+        apiUrl + "/api/foods/category/" + selectedCategory.name,
         {
           method: "GET",
           headers: {
@@ -208,7 +219,7 @@ export default function FoodTable({ filterOpen, modalOpen }) {
                       {row.fats === "0" ? "-" : row.fats}
                     </TableCell>
                     <TableCell style={{ width: 160 }} align="center">
-                      {row.category}
+                      {row.category.name}
                     </TableCell>
                   </TableRow>
                 )

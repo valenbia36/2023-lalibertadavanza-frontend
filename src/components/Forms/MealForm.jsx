@@ -24,8 +24,7 @@ const initialMealState = {
   name: "",
   date: new Date(),
   hour: new Date(),
-  calories: 0,
-  foods: [],
+  foods: [{ foodId: "", weightConsumed: "" }],
 };
 
 const MealForm = ({ open, setOpen, initialData }) => {
@@ -47,8 +46,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
         name: "",
         date: new Date(),
         hour: new Date(),
-        calories: 0,
-        foods: [{ name: "", calories: "", weight: "", category: "" }],
+        foods: [{ foodId: "", weightConsumed: "" }],
       });
     }
   }, [initialData]);
@@ -75,10 +73,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
       mealData.date === "" ||
       mealData.hour === "" ||
       !mealData.foods.every(
-        (food) =>
-          food.name !== "" &&
-          food.weight !== "" &&
-          Number(food.weightConsumed) > 0
+        (food) => food.foodId !== "" && Number(food.weightConsumed) > 0
       )
     ) {
       enqueueSnackbar("Please complete all the fields correctly.", {
@@ -86,27 +81,10 @@ const MealForm = ({ open, setOpen, initialData }) => {
       });
       return;
     } else {
-      /* mealData.calories = mealData.foods
-        .map((food) => parseInt(food.totalCalories))
-        .reduce((acc, calories) => acc + calories, 0);
-
-      mealData.carbs = mealData.foods
-        .map((food) => parseInt(food.totalCarbs))
-        .reduce((acc, carbs) => acc + carbs, 0);
-
-      mealData.proteins = mealData.foods
-        .map((food) => parseInt(food.totalProteins))
-        .reduce((acc, proteins) => acc + proteins, 0);
-
-      mealData.fats = mealData.foods
-        .map((food) => parseInt(food.totalFats))
-        .reduce((acc, fats) => acc + fats, 0); */
-
       mealData.hour = mealData.hour.toTimeString().slice(0, 5);
-
       mealData.date.setHours(1, 0);
       const url = initialData
-        ? apiUrl + `/api/meals/${initialData._id}`
+        ? apiUrl + `/api/meals2/${initialData._id}`
         : apiUrl + "/api/meals2";
       const method = initialData ? "PUT" : "POST";
       fetch(url, {
@@ -149,8 +127,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
         name: "",
         date: new Date(),
         hour: new Date(),
-        //calories: 0,
-        foods: [],
+        foods: [{ foodId: "", weightConsumed: "" }],
       });
     }
   };
@@ -158,7 +135,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
   const handleAddFoodInput = () => {
     const updatedFoods = [
       ...mealData.foods,
-      { name: "", calories: "", weight: "", category: "" },
+      { foodId: "", weightConsumed: "" },
     ];
     setMealData({ ...mealData, foods: updatedFoods });
   };
@@ -171,35 +148,9 @@ const MealForm = ({ open, setOpen, initialData }) => {
 
   const handleFoodInputChange = (newValue, index) => {
     const updatedFoods = [...mealData.foods];
+
     if (newValue) {
-      updatedFoods[index].name = newValue.name ? newValue.name : "";
-      updatedFoods[index].calories = newValue.calories;
-      updatedFoods[index].carbs = newValue.carbs;
-      updatedFoods[index].proteins = newValue.proteins;
-      updatedFoods[index].fats = newValue.fats;
-      updatedFoods[index].weight = newValue.weight;
-      updatedFoods[index].category = newValue.category;
-      if (updatedFoods[index].weightConsumed) {
-        updatedFoods[index].totalCalories = Math.round(
-          updatedFoods[index].weightConsumed *
-            (updatedFoods[index].calories / updatedFoods[index].weight)
-        );
-
-        updatedFoods[index].totalCarbs = Math.round(
-          updatedFoods[index].weightConsumed *
-            (updatedFoods[index].carbs / updatedFoods[index].weight)
-        );
-
-        updatedFoods[index].totalProteins = Math.round(
-          updatedFoods[index].weightConsumed *
-            (updatedFoods[index].proteins / updatedFoods[index].weight)
-        );
-
-        updatedFoods[index].totalFats = Math.round(
-          updatedFoods[index].weightConsumed *
-            (updatedFoods[index].fats / updatedFoods[index].weight)
-        );
-      }
+      updatedFoods[index].foodId = newValue._id;
     } else {
       updatedFoods[index].name = "";
       updatedFoods[index].calories = 0;
@@ -214,27 +165,10 @@ const MealForm = ({ open, setOpen, initialData }) => {
     const updatedFoods = [...mealData.foods];
     if (!isNaN(inputValue) && inputValue >= 1) {
       updatedFoods[index].weightConsumed = inputValue;
-      updatedFoods[index].totalCalories = Math.round(
-        inputValue * (updatedFoods[index].calories / updatedFoods[index].weight)
-      );
-      updatedFoods[index].totalCarbs = Math.round(
-        updatedFoods[index].weightConsumed *
-          (updatedFoods[index].carbs / updatedFoods[index].weight)
-      );
-
-      updatedFoods[index].totalProteins = Math.round(
-        updatedFoods[index].weightConsumed *
-          (updatedFoods[index].proteins / updatedFoods[index].weight)
-      );
-
-      updatedFoods[index].totalFats = Math.round(
-        updatedFoods[index].weightConsumed *
-          (updatedFoods[index].fats / updatedFoods[index].weight)
-      );
-      setMealData({ ...mealData, foods: updatedFoods });
     } else {
       updatedFoods[index].weightConsumed = "";
     }
+    setMealData({ ...mealData, foods: updatedFoods });
   };
 
   return (
@@ -339,10 +273,9 @@ const MealForm = ({ open, setOpen, initialData }) => {
                 <Autocomplete
                   id={`food-autocomplete-${index}`}
                   options={foodOptions}
-                  value={
-                    foodOptions.find((option) => option.name === food.name) ||
-                    null
-                  }
+                  value={foodOptions.find(
+                    (option) => option.name === food.name
+                  )}
                   onChange={(e, newValue) =>
                     handleFoodInputChange(newValue, index)
                   }

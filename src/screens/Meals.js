@@ -109,11 +109,7 @@ const Meals = () => {
           ))}
         </SpeedDial>
       }
-      {localStorage.getItem("viewAs") === "true" && (
-        <ViewingMessage
-          patientUserName={localStorage.getItem("patientUserName")}
-        />
-      )}
+
       <div className="row justify-content-center">
         <div className="col-lg-10">
           <div className="row justify-content-center">

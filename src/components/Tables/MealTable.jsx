@@ -30,7 +30,7 @@ function Row(props) {
 
   const handleDeleteClick = (meal) => {
     try {
-      fetch(apiUrl + "/api/meals/" + meal._id, {
+      fetch(apiUrl + "/api/meals2/" + meal._id, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -128,16 +128,20 @@ function Row(props) {
                   {row.foods.map((foodRow) => (
                     <TableRow key={foodRow._id}>
                       <TableCell component="th" scope="row" align="center">
-                        {foodRow.name}
+                        {foodRow.foodId.name}
                       </TableCell>
                       <TableCell align="center">
-                        {foodRow.totalCalories}
+                        {foodRow.caloriesPerFood}
                       </TableCell>
-                      <TableCell align="center">{foodRow.totalCarbs}</TableCell>
                       <TableCell align="center">
-                        {foodRow.totalProteins}
+                        {foodRow.carbsPerFood}
                       </TableCell>
-                      <TableCell align="center">{foodRow.totalFats}</TableCell>
+                      <TableCell align="center">
+                        {foodRow.proteinsPerFood}
+                      </TableCell>
+                      <TableCell align="center">
+                        {foodRow.fatsPerFood}
+                      </TableCell>
                       <TableCell align="center">
                         {foodRow.weightConsumed}
                       </TableCell>
@@ -147,10 +151,10 @@ function Row(props) {
                     <TableCell align="center" sx={{ fontWeight: "bold" }}>
                       Total
                     </TableCell>
-                    <TableCell align="center">{row.calories}</TableCell>
-                    <TableCell align="center">{row.carbs}</TableCell>
-                    <TableCell align="center">{row.proteins}</TableCell>
-                    <TableCell align="center">{row.fats}</TableCell>
+                    <TableCell align="center">{row.totalCalories}</TableCell>
+                    <TableCell align="center">{row.totalCarbs}</TableCell>
+                    <TableCell align="center">{row.totalProteins}</TableCell>
+                    <TableCell align="center">{row.totalFats}</TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
