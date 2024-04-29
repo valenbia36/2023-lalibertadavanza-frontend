@@ -19,7 +19,7 @@ const WaterGlassBarChartContainer = ({ flag }) => {
       },
     });
     const data = await response.json();
-    setData(data.result);
+    setData(data.data);
   };
 
   useEffect(() => {

@@ -168,29 +168,14 @@ export default function RecipeTable({}) {
     const horaFormateada = `${horas < 10 ? "0" : ""}${horas}:${
       minutos < 10 ? "0" : ""
     }${minutos}`;
+    console.log(meal.foods);
     if (meal && meal != []) {
       const mealToAdd = {
         name: meal.name,
         foods: meal.foods,
         date: fechaActual,
         hour: horaFormateada,
-        //userId: localStorage.getItem("userId"),
       };
-      mealToAdd.calories = meal.foods
-        .map((food) => parseInt(food.totalCalories))
-        .reduce((acc, calories) => acc + calories, 0);
-
-      mealToAdd.carbs = meal.foods
-        .map((food) => parseInt(food.totalCarbs))
-        .reduce((acc, carbs) => acc + carbs, 0);
-
-      mealToAdd.proteins = meal.foods
-        .map((food) => parseInt(food.totalProteins))
-        .reduce((acc, proteins) => acc + proteins, 0);
-
-      mealToAdd.fats = meal.foods
-        .map((food) => parseInt(food.totalFats))
-        .reduce((acc, fats) => acc + fats, 0);
       setIsLoading(true);
       fetch(apiUrl + "/api/meals", {
         method: "POST",

@@ -83,9 +83,10 @@ const MealForm = ({ open, setOpen, initialData }) => {
     } else {
       mealData.hour = mealData.hour.toTimeString().slice(0, 5);
       mealData.date.setHours(1, 0);
+
       const url = initialData
-        ? apiUrl + `/api/meals2/${initialData._id}`
-        : apiUrl + "/api/meals2";
+        ? apiUrl + `/api/meals/${initialData._id}`
+        : apiUrl + "/api/meals";
       const method = initialData ? "PUT" : "POST";
       fetch(url, {
         method: method,
@@ -267,6 +268,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
               </LocalizationProvider>
             </FormControl>
           </Grid>
+
           {mealData.foods.map((food, index) => (
             <React.Fragment key={index}>
               <Grid item xs={6}>
@@ -274,7 +276,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
                   id={`food-autocomplete-${index}`}
                   options={foodOptions}
                   value={foodOptions.find(
-                    (option) => option.name === food.name
+                    (option) => option.name === food.foodId.name
                   )}
                   onChange={(e, newValue) =>
                     handleFoodInputChange(newValue, index)

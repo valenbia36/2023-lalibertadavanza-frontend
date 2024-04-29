@@ -30,7 +30,7 @@ function Row(props) {
 
   const handleDeleteClick = (meal) => {
     try {
-      fetch(apiUrl + "/api/meals2/" + meal._id, {
+      fetch(apiUrl + "/api/meals/" + meal._id, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -183,7 +183,7 @@ export default function MealTable({ modalOpen }) {
   }, [isModalOpen, modalOpen]);
 
   const getMeals = async () => {
-    const response = await fetch(apiUrl + "/api/meals2/user/", {
+    const response = await fetch(apiUrl + "/api/meals/user/", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

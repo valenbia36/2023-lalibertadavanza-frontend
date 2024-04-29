@@ -24,7 +24,6 @@ const apiUrl = getApiUrl();
 const initialGoalState = {
   name: "",
   calories: "",
-  userId: localStorage.getItem("userId"),
   startDate: new Date(),
   endDate: new Date(),
 };
@@ -42,7 +41,6 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
   const [newGoal, setNewGoal] = useState({
     name: "",
     calories: "",
-    userId: localStorage.getItem("userId"),
     startDate: new Date(),
     endDate: new Date(),
     recurrency: "Non-Recurring",
@@ -62,7 +60,6 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
       setNewGoal({
         name: "",
         calories: "",
-        userId: localStorage.getItem("userId"),
         startDate: new Date(),
         endDate: new Date(),
         recurrency: "Non-Recurring",
@@ -74,7 +71,6 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
     if (
       newGoal.name === "" ||
       newGoal.calories === "" ||
-      newGoal.userId === "" ||
       newGoal.startDate === "" ||
       newGoal.endDate === "" ||
       newGoal.endDate < newGoal.startDate

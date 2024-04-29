@@ -25,25 +25,26 @@ const getMealsByUserIdAndDay = async (
   });
   const data = await response.json();
   const groupedFoods = {};
-  if (data.data && data.data.length > 0) {
-    data.data.forEach((item) => {
+  if (data.mealsToSend && data.mealsToSend.length > 0) {
+    data.mealsToSend.forEach((item) => {
       item.foods.forEach((food) => {
-        const { name, weightConsumed, category } = food;
-        if (groupedFoods[name]) {
-          groupedFoods[name].value += weightConsumed;
+        if (groupedFoods[food.foodId.name]) {
+          groupedFoods[food.foodId.name].value += food.weightConsumed;
         } else {
-          groupedFoods[name] = {
-            id: category,
-            value: weightConsumed,
-            label: name,
+          groupedFoods[food.foodId.name] = {
+            id: food.foodId.category._id,
+            value: food.weightConsumed,
+            label: food.foodId.name,
           };
         }
       });
     });
     const groupedFoodsArray = Object.values(groupedFoods);
 
-    if (selectedCategory) {
-      setData(groupedFoodsArray.filter((item) => item.id === selectedCategory));
+    if (selectedCategory && selectedCategory.name) {
+      setData(
+        groupedFoodsArray.filter((item) => item.id === selectedCategory._id)
+      );
       setLoading(false);
     } else {
       setData(groupedFoodsArray);
@@ -57,7 +58,7 @@ const getMealsByUserIdAndDay = async (
 
 const PieChartContainer = () => {
   const [data, setData] = useState();
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState({ name: "" });
   const [date, setDate] = useState(format(new Date(), "yyyy-MM-dd"));
   const [loading, setLoading] = useState(false);
 

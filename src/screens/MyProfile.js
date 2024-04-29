@@ -55,16 +55,13 @@ const MyProfile = () => {
   }, []);
 
   const getUserById = async () => {
-    const response = await fetch(
-      apiUrl + "/api/auth/users/" + localStorage.getItem("userId"),
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      }
-    );
+    const response = await fetch(apiUrl + "/api/auth/users/", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    });
 
     const data = await response.json();
     setUser(data.data);
@@ -116,10 +113,11 @@ const MyProfile = () => {
       return;
     }
 
-    fetch(apiUrl + "/api/auth/users/" + localStorage.getItem("userId"), {
+    fetch(apiUrl + "/api/auth/users/", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
       },
       body: JSON.stringify(user),
     }).then(function (response) {
