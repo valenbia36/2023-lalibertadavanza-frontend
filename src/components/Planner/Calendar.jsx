@@ -46,6 +46,7 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
   const [shoppingListData, setShoppingListData] = useState({});
   const [weeklyTotalPerFood, setWeeklyTotalPerFood] = useState({});
   const [refresh, setRefresh] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     if (initialData && Object.keys(initialData).length > 0) {
       setSelectedRecipes({ ...initialData });
@@ -134,30 +135,20 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
   };
   const handleAddMeal = (meal, timeOfTheDay, hour) => {
     handleAddToCalendar();
+    const fechaActual = new Date();
+    const horas = fechaActual.getHours();
+    const minutos = fechaActual.getMinutes();
+    const horaFormateada = `${horas < 10 ? "0" : ""}${horas}:${
+      minutos < 10 ? "0" : ""
+    }${minutos}`;
     if (meal && meal != []) {
       const mealToAdd = {
-        name: timeOfTheDay + meal.name,
+        name: meal.name,
         foods: meal.foods,
-        date: new Date(),
-        hour: hour,
-        userId: localStorage.getItem("userId"),
+        date: fechaActual,
+        hour: horaFormateada,
       };
-      mealToAdd.calories = meal.foods
-        .map((food) => parseInt(food.totalCalories))
-        .reduce((acc, calories) => acc + calories, 0);
-
-      mealToAdd.carbs = meal.foods
-        .map((food) => parseInt(food.totalCarbs))
-        .reduce((acc, carbs) => acc + carbs, 0);
-
-      mealToAdd.proteins = meal.foods
-        .map((food) => parseInt(food.totalProteins))
-        .reduce((acc, proteins) => acc + proteins, 0);
-
-      mealToAdd.fats = meal.foods
-        .map((food) => parseInt(food.totalFats))
-        .reduce((acc, fats) => acc + fats, 0);
-
+      setIsLoading(true);
       fetch(apiUrl + "/api/meals", {
         method: "POST",
         headers: {
@@ -182,7 +173,9 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
             variant: "error",
           });
         });
+      setIsLoading(false);
     } else {
+      setIsLoading(false);
       enqueueSnackbar("An error occurred while saving the meal.", {
         variant: "error",
       });

@@ -123,6 +123,7 @@ export default function RecipeTable({}) {
       },
     });
     const data = await response.json();
+    console.log(data);
     if (data.length > 0) {
       const sortedRecipes = data.data.sort((a, b) => {
         const ratingA = calculateAverageRating(a.ratings);
@@ -221,6 +222,7 @@ export default function RecipeTable({}) {
         flexDirection: "column",
         alignItems: "center",
         overflowY: "auto",
+        overflowx: "auto",
       }}
     >
       <SearchBar setSearchQuery={handleSearch} />
@@ -318,7 +320,6 @@ export default function RecipeTable({}) {
                         aria-label="edit row"
                         size="small"
                         onClick={() => handleEditClick(row)}
-                        disabled
                       >
                         <EditIcon />
                       </IconButton>

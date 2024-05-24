@@ -13,6 +13,7 @@ export default function DialogMessage({ open, setOpen, ingredients }) {
 
   return (
     <React.Fragment>
+      {console.log(ingredients)}
       <Dialog
         open={open}
         aria-labelledby="alert-dialog-title"
@@ -23,7 +24,7 @@ export default function DialogMessage({ open, setOpen, ingredients }) {
         <DialogContent>
           {ingredients.map((ingredient, index) => (
             <DialogContentText key={index} id="alert-dialog-description">
-              {`- ${ingredient.name} - ${ingredient.weightConsumed} gr/ml`}
+              {`- ${ingredient.foodId} - ${ingredient.weightConsumed} gr/ml`}
             </DialogContentText>
           ))}
         </DialogContent>
