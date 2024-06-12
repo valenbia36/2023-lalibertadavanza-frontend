@@ -355,7 +355,7 @@ const RecipeForm = ({
                 index={index}
                 handleRemove={handleRemoveFoodInput}
               />
-              {food.name === "" && (
+              {food.foodId === "" && (
                 <Grid
                   item
                   xs={1}

@@ -11,11 +11,13 @@ import {
 } from "@mui/material";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import LocalDrinkIcon from "@mui/icons-material/LocalDrink";
+import RestaurantIcon from "@mui/icons-material/Restaurant";
 import Confetti from "react-confetti";
 import getApiUrl from "../helpers/apiConfig";
 import { useSnackbar } from "notistack";
 import IntermittentFastingForm from "../components/Forms/IntermittentFastingForm";
 import Calendar from "../components/Planner/Calendar";
+import RecipeForm from "../components/Forms/Recipe/RecipeForm";
 import { getWeek } from "date-fns";
 
 const apiUrl = getApiUrl();
@@ -28,6 +30,8 @@ const Planner = () => {
   const [plan, setPlan] = useState({});
   const [recipes, setRecipes] = useState([]);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const [isModalFoodOpen, setIsModalFoodOpen] = useState(false);
+  const [isModalRecipeOpen, setIsModalRecipeOpen] = useState(false);
 
   const [openIntermittentFastingModal, setOpenIntermittentFastingModal] =
     useState(false);
@@ -109,6 +113,10 @@ const Planner = () => {
     }, 5000);
   };
 
+  const handelOpenMealForm = () => {
+    setIsModalRecipeOpen(true);
+  };
+
   const handleIntermittentFasting = () => {
     setOpenIntermittentFastingModal(true);
   };
@@ -151,6 +159,11 @@ const Planner = () => {
       name: "Intermittent Fasting",
       onClick: handleIntermittentFasting,
     },
+    {
+      icon: <RestaurantIcon />,
+      name: "Add Meal",
+      onClick: handelOpenMealForm,
+    },
   ];
 
   const closeModal = () => {
@@ -189,6 +202,24 @@ const Planner = () => {
       <IntermittentFastingForm
         openIntermittentFastingModal={openIntermittentFastingModal}
         closeModal={closeModal}
+      />
+      <RecipeForm
+        openRecipe={isModalRecipeOpen}
+        setRecipeOpen={(value) => {
+          setIsModalRecipeOpen(value);
+          // Call getRecipes when the RecipeForm is closed
+          if (!value) {
+            getRecipes();
+          }
+        }}
+        foodModal={isModalFoodOpen}
+        setOpenFoodModal={(value) => {
+          setIsModalFoodOpen(value);
+          // Call getRecipes when the RecipeForm is closed
+          if (!value) {
+            getRecipes();
+          }
+        }}
       />
     </div>
   );

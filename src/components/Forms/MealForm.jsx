@@ -30,6 +30,7 @@ const initialMealState = {
 const MealForm = ({ open, setOpen, initialData }) => {
   const [mealData, setMealData] = useState(initialMealState);
   const [foodOptions, setFoodOptions] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
@@ -83,7 +84,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
     } else {
       mealData.hour = mealData.hour.toTimeString().slice(0, 5);
       mealData.date.setHours(1, 0);
-
+      setIsLoading(true);
       const url = initialData
         ? apiUrl + `/api/meals/${initialData._id}`
         : apiUrl + "/api/meals";
@@ -106,6 +107,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
                 variant: "success",
               }
             );
+            setIsLoading(false);
             closeModal();
           } else {
             enqueueSnackbar("An error occurred while saving the meal.", {
@@ -343,6 +345,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
               variant="contained"
               color="primary"
               onClick={handleAddMeal}
+              disabled={isLoading}
               sx={{
                 mt: 3,
                 mb: 2,

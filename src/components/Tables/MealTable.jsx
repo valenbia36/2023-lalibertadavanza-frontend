@@ -25,11 +25,13 @@ function Row(props) {
   const { row, onEditClick } = props;
   const [open, setOpen] = React.useState(false);
   const [isModalRecipeOpen, setIsModalRecipeOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { enqueueSnackbar } = useSnackbar();
 
   const handleDeleteClick = (meal) => {
     try {
+      setIsLoading(true);
       fetch(apiUrl + "/api/meals/" + meal._id, {
         method: "DELETE",
         headers: {
@@ -54,6 +56,7 @@ function Row(props) {
           });
         }
       });
+      setIsLoading(false);
     } catch (error) {
       enqueueSnackbar("An error occurred while deleting the meal.", {
         variant: "error",
@@ -90,6 +93,7 @@ function Row(props) {
             <IconButton
               aria-label="delete row"
               size="small"
+              disabled={isLoading}
               onClick={() => handleDeleteClick(row)}
             >
               <DeleteIcon />
@@ -190,8 +194,8 @@ export default function MealTable({ modalOpen }) {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
     });
-    const data = await response.json();
 
+    const data = await response.json();
     const mealsWithShortenedDates = data.data.map((meal) => {
       return {
         ...meal,

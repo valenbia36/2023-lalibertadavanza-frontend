@@ -37,9 +37,11 @@ const FoodForm = ({ open, setOpen }) => {
       Number(newFood.calories) < 1 ||
       Number(newFood.weight) < 1
     ) {
+      setIsLoading(true);
       enqueueSnackbar("Please complete all the fields correctly.", {
         variant: "error",
       });
+      setIsLoading(false);
       return;
     } else {
       setIsLoading(true);
@@ -59,10 +61,11 @@ const FoodForm = ({ open, setOpen }) => {
           setIsLoading(false);
           closeModal();
         } else {
-          setIsLoading(false);
+          setIsLoading(true);
           enqueueSnackbar("An error occurred while creating the food.", {
             variant: "error",
           });
+          setIsLoading(false);
         }
       });
     }

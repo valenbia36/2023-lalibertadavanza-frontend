@@ -26,6 +26,12 @@ import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import RestaurantIcon from "@mui/icons-material/Restaurant";
 import { useSnackbar } from "notistack";
 const apiUrl = getApiUrl();
+const initialMealState = {
+  name: "",
+  date: new Date(),
+  hour: new Date(),
+  foods: [{ foodId: "", weightConsumed: "" }],
+};
 
 function TablePaginationActions(props) {
   const theme = useTheme();
@@ -123,7 +129,6 @@ export default function RecipeTable({}) {
       },
     });
     const data = await response.json();
-    console.log(data);
     if (data.length > 0) {
       const sortedRecipes = data.data.sort((a, b) => {
         const ratingA = calculateAverageRating(a.ratings);
@@ -169,11 +174,13 @@ export default function RecipeTable({}) {
     const horaFormateada = `${horas < 10 ? "0" : ""}${horas}:${
       minutos < 10 ? "0" : ""
     }${minutos}`;
-    console.log(meal.foods);
     if (meal && meal != []) {
       const mealToAdd = {
         name: meal.name,
-        foods: meal.foods,
+        foods: meal.foods.map((food) => ({
+          foodId: food._id,
+          weightConsumed: food.weightConsumed,
+        })),
         date: fechaActual,
         hour: horaFormateada,
       };

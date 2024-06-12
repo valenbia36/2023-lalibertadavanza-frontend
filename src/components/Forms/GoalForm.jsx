@@ -30,6 +30,7 @@ const initialGoalState = {
 
 const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
   const { enqueueSnackbar } = useSnackbar();
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedRecuringValue, setSelectedRecurringValue] =
     useState("Non-Recurring");
   const closeModal = () => {
@@ -80,6 +81,7 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
       });
       return;
     } else {
+      setIsLoading(true);
       const url = initialData
         ? apiUrl + `/api/goals/${initialData._id}`
         : apiUrl + "/api/goals";
@@ -111,6 +113,7 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
               "## " + typeof newGoal + " - " + typeof newGoal.startDate
             );
           }
+          setIsLoading(false);
           closeModal();
         } else {
           enqueueSnackbar("An error occurred while creating the goal.", {
@@ -284,6 +287,7 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
             variant="contained"
             color="primary"
             onClick={handleAddGoal}
+            disabled={isLoading}
             sx={{
               mt: 3,
               mb: 2,

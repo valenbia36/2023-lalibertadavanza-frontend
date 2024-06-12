@@ -14,6 +14,7 @@ const IntermittentFastingForm = ({
   closeModal,
 }) => {
   const { enqueueSnackbar } = useSnackbar();
+  const [isLoading, setIsLoading] = useState(false);
   const [startDateTime, setStartDateTime] = useState(
     new Date(new Date().getTime() + 1 * 60000)
   );
@@ -24,22 +25,17 @@ const IntermittentFastingForm = ({
     useState();
 
   useEffect(() => {
-    handleGetActiveIntermittentFasting();
+    //handleGetActiveIntermittentFasting(); Comente esto porque explota sino MIRAR
   }, [activeIntermittentFastings, openIntermittentFastingModal]);
 
   const handleGetActiveIntermittentFasting = async () => {
-    const response = await fetch(
-      apiUrl +
-        "/api/intermittentFasting/active/" +
-        localStorage.getItem("userId"),
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      }
-    );
+    const response = await fetch(apiUrl + "/api/intermittentFasting/active/", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    });
     const data = await response.json();
     if (data.filteredData.length > 0) {
       setActiveIntermittentFastings(data.filteredData);
@@ -47,6 +43,7 @@ const IntermittentFastingForm = ({
   };
 
   const cancelIntermittentFasting = async () => {
+    setIsLoading(true);
     fetch(
       apiUrl +
         "/api/intermittentFasting/active/" +
@@ -77,13 +74,16 @@ const IntermittentFastingForm = ({
 
   const handleStartIntermittentFasting = () => {
     const timeDifferenceMillis = endDateTime - startDateTime;
-    
+
     const timeDifferenceHours = timeDifferenceMillis / (1000 * 60 * 60);
-  
+
     if (startDateTime > endDateTime) {
-      enqueueSnackbar("End date and time must be greater than start date and time.", {
-        variant: "error",
-      });
+      enqueueSnackbar(
+        "End date and time must be greater than start date and time.",
+        {
+          variant: "error",
+        }
+      );
     } else if (timeDifferenceHours < 1) {
       enqueueSnackbar("The fasting period must be at least 1 hour.", {
         variant: "error",
@@ -100,13 +100,16 @@ const IntermittentFastingForm = ({
           startDateTime: startDateTime,
           endDateTime: endDateTime,
           email: localStorage.getItem("userMail"),
-          userName: localStorage.getItem("username")
+          userName: localStorage.getItem("username"),
         }),
       }).then(function (response) {
         if (response.status === 200) {
-          enqueueSnackbar("The intermittent fasting was created successfully.", {
-            variant: "success",
-          });
+          enqueueSnackbar(
+            "The intermittent fasting was created successfully.",
+            {
+              variant: "success",
+            }
+          );
           closeModal();
         } else if (response.status === 501) {
           enqueueSnackbar(
@@ -119,7 +122,6 @@ const IntermittentFastingForm = ({
       });
     }
   };
-  
 
   function formatDate(date) {
     if (typeof date === "string") {
@@ -201,7 +203,12 @@ const IntermittentFastingForm = ({
         )}
 
         <span
-          style={{ marginTop: "5%", marginBottom: "5%", fontWeight: "bold", textAlign: 'center' }}
+          style={{
+            marginTop: "5%",
+            marginBottom: "5%",
+            fontWeight: "bold",
+            textAlign: "center",
+          }}
         >
           Configure your Intermittent Fasting:{" "}
         </span>

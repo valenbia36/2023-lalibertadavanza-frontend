@@ -16,7 +16,6 @@ export default function RateModal({ open, setOpen, row, setLoaded }) {
       }
       console.log({
         rate: newRating,
-        userId: localStorage.getItem("userId"),
         id: recipeId,
       });
 
@@ -29,7 +28,6 @@ export default function RateModal({ open, setOpen, row, setLoaded }) {
         },
         body: JSON.stringify({
           rate: newRating,
-          userId: localStorage.getItem("userId"),
           id: recipeId,
         }),
       });
