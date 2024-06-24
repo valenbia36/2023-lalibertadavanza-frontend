@@ -25,6 +25,7 @@ import DialogMessage from "../DialogMessage";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import RestaurantIcon from "@mui/icons-material/Restaurant";
 import { useSnackbar } from "notistack";
+
 const apiUrl = getApiUrl();
 const initialMealState = {
   name: "",
@@ -90,18 +91,20 @@ export default function RecipeTable({}) {
   const [loaded, setLoaded] = useState(false);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [isLoading, setIsLoading] = useState(false);
+  const [previousSearchQuery, setPreviousSearchQuery] = useState("");
+
   const handleOpenForm = () => {
-    // Open the RecipeForm modal when the button is clicked
     setIsModalRecipeOpen(true);
     setEditMeal(null);
   };
+
   const filteredRecipes = recipes.filter((row) =>
     row.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   function calculateAverageRating(ratingsArray) {
     if (!Array.isArray(ratingsArray) || ratingsArray.length === 0) {
-      return 0; // Manejar el caso en que el array esté vacío o no sea un array
+      return 0;
     }
 
     const totalRatings = ratingsArray.reduce((accumulator, ratingObj) => {
@@ -115,9 +118,15 @@ export default function RecipeTable({}) {
     getRecipes();
     setLoaded(false);
   }, [isModalRecipeOpen, loaded]);
+
   useEffect(() => {
+    if (previousSearchQuery !== searchQuery) {
+      setPage(0);
+      setPreviousSearchQuery(searchQuery);
+    }
     setNoResults(filteredRecipes.length === 0);
-  }, [filteredRecipes]);
+    setTotalItems(filteredRecipes.length);
+  }, [filteredRecipes, searchQuery, previousSearchQuery]);
 
   const getRecipes = async () => {
     setIsLoading(true);
@@ -133,12 +142,11 @@ export default function RecipeTable({}) {
       const sortedRecipes = data.data.sort((a, b) => {
         const ratingA = calculateAverageRating(a.ratings);
         const ratingB = calculateAverageRating(b.ratings);
-        return ratingB - ratingA; // Sort in descending order
+        return ratingB - ratingA;
       });
     }
 
     setRecipes(data.data);
-    setTotalItems(data.data.length);
     setIsLoading(false);
   };
 
@@ -150,23 +158,25 @@ export default function RecipeTable({}) {
     setEditMeal(meal);
     setIsModalRecipeOpen(true);
   };
+
   const handleInfoClick = (meal) => {
     setInfoMeal(meal);
     setIsPicModalOpen(true);
   };
+
   const handleSearch = (query) => {
     setSearchQuery(query);
   };
+
   const handleOpenDialog = (row) => {
     setSelectedRow(row);
-    // Set the state for the specific row to true
     setOpenDialogs((prev) => ({ ...prev, [row._id]: true }));
   };
 
   const handleCloseDialog = () => {
-    // Close the dialog for the current row
     setOpenDialogs((prev) => ({ ...prev, [selectedRow._id]: false }));
   };
+
   const handleAddMeal = (meal) => {
     const fechaActual = new Date();
     const horas = fechaActual.getHours();
@@ -178,13 +188,14 @@ export default function RecipeTable({}) {
       const mealToAdd = {
         name: meal.name,
         foods: meal.foods.map((food) => ({
-          foodId: food._id,
+          foodId: food.foodId._id,
           weightConsumed: food.weightConsumed,
         })),
         date: fechaActual,
         hour: horaFormateada,
       };
       setIsLoading(true);
+
       fetch(apiUrl + "/api/meals", {
         method: "POST",
         headers: {
@@ -219,8 +230,8 @@ export default function RecipeTable({}) {
   };
 
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         textAlign: "center",
         maxWidth: "100%",
         margin: "auto",
@@ -228,67 +239,62 @@ export default function RecipeTable({}) {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        overflowY: "auto",
-        overflowx: "auto",
+        overflowX: "auto",
       }}
     >
       <SearchBar setSearchQuery={handleSearch} />
       <TableContainer
         component={Paper}
-        sx={{ overflowX: "auto", minHeight: "450px", minWidth: "200px" }}
+        sx={{
+          minHeight: "450px",
+          minWidth: "300px",
+          maxWidth: "100%",
+          paddingBottom: "20px",
+          marginTop: "20px",
+        }}
       >
-        <Table aria-label="custom pagination table">
-          <TableHead sx={{ fontWeight: "bold" }}>
-            <TableRow sx={{ fontWeight: "bold" }}>
-              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
-                Name
-              </TableCell>
-              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
-                Rating
-              </TableCell>
-              {
-                <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
-                  Actions
-                </TableCell>
-              }
-              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
-                Ingredients
-              </TableCell>
-              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
-                Info
-              </TableCell>
-              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
-                Add to Meals
-              </TableCell>
+        <Table
+          aria-label="custom pagination table"
+          sx={{
+            tableLayout: "fixed",
+            minWidth: 650,
+            "& .MuiTableCell-root": {
+              textAlign: "center",
+              fontWeight: "bold",
+              padding: "8px",
+            },
+            "& .MuiTableCell-head": {
+              backgroundColor: "#f5f5f5",
+            },
+          }}
+        >
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>Rating</TableCell>
+              <TableCell>Actions</TableCell>
+              <TableCell>Ingredients</TableCell>
+              <TableCell>Info</TableCell>
+              <TableCell>Add to Meals</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {noResults ? (
               <TableRow>
-                <TableCell colSpan={3} align="center">
-                  No results found.{" "}
+                <TableCell colSpan={6} align="center">
+                  No results found.
                 </TableCell>
               </TableRow>
             ) : (
-              (filteredRecipes && 5 > 0
+              (filteredRecipes.length > 0
                 ? filteredRecipes.slice(page * 5, page * 5 + 5)
                 : filteredRecipes
               ).map((row) => (
                 <TableRow key={row._id}>
-                  <TableCell
-                    component="th"
-                    scope="row"
-                    style={{ width: 160 }}
-                    align="center"
-                  >
+                  <TableCell component="th" scope="row">
                     {row.name}
                   </TableCell>
-                  <TableCell
-                    component="th"
-                    scope="row"
-                    style={{ width: 160 }}
-                    align="center"
-                  >
+                  <TableCell>
                     <Rating
                       name={`rating-${row._id}`}
                       value={calculateAverageRating(row.ratings)}
@@ -301,7 +307,7 @@ export default function RecipeTable({}) {
                           rating.userId === localStorage.getItem("userId")
                       ) && (
                         <IconButton
-                          aria-label="edit row"
+                          aria-label="rate recipe"
                           size="small"
                           onClick={() => {
                             setSelectedRow(row);
@@ -312,70 +318,47 @@ export default function RecipeTable({}) {
                         </IconButton>
                       )}
                   </TableCell>
-
-                  <TableCell align="center">
-                    {row.creator === localStorage.getItem("userId") ? (
-                      <IconButton
-                        aria-label="edit row"
-                        size="small"
-                        onClick={() => handleEditClick(row)}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                    ) : (
-                      <IconButton
-                        aria-label="edit row"
-                        size="small"
-                        onClick={() => handleEditClick(row)}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                    )}
+                  <TableCell>
+                    <IconButton
+                      aria-label="edit recipe"
+                      size="small"
+                      onClick={() => handleEditClick(row)}
+                    >
+                      <EditIcon />
+                    </IconButton>
                   </TableCell>
-                  <TableCell align="center">
-                    {
-                      <IconButton
-                        aria-label="edit row"
-                        size="small"
-                        onClick={() => handleOpenDialog(row)}
-                      >
-                        <ReceiptLongIcon />
-                      </IconButton>
-                    }
+                  <TableCell>
+                    <IconButton
+                      aria-label="view ingredients"
+                      size="small"
+                      onClick={() => handleOpenDialog(row)}
+                    >
+                      <ReceiptLongIcon />
+                    </IconButton>
                     <DialogMessage
                       open={openDialogs[row._id] || false}
                       setOpen={handleCloseDialog}
                       ingredients={row.foods}
                     />
                   </TableCell>
-                  <TableCell align="center">
-                    {!(
-                      row.steps.length === 1 &&
-                      row.steps[0].images.length === 0 &&
-                      row.steps[0].text === ""
-                    ) ? (
-                      <IconButton
-                        aria-label="edit row"
-                        size="small"
-                        onClick={() => handleInfoClick(row)}
-                      >
-                        <InfoIcon />
-                      </IconButton>
-                    ) : (
-                      <IconButton
-                        aria-label="edit row"
-                        size="small"
-                        onClick={() => handleInfoClick(row)}
-                        disabled
-                      >
-                        <InfoIcon />
-                      </IconButton>
-                    )}
+                  <TableCell>
+                    <IconButton
+                      aria-label="view info"
+                      size="small"
+                      onClick={() => handleInfoClick(row)}
+                      disabled={
+                        row.steps.length === 1 &&
+                        row.steps[0].images.length === 0 &&
+                        row.steps[0].text === ""
+                      }
+                    >
+                      <InfoIcon />
+                    </IconButton>
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell>
                     <Tooltip title="Add Meal">
                       <IconButton
-                        aria-label="edit row"
+                        aria-label="add meal"
                         size="small"
                         onClick={() => handleAddMeal(row)}
                       >
@@ -399,7 +382,6 @@ export default function RecipeTable({}) {
           openRecipe={isModalRecipeOpen}
           setRecipeOpen={(value) => {
             setIsModalRecipeOpen(value);
-            // Call getRecipes when the RecipeForm is closed
             if (!value) {
               getRecipes();
             }
@@ -408,7 +390,6 @@ export default function RecipeTable({}) {
           foodModal={isModalFoodOpen}
           setOpenFoodModal={(value) => {
             setIsModalFoodOpen(value);
-            // Call getRecipes when the RecipeForm is closed
             if (!value) {
               getRecipes();
             }
@@ -423,7 +404,6 @@ export default function RecipeTable({}) {
           open={isRateModalOpen}
           setOpen={(value) => {
             setIsRateModalOpen(value);
-            // Call getRecipes when the RateModal is closed
             if (!value) {
               getRecipes();
             }
@@ -435,6 +415,6 @@ export default function RecipeTable({}) {
       <IconButton onClick={handleOpenForm}>
         <AddCircleRoundedIcon />
       </IconButton>
-    </div>
+    </Box>
   );
 }

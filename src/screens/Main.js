@@ -46,11 +46,11 @@ const Main = () => {
       }),
     }).then(function (response) {
       if (response.status === 200) {
-        enqueueSnackbar("The water glass was add successfully.", {
+        enqueueSnackbar("The water glass was added successfully.", {
           variant: "success",
         });
       } else {
-        enqueueSnackbar("An error occurred while adding the water glss.", {
+        enqueueSnackbar("An error occurred while adding the water glass.", {
           variant: "error",
         });
       }

@@ -84,6 +84,7 @@ const RecipeForm = ({
         ? apiUrl + `/api/recipes/${initialData._id}`
         : apiUrl + "/api/recipes";
       const method = initialData ? "PUT" : "POST";
+      console.log("aca: " + initialData);
       fetch(url, {
         method: method,
         headers: {
@@ -256,6 +257,7 @@ const RecipeForm = ({
     } else {
       updatedFoods[index].foodId = "";
     }
+
     setMealData({ ...mealData, foods: updatedFoods });
   };
 

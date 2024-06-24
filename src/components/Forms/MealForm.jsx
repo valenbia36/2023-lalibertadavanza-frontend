@@ -7,6 +7,8 @@ import {
   IconButton,
   Grid,
   FormControl,
+  CircularProgress,
+  Typography,
 } from "@mui/material";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
@@ -31,41 +33,66 @@ const MealForm = ({ open, setOpen, initialData }) => {
   const [mealData, setMealData] = useState(initialMealState);
   const [foodOptions, setFoodOptions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [foodsLoaded, setFoodsLoaded] = useState(false); // Estado para controlar la carga de alimentos
+  const [loadingFoods, setLoadingFoods] = useState(false); // Estado para controlar el estado de carga de alimentos en Autocomplete
   const { enqueueSnackbar } = useSnackbar();
 
+  // Cargar alimentos al montar el componente
+  useEffect(() => {
+    if (!foodsLoaded && !initialData) {
+      getFoods();
+    }
+  }, [foodsLoaded, initialData]);
+
+  // Inicializar mealData cuando cambia initialData o foodOptions
   useEffect(() => {
     if (initialData) {
-      const initialTime = new Date(`2023-01-01T${initialData.hour}`);
-      const initialDate = new Date(initialData.date + "T10:00:00Z");
-      setMealData({
-        ...initialData,
-        hour: initialTime,
-        date: initialDate,
-      });
+      initializeForm(initialData);
     } else {
-      setMealData({
-        name: "",
-        date: new Date(),
-        hour: new Date(),
-        foods: [{ foodId: "", weightConsumed: "" }],
-      });
+      initializeForm(initialMealState);
     }
-  }, [initialData]);
+  }, [initialData, foodOptions]);
 
-  useEffect(() => {
-    getFoods();
-  }, [open]);
+  const initializeForm = (data) => {
+    const initialTime = new Date(`2023-01-01T${data.hour}`);
+    const initialDate = new Date(data.date + "T10:00:00Z");
+    const initialFoods = data.foods.map((food) => ({
+      foodId: food.foodId._id,
+      weightConsumed: food.weightConsumed,
+    }));
+    setMealData({
+      ...data,
+      hour: initialTime,
+      date: initialDate,
+      foods: initialFoods,
+    });
+  };
 
   const getFoods = async () => {
-    const response = await fetch(apiUrl + "/api/foods/", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-    });
-    const data = await response.json();
-    setFoodOptions(data.data);
+    setLoadingFoods(true);
+    setIsLoading(true);
+    try {
+      const response = await fetch(apiUrl + "/api/foods/", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setFoodOptions(data.data);
+        setFoodsLoaded(true); // Marcar que los alimentos se han cargado correctamente
+      } else {
+        throw new Error("Failed to fetch food options");
+      }
+    } catch (error) {
+      console.error("Error fetching food options:", error);
+      enqueueSnackbar("Failed to load food options.", { variant: "error" });
+    } finally {
+      setIsLoading(false);
+      setLoadingFoods(false);
+    }
   };
 
   const handleAddMeal = () => {
@@ -98,7 +125,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
         body: JSON.stringify(mealData),
       })
         .then(function (response) {
-          if (response.status === 200) {
+          if (response.ok) {
             enqueueSnackbar(
               initialData
                 ? "The meal was updated successfully."
@@ -126,12 +153,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
   const closeModal = () => {
     setOpen(false);
     if (!initialData) {
-      setMealData({
-        name: "",
-        date: new Date(),
-        hour: new Date(),
-        foods: [{ foodId: "", weightConsumed: "" }],
-      });
+      setMealData(initialMealState);
     }
   };
 
@@ -155,10 +177,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
     if (newValue) {
       updatedFoods[index].foodId = newValue._id;
     } else {
-      updatedFoods[index].name = "";
-      updatedFoods[index].calories = 0;
-      updatedFoods[index].weight = 0;
-      updatedFoods[index].category = "";
+      updatedFoods[index].foodId = "";
     }
     setMealData({ ...mealData, foods: updatedFoods });
   };
@@ -226,7 +245,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
             <FormControl fullWidth>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
-                  label="Date (MM/DD/AAAA)"
+                  label="Date (MM/DD/YYYY)"
                   variant="outlined"
                   fullWidth
                   margin="normal"
@@ -277,9 +296,12 @@ const MealForm = ({ open, setOpen, initialData }) => {
                 <Autocomplete
                   id={`food-autocomplete-${index}`}
                   options={foodOptions}
-                  value={foodOptions.find(
-                    (option) => option.name === food.foodId.name
-                  )}
+                  loading={loadingFoods} // Mostrar spinner o "Loading"
+                  value={
+                    food.foodId
+                      ? foodOptions.find((option) => option._id === food.foodId)
+                      : null
+                  }
                   onChange={(e, newValue) =>
                     handleFoodInputChange(newValue, index)
                   }
@@ -290,6 +312,17 @@ const MealForm = ({ open, setOpen, initialData }) => {
                       label="Food"
                       variant="outlined"
                       fullWidth
+                      InputProps={{
+                        ...params.InputProps,
+                        endAdornment: (
+                          <React.Fragment>
+                            {loadingFoods ? (
+                              <CircularProgress color="inherit" size={20} />
+                            ) : null}
+                            {params.InputProps.endAdornment}
+                          </React.Fragment>
+                        ),
+                      }}
                     />
                   )}
                   noOptionsText="No foods available."

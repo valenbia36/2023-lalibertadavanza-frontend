@@ -37,14 +37,6 @@ const RecipeList = () => {
           setModalOpen={setIsModalRecipeOpen}
         />
       </div>
-      <React.Fragment>
-        {/* <RecipeForm
-          openRecipe={isModalRecipeOpen}
-          setRecipeOpen={setIsModalRecipeOpen}
-          setOpenFoodModal={setIsModalFoodOpen}
-          foodModal={isModalFoodOpen}
-        /> */}
-      </React.Fragment>
     </div>
   );
 };

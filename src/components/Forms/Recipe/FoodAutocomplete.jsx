@@ -12,7 +12,11 @@ export default function FoodAutocomplete({
       <Autocomplete
         id={`food-autocomplete-${index}`}
         options={foodOptions}
-        value={foodOptions.find((option) => option.name === food.name) || null}
+        value={
+          food.foodId._id
+            ? foodOptions.find((option) => option._id === food.foodId._id)
+            : foodOptions.find((option) => option._id === food.foodId._id)
+        }
         onChange={(e, newValue) => handleFoodInputChange(newValue, index)}
         getOptionLabel={(option) => option.name}
         renderInput={(params) => (
