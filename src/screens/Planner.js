@@ -8,6 +8,14 @@ import {
   SpeedDialAction,
   SpeedDialIcon,
   Box,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Button,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import LocalDrinkIcon from "@mui/icons-material/LocalDrink";
@@ -18,7 +26,6 @@ import { useSnackbar } from "notistack";
 import IntermittentFastingForm from "../components/Forms/IntermittentFastingForm";
 import Calendar from "../components/Planner/Calendar";
 import RecipeForm from "../components/Forms/Recipe/RecipeForm";
-import { getWeek } from "date-fns";
 
 const apiUrl = getApiUrl();
 
@@ -32,9 +39,11 @@ const Planner = () => {
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [isModalFoodOpen, setIsModalFoodOpen] = useState(false);
   const [isModalRecipeOpen, setIsModalRecipeOpen] = useState(false);
-
   const [openIntermittentFastingModal, setOpenIntermittentFastingModal] =
     useState(false);
+
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dontShowAgain, setDontShowAgain] = useState(false);
 
   useEffect(() => {
     function handleResize() {
@@ -46,6 +55,7 @@ const Planner = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, [theme]);
+
   useEffect(() => {
     async function fetchData() {
       await Promise.all([getPlan(), getRecipes()]);
@@ -53,7 +63,21 @@ const Planner = () => {
     }
 
     fetchData();
+
+    // Check local storage to see if the user opted to not show the dialog again
+    const dontShow = localStorage.getItem("dontShowPopup");
+    if (!dontShow) {
+      setOpenDialog(true);
+    }
   }, []);
+
+  const handleCloseDialog = () => {
+    if (dontShowAgain) {
+      localStorage.setItem("dontShowPopup", "true");
+    }
+    setOpenDialog(false);
+  };
+
   const renderCalendar = () => {
     if (isDataLoaded) {
       return (
@@ -65,7 +89,6 @@ const Planner = () => {
         />
       );
     } else {
-      // Puedes mostrar un mensaje de carga o cualquier otro indicador mientras esperas los datos
       return (
         <Box
           sx={{
@@ -94,11 +117,11 @@ const Planner = () => {
       }),
     }).then(function (response) {
       if (response.status === 200) {
-        enqueueSnackbar("The water glass was add successfully.", {
+        enqueueSnackbar("The water glass was added successfully.", {
           variant: "success",
         });
       } else {
-        enqueueSnackbar("An error occurred while adding the water glss.", {
+        enqueueSnackbar("An error occurred while adding the water glass.", {
           variant: "error",
         });
       }
@@ -120,6 +143,7 @@ const Planner = () => {
   const handleIntermittentFasting = () => {
     setOpenIntermittentFastingModal(true);
   };
+
   const getPlan = async () => {
     const response = await fetch(
       apiUrl + `/api/weeks/${localStorage.getItem("userId")}`,
@@ -136,6 +160,7 @@ const Planner = () => {
         setPlan(data[0]);
       });
   };
+
   const getRecipes = async () => {
     const response = await fetch(apiUrl + "/api/recipes/", {
       method: "GET",
@@ -147,10 +172,6 @@ const Planner = () => {
       .then((response) => response.json())
       .then((data) => setRecipes(data.data));
   };
-  useEffect(() => {
-    getPlan();
-    getRecipes();
-  }, []);
 
   const actions = [
     { icon: <LocalDrinkIcon />, name: "Water", onClick: handleWaterGlassClick },
@@ -207,7 +228,6 @@ const Planner = () => {
         openRecipe={isModalRecipeOpen}
         setRecipeOpen={(value) => {
           setIsModalRecipeOpen(value);
-          // Call getRecipes when the RecipeForm is closed
           if (!value) {
             getRecipes();
           }
@@ -215,12 +235,38 @@ const Planner = () => {
         foodModal={isModalFoodOpen}
         setOpenFoodModal={(value) => {
           setIsModalFoodOpen(value);
-          // Call getRecipes when the RecipeForm is closed
           if (!value) {
             getRecipes();
           }
         }}
       />
+
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>Welcome to the Planner</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            This is your dashboard to manage your daily meals. You can add more
+            recipes using the menu in the right bottom. To save the dashboard,
+            press the Save Plan button. You can view and interact with your
+            shopping list based on the dashboard by pressing the View Cart
+            button.
+          </DialogContentText>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={dontShowAgain}
+                onChange={(e) => setDontShowAgain(e.target.checked)}
+              />
+            }
+            label="Don't show this again"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            Got it
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

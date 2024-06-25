@@ -1,5 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Box, IconButton, Grid, TableRow } from "@mui/material";
+import {
+  Modal,
+  Box,
+  IconButton,
+  Grid,
+  TableRow,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
+  Checkbox,
+  FormControlLabel,
+} from "@mui/material";
 import { useSnackbar } from "notistack";
 import getApiUrl from "../../../helpers/apiConfig";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
@@ -14,6 +28,7 @@ import WeightField from "./WeightField";
 import AddPhoto from "./AddPhoto";
 import FoodForm from "../FoodForm";
 import FoodBankIcon from "@mui/icons-material/FoodBank";
+import AddIcon from "@mui/icons-material/Add";
 
 const apiUrl = getApiUrl();
 
@@ -34,11 +49,17 @@ const RecipeForm = ({
   const [foodOptions, setFoodOptions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
+  const [showInstructions, setShowInstructions] = useState(false);
+  const [dontShowAgain, setDontShowAgain] = useState(false);
 
   useEffect(() => {
     if (initialData) {
       setMealData({
         ...initialData,
+        foods: initialData.foods.map((food) => ({
+          foodId: food.foodId,
+          weightConsumed: food.weightConsumed.toString(),
+        })),
       });
     } else {
       setMealData({
@@ -52,6 +73,24 @@ const RecipeForm = ({
   useEffect(() => {
     getFoods();
   }, [foodModal]);
+
+  useEffect(() => {
+    const showInstructionsPreference = localStorage.getItem("showInstructions");
+    if (showInstructionsPreference !== "false") {
+      setShowInstructions(true);
+    }
+  }, []);
+
+  const handleDontShowAgainChange = (event) => {
+    setDontShowAgain(event.target.checked);
+  };
+
+  const handleCloseInstructions = () => {
+    if (dontShowAgain) {
+      localStorage.setItem("showInstructions", "false");
+    }
+    setShowInstructions(false);
+  };
 
   const getFoods = async () => {
     const response = await fetch(apiUrl + "/api/foods/", {
@@ -71,7 +110,8 @@ const RecipeForm = ({
       mealData.name === "" ||
       !mealData.foods.every(
         (food) => food.foodId !== "" && Number(food.weightConsumed) > 0
-      )
+      ) ||
+      !mealData.steps.every((step) => step.text.trim().length > 0)
     ) {
       setIsLoading(false);
       enqueueSnackbar("Please complete all the fields correctly.", {
@@ -84,7 +124,6 @@ const RecipeForm = ({
         ? apiUrl + `/api/recipes/${initialData._id}`
         : apiUrl + "/api/recipes";
       const method = initialData ? "PUT" : "POST";
-      console.log("aca: " + initialData);
       fetch(url, {
         method: method,
         headers: {
@@ -118,6 +157,7 @@ const RecipeForm = ({
       setIsLoading(false);
     }
   };
+
   const handleOpenFoodModal = () => {
     setOpenFoodModal(true);
   };
@@ -145,6 +185,7 @@ const RecipeForm = ({
     updatedFoods.splice(index, 1);
     setMealData({ ...mealData, foods: updatedFoods });
   };
+
   const handleAddStepInput = () => {
     setMealData((prevMealData) => ({
       ...prevMealData,
@@ -158,6 +199,7 @@ const RecipeForm = ({
       steps: prevMealData.steps.filter((_, index) => index !== indexToRemove),
     }));
   };
+
   const handleStepChange = (index, value, images) => {
     setMealData((prevMealData) => {
       const newSteps = [...prevMealData.steps];
@@ -165,6 +207,7 @@ const RecipeForm = ({
       return { ...prevMealData, steps: newSteps };
     });
   };
+
   const handleImageArrayChange = async (e, stepIndex) => {
     const files = e.target.files;
 
@@ -273,112 +316,110 @@ const RecipeForm = ({
   };
 
   return (
-    <Modal
-      open={openRecipe}
-      onClose={closeModal}
-      aria-labelledby="modal-title"
-      aria-describedby="modal-description"
-      disableScrollLock={true}
-    >
-      <Box
-        sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: "100%",
-          maxWidth: 500,
-          bgcolor: "background.paper",
-          boxShadow: 24,
-          maxHeight: "80vh !important",
-          overflowY: "auto !important",
-
-          p: 4,
-          borderRadius: "2%",
-        }}
+    <>
+      <Modal
+        open={openRecipe}
+        onClose={closeModal}
+        aria-labelledby="modal-title"
+        aria-describedby="modal-description"
+        disableScrollLock={true}
       >
-        <CloseButton closeModal={closeModal} />
-        <Grid container spacing={2}>
-          <NameField mealData={mealData} setMealData={setMealData} />
-          {mealData.steps &&
-            mealData.steps.map((step, index) => (
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "100%",
+            maxWidth: 500,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            maxHeight: "80vh !important",
+            overflowY: "auto !important",
+            p: 4,
+            borderRadius: "2%",
+          }}
+        >
+          <CloseButton closeModal={closeModal} />
+          <Grid container spacing={2}>
+            <NameField mealData={mealData} setMealData={setMealData} />
+            {mealData.steps &&
+              mealData.steps.map((step, index) => (
+                <React.Fragment key={index}>
+                  <StepField
+                    mealData={mealData}
+                    handleStepChange={handleStepChange}
+                    index={index}
+                  />
+                  <AddButton index={index} handleInput={handleAddStepInput} />
+                  <RemoveButton
+                    index={index}
+                    handleRemove={handleRemoveStepInput}
+                  />
+                  {mealData.steps[index] &&
+                  mealData.steps[index].images.length === 0 ? (
+                    <AddPhoto
+                      index={index}
+                      handleImageArrayChange={handleImageArrayChange}
+                      handleRemoveImage={handleRemoveImage}
+                    />
+                  ) : (
+                    <Grid
+                      item
+                      xs={1}
+                      sx={{ display: "flex", alignItems: "center" }}
+                    >
+                      <IconButton
+                        color="primary"
+                        onClick={() => handleRemoveImage(index)}
+                      >
+                        <CancelPresentationIcon />
+                      </IconButton>
+                    </Grid>
+                  )}
+                </React.Fragment>
+              ))}
+            {mealData.foods.map((food, index) => (
               <React.Fragment key={index}>
-                <StepField
-                  mealData={mealData}
-                  handleStepChange={handleStepChange}
+                <FoodAutocomplete
+                  food={food}
+                  foodOptions={foodOptions}
                   index={index}
+                  handleFoodInputChange={handleFoodInputChange}
                 />
-                <AddButton index={index} handleInput={handleAddStepInput} />
+                <WeightField
+                  food={food}
+                  index={index}
+                  handleQuantityInputChange={handleQuantityInputChange}
+                />
+                <AddButton index={index} handleInput={handleAddFoodInput} />
                 <RemoveButton
                   index={index}
-                  handleRemove={handleRemoveStepInput}
+                  handleRemove={handleRemoveFoodInput}
                 />
-
-                {mealData.steps[index] &&
-                mealData.steps[index].images.length === 0 ? (
-                  <AddPhoto
-                    index={index}
-                    handleImageArrayChange={handleImageArrayChange}
-                    handleRemoveImage={handleRemoveImage}
-                  />
-                ) : (
+                {food.foodId === "" && (
                   <Grid
                     item
                     xs={1}
                     sx={{ display: "flex", alignItems: "center" }}
                   >
-                    <IconButton
-                      color="primary"
-                      onClick={() => handleRemoveImage(index)}
-                    >
-                      <CancelPresentationIcon />
+                    <IconButton color="primary" onClick={handleOpenFoodModal}>
+                      <FoodBankIcon />
                     </IconButton>
                   </Grid>
                 )}
               </React.Fragment>
             ))}
-
-          {mealData.foods.map((food, index) => (
-            <React.Fragment key={index}>
-              <FoodAutocomplete
-                food={food}
-                foodOptions={foodOptions}
-                index={index}
-                handleFoodInputChange={handleFoodInputChange}
-              />
-
-              <WeightField
-                food={food}
-                index={index}
-                handleQuantityInputChange={handleQuantityInputChange}
-              />
-              <AddButton index={index} handleInput={handleAddFoodInput} />
-              <RemoveButton
-                index={index}
-                handleRemove={handleRemoveFoodInput}
-              />
-              {food.foodId === "" && (
-                <Grid
-                  item
-                  xs={1}
-                  sx={{ display: "flex", alignItems: "center" }}
-                >
-                  <IconButton color="primary" onClick={handleOpenFoodModal}>
-                    <FoodBankIcon />
-                  </IconButton>
-                </Grid>
-              )}
-            </React.Fragment>
-          ))}
-          <FoodForm open={foodModal} setOpen={setOpenFoodModal} />
-          <AddMealButton
-            initialData={initialData}
-            handleAddMeal={handleAddRecipe}
-            disable={isLoading}
-          />
-        </Grid>
-      </Box>
-    </Modal>
+            <FoodForm open={foodModal} setOpen={setOpenFoodModal} />
+            <AddMealButton
+              initialData={initialData}
+              handleAddMeal={handleAddRecipe}
+              disable={isLoading}
+            />
+          </Grid>
+        </Box>
+      </Modal>
+    </>
   );
 };
 

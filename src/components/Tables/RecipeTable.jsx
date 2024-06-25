@@ -301,10 +301,12 @@ export default function RecipeTable({}) {
                       precision={0.5}
                       readOnly={true}
                     />
+                    {/* Esto no funciona porque no existe mas el localStorage.getItem("userId") */}
                     {row.ratings &&
                       !row.ratings.find(
                         (rating) =>
-                          rating.userId === localStorage.getItem("userId")
+                          rating.userId.toString() ===
+                          localStorage.getItem("userId")
                       ) && (
                         <IconButton
                           aria-label="rate recipe"

@@ -15,6 +15,7 @@ const BuyList = ({ shoppingListData, weeklyTotalPerFood }) => {
   const calculateTotalWeightConsumedPerDay = (data) => {
     const totalWeightConsumedPerDay = {};
     const weeklyTotalConsumed = {};
+    /*  console.log(data); */
 
     // Iterate over each day
     Object.keys(data).forEach((day) => {
@@ -24,7 +25,7 @@ const BuyList = ({ shoppingListData, weeklyTotalPerFood }) => {
       Object.keys(data[day] || {}).forEach((meal) => {
         // Iterate over each food item in the meal
         (data[day][meal] || []).forEach((food) => {
-          const foodName = food.name;
+          const foodName = food.foodId.name;
 
           // Initialize total weight consumed for the food if not present
           if (!totalWeightConsumedPerDay[day][foodName]) {
@@ -51,7 +52,7 @@ const BuyList = ({ shoppingListData, weeklyTotalPerFood }) => {
   // Example usage:
   const { totalWeightConsumedPerDay, weeklyTotalConsumed } =
     calculateTotalWeightConsumedPerDay(shoppingListData);
-
+  /* console.log(totalWeightConsumedPerDay); */
   return (
     <div>
       {/* Mostrar la suma total de cada alimento por día */}

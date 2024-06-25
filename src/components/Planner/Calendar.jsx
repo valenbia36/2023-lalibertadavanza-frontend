@@ -7,13 +7,17 @@ import {
   Tooltip,
   Typography,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
 import RecipeAutocomplete from "./RecipeAutocomplete";
 import getApiUrl from "../../helpers/apiConfig";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import CheckIcon from "@mui/icons-material/Check";
-import ConfirmButton from "./ConfirmButton";
 import { useSnackbar } from "notistack";
 import { ShoppingList } from "./ShoppingList";
 
@@ -47,6 +51,10 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
   const [weeklyTotalPerFood, setWeeklyTotalPerFood] = useState({});
   const [refresh, setRefresh] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
+  const [addedMealsCount, setAddedMealsCount] = useState(0);
+  const [mealToAdd, setMealToAdd] = useState(null);
+
   useEffect(() => {
     if (initialData && Object.keys(initialData).length > 0) {
       setSelectedRecipes({ ...initialData });
@@ -61,9 +69,10 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
       [day]: { ...selectedRecipes[day], [meal]: recipe },
     });
   };
+
   const handleShoppingList = () => {
     const shoppingListData = {};
-    const dailyTotalPerFood = {}; // New object to store daily total consumption for each food
+    const dailyTotalPerFood = {};
 
     for (const day of daysOfWeek) {
       const breakfast = selectedRecipes[day]?.breakfast;
@@ -77,15 +86,12 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
         if (selectedRecipes[day][meal] && selectedRecipes[day][meal].foods) {
           const foods = selectedRecipes[day][meal].foods;
           foods.forEach((food) => {
-            // Initialize daily total for each food if not present
             if (!dailyTotalPerFood[food.name]) {
               dailyTotalPerFood[food.name] = 0;
             }
 
-            // Increment daily total for each food
             dailyTotalPerFood[food.name] += food.weightConsumed;
 
-            // Add food to shopping list data
             if (!shoppingListData[day][meal]) {
               shoppingListData[day][meal] = [];
             }
@@ -102,7 +108,7 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
 
     setOpenList(true);
     setShoppingListData(shoppingListData);
-    setWeeklyTotalPerFood(dailyTotalPerFood); // Update the state with the daily total consumption per food
+    setWeeklyTotalPerFood(dailyTotalPerFood);
   };
 
   const handleAddToCalendar = () => {
@@ -114,7 +120,6 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
       },
       body: JSON.stringify({
         ...selectedRecipes,
-        userId: localStorage.getItem("userId"),
       }),
     })
       .then(function (response) {
@@ -133,7 +138,18 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
         console.error("Error during fetch:", error);
       });
   };
+
   const handleAddMeal = (meal, timeOfTheDay, hour) => {
+    if (addedMealsCount > 0) {
+      setMealToAdd({ meal, timeOfTheDay, hour });
+      setShowConfirmationDialog(true);
+    } else {
+      addMealToCalendar(meal, timeOfTheDay, hour);
+      setAddedMealsCount(addedMealsCount + 1);
+    }
+  };
+
+  const addMealToCalendar = (meal, timeOfTheDay, hour) => {
     handleAddToCalendar();
     const fechaActual = new Date();
     const horas = fechaActual.getHours();
@@ -181,6 +197,18 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
       });
     }
   };
+
+  const handleConfirmAddMeal = () => {
+    if (mealToAdd) {
+      addMealToCalendar(mealToAdd.meal, mealToAdd.timeOfTheDay, mealToAdd.hour);
+      setShowConfirmationDialog(false);
+    }
+  };
+
+  const handleCloseConfirmationDialog = () => {
+    setShowConfirmationDialog(false);
+  };
+
   function getFecha(fecha) {
     var cadenaFecha = fecha;
     var fechaObjeto = new Date(cadenaFecha);
@@ -207,7 +235,7 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
         justifyContent: "center",
         flexDirection: "column",
         alignItems: "center",
-        marginBottom: 0, // Ajusta este valor según tus necesidades
+        marginBottom: 0,
       }}
     >
       <Grid container spacing={2}>
@@ -226,7 +254,7 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
                   today.toLocaleDateString("en", { weekday: "long" }) === day
                     ? "0 0 15px rgba(255, 0, 0, 0.8)"
                     : "none",
-                marginBottom: 0, // Ajusta este valor según tus necesidades
+                marginBottom: 0,
               }}
             >
               <Typography variant="h6" align="center" gutterBottom>
@@ -360,30 +388,26 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
           marginTop: "10px",
         }}
       >
-        {/* <IconButton
-          type="submit"
-          aria-label="search"
-          onClick={handleShoppingList}
-        >
-          <ShoppingCartCheckoutIcon fontSize="large" />
-        </IconButton> */}
         <Button
-          variant="outlined"
+          variant="contained"
           type="submit"
           aria-label="search"
           onClick={handleShoppingList}
           endIcon={<ShoppingCartCheckoutIcon />}
+          style={{ marginRight: "10px" }}
         >
           View Cart
         </Button>
-
-        <IconButton
+        <Button
+          variant="contained"
           type="submit"
           aria-label="search"
           onClick={handleAddToCalendar}
+          endIcon={<SaveAltIcon />}
+          style={{ marginLeft: "10px" }}
         >
-          <SaveAltIcon fontSize="large" />
-        </IconButton>
+          Save Plan
+        </Button>
       </div>
       {initialData?.lastUpdate && (
         <Typography variant="h6" align="center" gutterBottom>
@@ -405,6 +429,27 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
         shoppingListData={shoppingListData}
         weeklyTotalPerFood={weeklyTotalPerFood}
       />
+
+      <Dialog
+        open={showConfirmationDialog}
+        onClose={handleCloseConfirmationDialog}
+      >
+        <DialogTitle>Confirm</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            You have already added this meal today. Are you sure you want to add
+            it again?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseConfirmationDialog} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleConfirmAddMeal} color="primary" autoFocus>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };

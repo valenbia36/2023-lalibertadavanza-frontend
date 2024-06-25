@@ -41,7 +41,6 @@ export default function LabelBottomNavigation() {
   }, [location.pathname]);
 
   const handleChange = (event, newValue) => {
-    console.log(newValue);
     setValue(newValue);
 
     switch (newValue) {

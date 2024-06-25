@@ -13,7 +13,6 @@ export default function DialogMessage({ open, setOpen, ingredients }) {
 
   return (
     <React.Fragment>
-      {console.log(ingredients)}
       <Dialog
         open={open}
         aria-labelledby="alert-dialog-title"

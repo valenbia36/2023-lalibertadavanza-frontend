@@ -75,7 +75,6 @@ export default function FoodTable({ filterOpen, modalOpen }) {
   useEffect(() => {
     if (filterOpen === false) {
       setSelectedCategory(initialSelectedCategoryState);
-      console.log(selectedCategory);
       getFoods();
     }
   }, [filterOpen, modalOpen]);

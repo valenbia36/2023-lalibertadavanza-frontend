@@ -2,24 +2,24 @@ import React, { useState } from "react";
 import { Button, Modal, Box, IconButton, Rating } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import getApiUrl from "../helpers/apiConfig";
+import { useSnackbar } from "notistack";
 const apiUrl = getApiUrl();
 export default function RateModal({ open, setOpen, row, setLoaded }) {
   const [value, setValue] = React.useState(0);
+  const { enqueueSnackbar } = useSnackbar();
+  const [isLoading, setIsLoading] = React.useState(false);
   const [userRatings, setUserRatings] = useState({});
   const [userRatedRecipes, setUserRatedRecipes] = useState(new Set());
   const handleRatingChange = async (recipeId, newRating) => {
     try {
       // Verificar si el usuario ya calificó esta receta
-      if (userRatedRecipes.has(recipeId)) {
+      /* if (userRatedRecipes.has(recipeId)) {
         console.log("Ya has calificado esta receta");
         return;
-      }
-      console.log({
-        rate: newRating,
-        id: recipeId,
-      });
+      } */
 
       // Llamar al endpoint para agregar la calificación
+      setIsLoading(true);
       const response = await fetch(apiUrl + `/api/recipes/rate/${recipeId}`, {
         method: "PUT",
         headers: {
@@ -30,11 +30,25 @@ export default function RateModal({ open, setOpen, row, setLoaded }) {
           rate: newRating,
           id: recipeId,
         }),
+      }).then(function (response) {
+        if (response.status === 200) {
+          enqueueSnackbar("Rate was added successfully", {
+            variant: "success",
+          });
+        } else if (response.status === 401) {
+          enqueueSnackbar("You have already rate this recipe", {
+            variant: "error",
+          });
+        } else {
+          enqueueSnackbar("An error occurred while saving the rating.", {
+            variant: "error",
+          });
+        }
       });
-      const data = await response.json();
+      //const data = await response.json();
+      setIsLoading(false);
       setLoaded(true);
     } catch (error) {
-      console.error("Error al calificar la receta", error);
       // Manejar el error según tus necesidades
     }
   };
@@ -96,6 +110,7 @@ export default function RateModal({ open, setOpen, row, setLoaded }) {
             setValue(0);
             setOpen(false);
           }}
+          disabled={isLoading}
         >
           Rate
         </Button>
