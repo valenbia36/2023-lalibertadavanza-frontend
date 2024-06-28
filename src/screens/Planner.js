@@ -145,16 +145,13 @@ const Planner = () => {
   };
 
   const getPlan = async () => {
-    const response = await fetch(
-      apiUrl + `/api/weeks/${localStorage.getItem("userId")}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      }
-    )
+    const response = await fetch(apiUrl + `/api/weeks/`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         setPlan(data[0]);

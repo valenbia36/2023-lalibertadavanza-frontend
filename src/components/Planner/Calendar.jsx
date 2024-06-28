@@ -140,7 +140,7 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
   };
 
   const handleAddMeal = (meal, timeOfTheDay, hour) => {
-    if (addedMealsCount > 0) {
+    if (meal) {
       setMealToAdd({ meal, timeOfTheDay, hour });
       setShowConfirmationDialog(true);
     } else {
@@ -199,7 +199,7 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
   };
 
   const handleConfirmAddMeal = () => {
-    if (mealToAdd) {
+    if (mealToAdd && mealToAdd.meal) {
       addMealToCalendar(mealToAdd.meal, mealToAdd.timeOfTheDay, mealToAdd.hour);
       setShowConfirmationDialog(false);
     }
@@ -263,7 +263,7 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
 
               <div>
                 <Typography variant="subtitle1">
-                  Breakfast:{}
+                  Breakfast:
                   {today.toLocaleDateString("en", { weekday: "long" }) ===
                     day && (
                     <Tooltip title="Add to meals">
@@ -437,8 +437,8 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
         <DialogTitle>Confirm</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            You have already added this meal today. Are you sure you want to add
-            it again?
+            You have already added a meal today. Are you sure you want to add
+            another one?
           </DialogContentText>
         </DialogContent>
         <DialogActions>

@@ -235,20 +235,21 @@ export default function RecipeTable({}) {
         textAlign: "center",
         maxWidth: "100%",
         margin: "auto",
-        minHeight: "400px",
+        //minHeight: "400px", // Ajusta según sea necesario para evitar el scroll vertical
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        overflowX: "auto",
+
+        overflowX: "auto", // Asegura que el contenido no se desborde horizontalmente
       }}
     >
       <SearchBar setSearchQuery={handleSearch} />
       <TableContainer
         component={Paper}
         sx={{
-          minHeight: "450px",
-          minWidth: "300px",
-          maxWidth: "100%",
+          minHeight: "450px", // Ajusta según sea necesario
+          minWidth: "300px", // Ajusta según sea necesario
+          maxWidth: "100%", // Ajusta según sea necesario para que sea responsive
           paddingBottom: "20px",
           marginTop: "20px",
         }}
