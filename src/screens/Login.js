@@ -83,6 +83,7 @@ const Login = () => {
           });
           return;
         }
+        //SOLO DEBERIA TRAER EL MAIL
         const userId = data.data._id;
         const userName = data.data.firstName + " " + data.data.lastName;
 
@@ -91,6 +92,7 @@ const Login = () => {
           headers: {
             "Content-Type": "application/json",
           },
+          //ACA SOLO MANDO EL MAIL
           body: JSON.stringify({
             email: recoveryEmail,
             token: getUID(),

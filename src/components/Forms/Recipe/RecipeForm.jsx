@@ -5,6 +5,7 @@ import {
   IconButton,
   Grid,
   TableRow,
+  TextField,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -13,6 +14,7 @@ import {
   Button,
   Checkbox,
   FormControlLabel,
+  CircularProgress,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import getApiUrl from "../../../helpers/apiConfig";
@@ -28,7 +30,9 @@ import WeightField from "./WeightField";
 import AddPhoto from "./AddPhoto";
 import FoodForm from "../FoodForm";
 import FoodBankIcon from "@mui/icons-material/FoodBank";
-import AddIcon from "@mui/icons-material/Add";
+import { Autocomplete } from "@mui/material";
+import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
+import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
 
 const apiUrl = getApiUrl();
 
@@ -51,8 +55,10 @@ const RecipeForm = ({
   const { enqueueSnackbar } = useSnackbar();
   const [showInstructions, setShowInstructions] = useState(false);
   const [dontShowAgain, setDontShowAgain] = useState(false);
+  const [foodsLoaded, setFoodsLoaded] = useState(false); // Estado para controlar la carga de alimentos
+  const [loadingFoods, setLoadingFoods] = useState(false); // Estado para controlar el estado de carga de alimentos en Autocomplete
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (initialData) {
       setMealData({
         ...initialData,
@@ -68,11 +74,64 @@ const RecipeForm = ({
         foods: [{ foodId: "", weightConsumed: "" }],
       });
     }
-  }, [initialData]);
-
+  }, [initialData]); */
+  // Cargar alimentos al montar el componente
   useEffect(() => {
-    getFoods();
-  }, [foodModal]);
+    if (!foodsLoaded && !initialData) {
+      getFoods();
+    }
+  }, [foodsLoaded, initialData]);
+
+  // Inicializar mealData cuando cambia initialData o foodOptions
+  useEffect(() => {
+    if (initialData) {
+      initializeForm(initialData);
+    } else {
+      initializeForm(initialMealState);
+    }
+  }, [initialData, foodOptions]);
+
+  const initializeForm = (data) => {
+    const initialTime = new Date(`2023-01-01T${data.hour}`);
+    const initialDate = new Date(data.date + "T10:00:00Z");
+    const initialFoods = data.foods.map((food) => ({
+      foodId: food.foodId._id,
+      weightConsumed: food.weightConsumed,
+    }));
+    setMealData({
+      ...data,
+      hour: initialTime,
+      date: initialDate,
+      foods: initialFoods,
+    });
+  };
+
+  const getFoods = async () => {
+    setLoadingFoods(true);
+    setIsLoading(true);
+    try {
+      const response = await fetch(apiUrl + "/api/foods/", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setFoodOptions(data.data);
+        setFoodsLoaded(true); // Marcar que los alimentos se han cargado correctamente
+      } else {
+        throw new Error("Failed to fetch food options");
+      }
+    } catch (error) {
+      console.error("Error fetching food options:", error);
+      enqueueSnackbar("Failed to load food options.", { variant: "error" });
+    } finally {
+      setIsLoading(false);
+      setLoadingFoods(false);
+    }
+  };
 
   useEffect(() => {
     const showInstructionsPreference = localStorage.getItem("showInstructions");
@@ -92,7 +151,7 @@ const RecipeForm = ({
     setShowInstructions(false);
   };
 
-  const getFoods = async () => {
+  /*  const getFoods = async () => {
     const response = await fetch(apiUrl + "/api/foods/", {
       method: "GET",
       headers: {
@@ -102,7 +161,7 @@ const RecipeForm = ({
     });
     const data = await response.json();
     setFoodOptions(data.data);
-  };
+  }; */
 
   const handleAddRecipe = () => {
     setIsLoading(true);
@@ -381,30 +440,84 @@ const RecipeForm = ({
               ))}
             {mealData.foods.map((food, index) => (
               <React.Fragment key={index}>
-                <FoodAutocomplete
-                  food={food}
-                  foodOptions={foodOptions}
-                  index={index}
-                  handleFoodInputChange={handleFoodInputChange}
-                />
-                <WeightField
-                  food={food}
-                  index={index}
-                  handleQuantityInputChange={handleQuantityInputChange}
-                />
-                <AddButton index={index} handleInput={handleAddFoodInput} />
-                <RemoveButton
-                  index={index}
-                  handleRemove={handleRemoveFoodInput}
-                />
-                {food.foodId === "" && (
+                <Grid item xs={6}>
+                  <Autocomplete
+                    id={`food-autocomplete-${index}`}
+                    options={foodOptions}
+                    loading={loadingFoods} // Mostrar spinner o "Loading"
+                    value={
+                      food.foodId
+                        ? foodOptions.find(
+                            (option) => option._id === food.foodId
+                          )
+                        : null
+                    }
+                    onChange={(e, newValue) =>
+                      handleFoodInputChange(newValue, index)
+                    }
+                    getOptionLabel={(option) => option.name}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Food"
+                        variant="outlined"
+                        fullWidth
+                        InputProps={{
+                          ...params.InputProps,
+                          endAdornment: (
+                            <React.Fragment>
+                              {loadingFoods ? (
+                                <CircularProgress color="inherit" size={20} />
+                              ) : null}
+                              {params.InputProps.endAdornment}
+                            </React.Fragment>
+                          ),
+                        }}
+                      />
+                    )}
+                    noOptionsText="No foods available."
+                    ListboxProps={{
+                      style: {
+                        maxHeight: 110,
+                      },
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={4}>
+                  <TextField
+                    InputProps={{
+                      inputProps: { min: 1 },
+                    }}
+                    label={`Weight (gr/ml)`}
+                    type="number"
+                    variant="outlined"
+                    fullWidth
+                    value={food.weightConsumed}
+                    onChange={(e) => handleQuantityInputChange(e, index)}
+                  />
+                </Grid>
+                {index === 0 && (
                   <Grid
                     item
-                    xs={1}
+                    xs={2}
                     sx={{ display: "flex", alignItems: "center" }}
                   >
-                    <IconButton color="primary" onClick={handleOpenFoodModal}>
-                      <FoodBankIcon />
+                    <IconButton color="primary" onClick={handleAddFoodInput}>
+                      <AddCircleRoundedIcon />
+                    </IconButton>
+                  </Grid>
+                )}
+                {index > 0 && (
+                  <Grid
+                    item
+                    xs={2}
+                    sx={{ display: "flex", alignItems: "center" }}
+                  >
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleRemoveFoodInput(index)}
+                    >
+                      <RemoveCircleRoundedIcon />
                     </IconButton>
                   </Grid>
                 )}

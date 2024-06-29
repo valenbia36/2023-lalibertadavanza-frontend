@@ -94,6 +94,17 @@ const MealForm = ({ open, setOpen, initialData }) => {
       setLoadingFoods(false);
     }
   };
+  const handleGetActiveIntermittentFasting = async () => {
+    const response = await fetch(apiUrl + "/api/intermittentFasting/active/", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    });
+    const data = await response.json();
+    return data.filteredData.length;
+  };
 
   const handleAddMeal = () => {
     if (
@@ -109,44 +120,47 @@ const MealForm = ({ open, setOpen, initialData }) => {
       });
       return;
     } else {
-      mealData.hour = mealData.hour.toTimeString().slice(0, 5);
-      mealData.date.setHours(1, 0);
-      setIsLoading(true);
-      const url = initialData
-        ? apiUrl + `/api/meals/${initialData._id}`
-        : apiUrl + "/api/meals";
-      const method = initialData ? "PUT" : "POST";
-      fetch(url, {
-        method: method,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-        body: JSON.stringify(mealData),
-      })
-        .then(function (response) {
-          if (response.ok) {
-            enqueueSnackbar(
-              initialData
-                ? "The meal was updated successfully."
-                : "The meal was created successfully.",
-              {
-                variant: "success",
-              }
-            );
-            setIsLoading(false);
-            closeModal();
-          } else {
+      if (handleGetActiveIntermittentFasting() > 0) {
+      } else {
+        mealData.hour = mealData.hour.toTimeString().slice(0, 5);
+        mealData.date.setHours(1, 0);
+        setIsLoading(true);
+        const url = initialData
+          ? apiUrl + `/api/meals/${initialData._id}`
+          : apiUrl + "/api/meals";
+        const method = initialData ? "PUT" : "POST";
+        fetch(url, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+          body: JSON.stringify(mealData),
+        })
+          .then(function (response) {
+            if (response.ok) {
+              enqueueSnackbar(
+                initialData
+                  ? "The meal was updated successfully."
+                  : "The meal was created successfully.",
+                {
+                  variant: "success",
+                }
+              );
+              setIsLoading(false);
+              closeModal();
+            } else {
+              enqueueSnackbar("An error occurred while saving the meal.", {
+                variant: "error",
+              });
+            }
+          })
+          .catch(function (error) {
             enqueueSnackbar("An error occurred while saving the meal.", {
               variant: "error",
             });
-          }
-        })
-        .catch(function (error) {
-          enqueueSnackbar("An error occurred while saving the meal.", {
-            variant: "error",
           });
-        });
+      }
     }
   };
 
