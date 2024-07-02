@@ -145,6 +145,7 @@ const Login = () => {
               data.user.firstName + " " + data.user.lastName
             );
             localStorage.setItem("userMail", data.user.email);
+            localStorage.setItem("userId", data.user._id);
 
             window.location.replace("/main");
             setIsLoading(false);

@@ -302,7 +302,8 @@ export default function RecipeTable({}) {
                       precision={0.5}
                       readOnly={true}
                     />
-                    {/* Esto no funciona porque no existe mas el localStorage.getItem("userId") */}
+                    {/* Esto no funciona porque no existe mas el localStorage.getItem("userId") Volver a poner el userId en el localStorage
+                    ya que tambien va a servir para el boton de editar */}
                     {row.ratings &&
                       !row.ratings.find(
                         (rating) =>
@@ -322,10 +323,12 @@ export default function RecipeTable({}) {
                       )}
                   </TableCell>
                   <TableCell>
+                    {console.log(localStorage.getItem("userId"))}
                     <IconButton
                       aria-label="edit recipe"
                       size="small"
                       onClick={() => handleEditClick(row)}
+                      disabled={row.creator !== localStorage.getItem("userId")}
                     >
                       <EditIcon />
                     </IconButton>
