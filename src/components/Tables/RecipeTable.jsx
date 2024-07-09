@@ -323,7 +323,6 @@ export default function RecipeTable({}) {
                       )}
                   </TableCell>
                   <TableCell>
-                    {console.log(localStorage.getItem("userId"))}
                     <IconButton
                       aria-label="edit recipe"
                       size="small"

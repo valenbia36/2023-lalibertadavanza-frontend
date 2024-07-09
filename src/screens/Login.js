@@ -86,7 +86,7 @@ const Login = () => {
         //SOLO DEBERIA TRAER EL MAIL
         const userId = data.data._id;
         const userName = data.data.firstName + " " + data.data.lastName;
-
+        setIsLoading(true);
         const response1 = await fetch(apiUrl + "/api/notifications/sendEmail", {
           method: "POST",
           headers: {
@@ -101,7 +101,7 @@ const Login = () => {
             url: url,
           }),
         });
-
+        setIsLoading(false);
         if (response1.status === 200) {
           enqueueSnackbar(
             "An email with the link to recover your password has been sent.",
@@ -380,6 +380,7 @@ const Login = () => {
               width: "100%",
             }}
             onClick={handleRecoverClick}
+            disabled={isLoading}
           >
             Reset Password
           </Button>
