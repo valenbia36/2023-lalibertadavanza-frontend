@@ -50,19 +50,16 @@ const MealList = () => {
           onClick={() => {
             setIsModalOpen(true);
           }}
-          style={{ marginRight: "10px" }} // Agregamos margen a la derecha para separar los botones
+          style={{ marginRight: "10px" }}
         >
           <AddCircleRoundedIcon fontSize="small" />{" "}
-          {/* Definimos un tamaño más pequeño */}
         </IconButton>
         <Tooltip title="Plan Meals">
           <Button
             variant="contained"
-            size="small" // Definimos un tamaño más pequeño para el botón
+            size="small"
             endIcon={
-              <IconButton
-                size="small" // Definimos un tamaño más pequeño para el icono
-              >
+              <IconButton size="small">
                 <CalendarMonthIcon />
               </IconButton>
             }

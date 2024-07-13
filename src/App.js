@@ -70,14 +70,7 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="resetPassword"
-              element={
-                <ProtectedRoute>
-                  <ResetPassword />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="resetPassword" element={<ResetPassword />} />
             <Route
               path="statistics"
               element={

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   TextField,
   Button,
@@ -20,6 +20,8 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import CloseIcon from "@mui/icons-material/Close";
 import getApiUrl from "../../helpers/apiConfig";
 import { Autocomplete } from "@mui/material";
+import CancelIntermittentFastingForm from "../Forms/CancelIntermittentFastingForm";
+
 const apiUrl = getApiUrl();
 
 const initialMealState = {
@@ -33,25 +35,31 @@ const MealForm = ({ open, setOpen, initialData }) => {
   const [mealData, setMealData] = useState(initialMealState);
   const [foodOptions, setFoodOptions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [foodsLoaded, setFoodsLoaded] = useState(false); // Estado para controlar la carga de alimentos
-  const [loadingFoods, setLoadingFoods] = useState(false); // Estado para controlar el estado de carga de alimentos en Autocomplete
+  const [foodsLoaded, setFoodsLoaded] = useState(false);
+  const [loadingFoods, setLoadingFoods] = useState(false);
+  const [openCancelDialog, setOpenCancelDialog] = useState(false);
+
   const { enqueueSnackbar } = useSnackbar();
 
-  // Cargar alimentos al montar el componente
   useEffect(() => {
-    if (!foodsLoaded && !initialData) {
+    if (!foodsLoaded) {
       getFoods();
     }
-  }, [foodsLoaded, initialData]);
+  }, [foodsLoaded]);
 
-  // Inicializar mealData cuando cambia initialData o foodOptions
   useEffect(() => {
-    if (initialData) {
+    if (open) {
+      getFoods();
+    }
+  }, [open]);
+
+  useEffect(() => {
+    if (initialData && foodsLoaded) {
       initializeForm(initialData);
-    } else {
+    } else if (foodsLoaded) {
       initializeForm(initialMealState);
     }
-  }, [initialData, foodOptions]);
+  }, [initialData, foodsLoaded]);
 
   const initializeForm = (data) => {
     const initialTime = new Date(`2023-01-01T${data.hour}`);
@@ -82,7 +90,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
       if (response.ok) {
         const data = await response.json();
         setFoodOptions(data.data);
-        setFoodsLoaded(true); // Marcar que los alimentos se han cargado correctamente
+        setFoodsLoaded(true);
       } else {
         throw new Error("Failed to fetch food options");
       }
@@ -94,83 +102,117 @@ const MealForm = ({ open, setOpen, initialData }) => {
       setLoadingFoods(false);
     }
   };
+
   const handleGetActiveIntermittentFasting = async () => {
-    const response = await fetch(apiUrl + "/api/intermittentFasting/active/", {
-      method: "GET",
+    try {
+      const response = await fetch(apiUrl + "/api/intermittentFasting/active", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      });
+      const data = await response.json();
+      if (data.filteredData) {
+        return data.filteredData;
+      }
+    } catch (error) {
+      console.error("Error fetching active intermittent fasting:", error);
+    }
+  };
+
+  const handleAddMeal = async () => {
+    try {
+      setIsLoading(true);
+
+      if (
+        mealData.name === "" ||
+        mealData.date === "" ||
+        mealData.hour === "" ||
+        !mealData.foods.every(
+          (food) => food.foodId !== "" && Number(food.weightConsumed) > 0
+        )
+      ) {
+        enqueueSnackbar("Please complete all the fields correctly.", {
+          variant: "error",
+        });
+        return;
+      }
+
+      mealData.hour = mealData.hour.toTimeString().slice(0, 5);
+      mealData.date.setHours(
+        mealData.hour.split(":")[0] - 3,
+        mealData.hour.split(":")[1]
+      );
+
+      const activeIF = await handleGetActiveIntermittentFasting();
+      if (
+        activeIF &&
+        new Date(mealData.date).toISOString() >= activeIF.startDateTime &&
+        new Date(mealData.date).toISOString() <=
+          new Date(activeIF.endDateTime).toISOString()
+      ) {
+        setOpenCancelDialog(true);
+      } else {
+        await confirmMeal();
+      }
+    } catch (error) {
+      console.error("Error saving meal:", error);
+      enqueueSnackbar("An error occurred while saving the meal.", {
+        variant: "error",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const confirmMeal = async () => {
+    const url = initialData
+      ? apiUrl + `/api/meals/${initialData._id}`
+      : apiUrl + "/api/meals";
+    const method = initialData ? "PUT" : "POST";
+    const response = await fetch(url, {
+      method: method,
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
+      body: JSON.stringify(mealData),
     });
-    const data = await response.json();
-    return data.filteredData.length;
-  };
 
-  const handleAddMeal = () => {
-    if (
-      mealData.name === "" ||
-      mealData.date === "" ||
-      mealData.hour === "" ||
-      !mealData.foods.every(
-        (food) => food.foodId !== "" && Number(food.weightConsumed) > 0
-      )
-    ) {
-      enqueueSnackbar("Please complete all the fields correctly.", {
+    if (response.status === 200) {
+      enqueueSnackbar(
+        initialData
+          ? "The meal was updated successfully."
+          : "The meal was created successfully.",
+        {
+          variant: "success",
+        }
+      );
+      closeModal();
+    } else {
+      enqueueSnackbar("An error occurred while saving the meal.", {
         variant: "error",
       });
-      return;
-    } else {
-      if (handleGetActiveIntermittentFasting() > 0) {
-      } else {
-        mealData.hour = mealData.hour.toTimeString().slice(0, 5);
-        mealData.date.setHours(1, 0);
-        setIsLoading(true);
-        const url = initialData
-          ? apiUrl + `/api/meals/${initialData._id}`
-          : apiUrl + "/api/meals";
-        const method = initialData ? "PUT" : "POST";
-        fetch(url, {
-          method: method,
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-          body: JSON.stringify(mealData),
-        })
-          .then(function (response) {
-            if (response.ok) {
-              enqueueSnackbar(
-                initialData
-                  ? "The meal was updated successfully."
-                  : "The meal was created successfully.",
-                {
-                  variant: "success",
-                }
-              );
-              setIsLoading(false);
-              closeModal();
-            } else {
-              enqueueSnackbar("An error occurred while saving the meal.", {
-                variant: "error",
-              });
-            }
-          })
-          .catch(function (error) {
-            enqueueSnackbar("An error occurred while saving the meal.", {
-              variant: "error",
-            });
-          });
-      }
     }
   };
 
   const closeModal = () => {
+    setOpenCancelDialog(false);
     setOpen(false);
     if (!initialData) {
       setMealData(initialMealState);
+    } else {
+      // Reset initial foods to prevent showing previous data
+      setMealData({
+        ...mealData,
+        foods: initialMealState.foods.map(() => ({
+          foodId: "",
+          weightConsumed: "",
+        })),
+      });
     }
   };
-
   const handleAddFoodInput = () => {
     const updatedFoods = [
       ...mealData.foods,
@@ -185,27 +227,33 @@ const MealForm = ({ open, setOpen, initialData }) => {
     setMealData({ ...mealData, foods: updatedFoods });
   };
 
-  const handleFoodInputChange = (newValue, index) => {
-    const updatedFoods = [...mealData.foods];
+  const handleFoodInputChange = useCallback(
+    (newValue, index) => {
+      const updatedFoods = [...mealData.foods];
 
-    if (newValue) {
-      updatedFoods[index].foodId = newValue._id;
-    } else {
-      updatedFoods[index].foodId = "";
-    }
-    setMealData({ ...mealData, foods: updatedFoods });
-  };
+      if (newValue) {
+        updatedFoods[index].foodId = newValue._id;
+      } else {
+        updatedFoods[index].foodId = "";
+      }
+      setMealData({ ...mealData, foods: updatedFoods });
+    },
+    [mealData]
+  );
 
-  const handleQuantityInputChange = (e, index) => {
-    const inputValue = Number(e.target.value);
-    const updatedFoods = [...mealData.foods];
-    if (!isNaN(inputValue) && inputValue >= 1) {
-      updatedFoods[index].weightConsumed = inputValue;
-    } else {
-      updatedFoods[index].weightConsumed = "";
-    }
-    setMealData({ ...mealData, foods: updatedFoods });
-  };
+  const handleQuantityInputChange = useCallback(
+    (e, index) => {
+      const inputValue = Number(e.target.value);
+      const updatedFoods = [...mealData.foods];
+      if (!isNaN(inputValue) && inputValue >= 1) {
+        updatedFoods[index].weightConsumed = inputValue;
+      } else {
+        updatedFoods[index].weightConsumed = "";
+      }
+      setMealData({ ...mealData, foods: updatedFoods });
+    },
+    [mealData]
+  );
 
   return (
     <Modal
@@ -310,7 +358,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
                 <Autocomplete
                   id={`food-autocomplete-${index}`}
                   options={foodOptions}
-                  loading={loadingFoods} // Mostrar spinner o "Loading"
+                  loading={loadingFoods}
                   value={
                     food.foodId
                       ? foodOptions.find((option) => option._id === food.foodId)
@@ -406,6 +454,11 @@ const MealForm = ({ open, setOpen, initialData }) => {
             </Button>
           </Grid>
         </Grid>
+        <CancelIntermittentFastingForm
+          open={openCancelDialog}
+          setOpen={setOpenCancelDialog}
+          onConfirm={confirmMeal}
+        />
       </Box>
     </Modal>
   );

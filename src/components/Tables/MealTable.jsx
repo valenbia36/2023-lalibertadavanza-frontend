@@ -46,6 +46,7 @@ function Row(props) {
 
           props.onDelete(meal);
 
+          // Adjust page if necessary
           if (props.endIndex >= props.totalMeals - 1) {
             const newPage = props.page === 0 ? 0 : props.page - 1;
             props.onPageChange(newPage);
@@ -184,7 +185,7 @@ export default function MealTable({ modalOpen }) {
 
   useEffect(() => {
     getMeals();
-  }, [isModalOpen, modalOpen]);
+  }, [isModalOpen, modalOpen, page]);
 
   const getMeals = async () => {
     const response = await fetch(apiUrl + "/api/meals/user/", {
@@ -216,7 +217,13 @@ export default function MealTable({ modalOpen }) {
   };
 
   const handleDelete = (deletedMeal) => {
-    setMeals(meals.filter((meal) => meal._id !== deletedMeal._id));
+    const updatedMeals = meals.filter((meal) => meal._id !== deletedMeal._id);
+    setMeals(updatedMeals);
+    setTotalMeals(updatedMeals.length); // Update totalMeals
+    // Adjust page if necessary
+    if (page > 0 && updatedMeals.length <= rowsPerPage * page) {
+      setPage(page - 1);
+    }
   };
 
   return (
@@ -273,13 +280,13 @@ export default function MealTable({ modalOpen }) {
 
       <div>
         <IconButton
-          onClick={(e) => handlePageChange(page - 1)}
+          onClick={() => handlePageChange(page - 1)}
           disabled={page === 0}
         >
           <ArrowBackIosIcon />
         </IconButton>
         <IconButton
-          onClick={(e) => handlePageChange(page + 1)}
+          onClick={() => handlePageChange(page + 1)}
           disabled={endIndex >= totalMeals}
         >
           <ArrowForwardIosIcon />
