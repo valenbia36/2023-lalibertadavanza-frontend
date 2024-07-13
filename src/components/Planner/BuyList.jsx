@@ -34,7 +34,6 @@ const BuyList = ({ shoppingListData, weeklyTotalPerFood }) => {
 
     return weeklyTotalConsumed;
   };
-
   const handlePurchaseChange = (event, foodName) => {
     const { value } = event.target;
     const updatedPurchaseAmount = {

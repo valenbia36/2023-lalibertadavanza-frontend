@@ -6,22 +6,44 @@ import {
   Box,
   Grid,
   IconButton,
-  FormControl,
-  FormControlLabel,
-  Radio,
-  FormGroup,
-  RadioGroup,
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import BuyList from "./BuyList";
-export function ShoppingList({
-  open,
-  setOpen,
-  shoppingListData,
-  weeklyTotalPerFood,
-}) {
+import getApiUrl from "../../helpers/apiConfig";
+
+const apiUrl = getApiUrl();
+export function ShoppingList({ open, setOpen }) {
+  useEffect(() => {
+    handleGetShoppingList();
+  }, [open]);
   const closeModal = () => {
     setOpen(false);
+  };
+  const [purchaseAmount, setPurchaseAmount] = useState({});
+  const [weeklyTotalConsumed, setweeklyTotalConsumed] = useState({});
+  const handleGetShoppingList = async () => {
+    const response = await fetch(apiUrl + "/api/shoppingList", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    });
+    const data = await response.json();
+    setweeklyTotalConsumed(data.shoppingList.weeklyTotal);
+    console.log(data);
+  };
+
+  const handlePurchaseChange = (event, foodName) => {
+    const { value } = event.target;
+    const updatedPurchaseAmount = {
+      ...purchaseAmount,
+      [foodName]: value,
+    };
+    setPurchaseAmount(updatedPurchaseAmount);
   };
 
   return (
@@ -59,12 +81,27 @@ export function ShoppingList({
         >
           <CloseIcon />
         </IconButton>
-
-        {/* Componente para mostrar las foods */}
-        <BuyList
-          shoppingListData={shoppingListData}
-          weeklyTotalPerFood={weeklyTotalPerFood}
-        />
+        <div>
+          <Typography variant="h6" gutterBottom>
+            Weekly Total:
+          </Typography>
+          <List>
+            {Object.keys(weeklyTotalConsumed).map((index) => (
+              <ListItem key={index}>
+                <ListItemText
+                  primary={`${weeklyTotalConsumed[index].foodId.name}: ${weeklyTotalConsumed[index].weightConsumed} grams/ml`}
+                />
+                {console.log(weeklyTotalConsumed)}
+                <TextField
+                  label="Purchased Amount"
+                  type="number"
+                  value={purchaseAmount[index] || ""}
+                  onChange={(event) => handlePurchaseChange(event, index)}
+                />
+              </ListItem>
+            ))}
+          </List>
+        </div>
       </Box>
     </Modal>
   );

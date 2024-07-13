@@ -62,53 +62,14 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
       setSelectedRecipes({ ...initialPlanState });
     }
   }, []);
-
+  const handleShoppingList = () => {
+    setOpenList(true);
+  };
   const handleRecipeChange = (day, meal, recipe) => {
     setSelectedRecipes({
       ...selectedRecipes,
       [day]: { ...selectedRecipes[day], [meal]: recipe },
     });
-  };
-
-  const handleShoppingList = () => {
-    const shoppingListData = {};
-    const dailyTotalPerFood = {};
-
-    for (const day of daysOfWeek) {
-      const breakfast = selectedRecipes[day]?.breakfast;
-      const lunch = selectedRecipes[day]?.lunch;
-      const snack = selectedRecipes[day]?.snack;
-      const dinner = selectedRecipes[day]?.dinner;
-
-      shoppingListData[day] = {};
-
-      const calculateTotalPerFood = (meal) => {
-        if (selectedRecipes[day][meal] && selectedRecipes[day][meal].foods) {
-          const foods = selectedRecipes[day][meal].foods;
-          foods.forEach((food) => {
-            if (!dailyTotalPerFood[food.name]) {
-              dailyTotalPerFood[food.name] = 0;
-            }
-
-            dailyTotalPerFood[food.name] += food.weightConsumed;
-
-            if (!shoppingListData[day][meal]) {
-              shoppingListData[day][meal] = [];
-            }
-            shoppingListData[day][meal].push(food);
-          });
-        }
-      };
-
-      calculateTotalPerFood("breakfast");
-      calculateTotalPerFood("lunch");
-      calculateTotalPerFood("snack");
-      calculateTotalPerFood("dinner");
-    }
-
-    setOpenList(true);
-    setShoppingListData(shoppingListData);
-    setWeeklyTotalPerFood(dailyTotalPerFood);
   };
 
   const handleAddToCalendar = () => {
@@ -392,9 +353,9 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
           variant="contained"
           type="submit"
           aria-label="search"
-          onClick={handleShoppingList}
           endIcon={<ShoppingCartCheckoutIcon />}
           style={{ marginRight: "10px" }}
+          onClick={handleShoppingList}
         >
           View Cart
         </Button>
@@ -426,8 +387,6 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
         setOpen={setOpenList}
         initialData={selectedRecipes}
         daysOfWeek={daysOfWeek}
-        shoppingListData={shoppingListData}
-        weeklyTotalPerFood={weeklyTotalPerFood}
       />
 
       <Dialog
