@@ -47,9 +47,6 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [openList, setOpenList] = useState(false);
   const [selectedRecipes, setSelectedRecipes] = useState([]);
-  const [shoppingListData, setShoppingListData] = useState({});
-  const [weeklyTotalPerFood, setWeeklyTotalPerFood] = useState({});
-  const [refresh, setRefresh] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
   const [addedMealsCount, setAddedMealsCount] = useState(0);
@@ -61,10 +58,12 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
     } else {
       setSelectedRecipes({ ...initialPlanState });
     }
-  }, []);
+  }, [initialData]);
+
   const handleShoppingList = () => {
     setOpenList(true);
   };
+
   const handleRecipeChange = (day, meal, recipe) => {
     setSelectedRecipes({
       ...selectedRecipes,
@@ -72,32 +71,36 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
     });
   };
 
-  const handleAddToCalendar = () => {
-    fetch(apiUrl + "/api/weeks/", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-      body: JSON.stringify({
-        ...selectedRecipes,
-      }),
-    })
-      .then(function (response) {
-        if (response.status === 200) {
-          enqueueSnackbar("The plan was created successfully.", {
-            variant: "success",
-          });
-          setPlan({ ...initialData, lastUpdate: new Date() });
-        } else {
-          enqueueSnackbar("An error occurred while creating the plan.", {
-            variant: "error",
-          });
-        }
-      })
-      .catch((error) => {
-        console.error("Error during fetch:", error);
+  const handleAddToCalendar = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(apiUrl + "/api/weeks/", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+        body: JSON.stringify({ ...selectedRecipes }),
       });
+
+      if (response.ok) {
+        enqueueSnackbar("The plan was created successfully.", {
+          variant: "success",
+        });
+        setPlan({ ...selectedRecipes, lastUpdate: new Date() });
+      } else {
+        enqueueSnackbar("An error occurred while creating the plan.", {
+          variant: "error",
+        });
+      }
+    } catch (error) {
+      console.error("Error during fetch:", error);
+      enqueueSnackbar("An error occurred while creating the plan.", {
+        variant: "error",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleAddMeal = (meal, timeOfTheDay, hour) => {
@@ -110,52 +113,53 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
     }
   };
 
-  const addMealToCalendar = (meal, timeOfTheDay, hour) => {
-    handleAddToCalendar();
-    const fechaActual = new Date();
-    const horas = fechaActual.getHours();
-    const minutos = fechaActual.getMinutes();
-    const horaFormateada = `${horas < 10 ? "0" : ""}${horas}:${
-      minutos < 10 ? "0" : ""
-    }${minutos}`;
-    if (meal && meal != []) {
-      const mealToAdd = {
-        name: meal.name,
-        foods: meal.foods,
-        date: fechaActual,
-        hour: horaFormateada,
-      };
+  const addMealToCalendar = async (meal, timeOfTheDay, hour) => {
+    try {
       setIsLoading(true);
-      fetch(apiUrl + "/api/meals", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-        body: JSON.stringify(mealToAdd),
-      })
-        .then(function (response) {
-          if (response.status === 200) {
-            enqueueSnackbar("The meal was created successfully.", {
-              variant: "success",
-            });
-          } else {
-            enqueueSnackbar("An error occurred while saving the meal.", {
-              variant: "error",
-            });
-          }
-        })
-        .catch(function (error) {
+      const fechaActual = new Date();
+      const horas = fechaActual.getHours();
+      const minutos = fechaActual.getMinutes();
+      const horaFormateada = `${horas < 10 ? "0" : ""}${horas}:${
+        minutos < 10 ? "0" : ""
+      }${minutos}`;
+
+      if (meal && meal !== []) {
+        const mealToAdd = {
+          name: meal.name,
+          foods: meal.foods,
+          date: fechaActual,
+          hour: horaFormateada,
+        };
+
+        const response = await fetch(apiUrl + "/api/meals", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+          body: JSON.stringify(mealToAdd),
+        });
+
+        if (response.ok) {
+          enqueueSnackbar("The meal was created successfully.", {
+            variant: "success",
+          });
+        } else {
           enqueueSnackbar("An error occurred while saving the meal.", {
             variant: "error",
           });
+        }
+      } else {
+        enqueueSnackbar("An error occurred while saving the meal.", {
+          variant: "error",
         });
-      setIsLoading(false);
-    } else {
-      setIsLoading(false);
+      }
+    } catch (error) {
       enqueueSnackbar("An error occurred while saving the meal.", {
         variant: "error",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -171,20 +175,15 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
   };
 
   function getFecha(fecha) {
-    var cadenaFecha = fecha;
-    var fechaObjeto = new Date(cadenaFecha);
-    var hora = fechaObjeto.getHours();
-    var minutos = fechaObjeto.getMinutes();
-    var dia = fechaObjeto.getDate();
-    var mes = fechaObjeto.getMonth() + 1;
-    var anio = fechaObjeto.getFullYear();
-    minutos = minutos < 10 ? "0" + minutos : minutos;
-    var resultado = hora + ":" + minutos + " " + dia + "/" + mes + "/" + anio;
-
-    if (fecha) return resultado;
-    else {
-      return "---";
-    }
+    const fechaObjeto = new Date(fecha);
+    const horas = fechaObjeto.getHours();
+    const minutos = fechaObjeto.getMinutes();
+    const dia = fechaObjeto.getDate();
+    const mes = fechaObjeto.getMonth() + 1;
+    const anio = fechaObjeto.getFullYear();
+    return `${horas < 10 ? "0" : ""}${horas}:${
+      minutos < 10 ? "0" : ""
+    }${minutos} ${dia}/${mes}/${anio}`;
   }
 
   return (
@@ -236,6 +235,7 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
                             "10:00"
                           );
                         }}
+                        disabled={isLoading}
                       >
                         <CheckIcon />
                       </IconButton>
@@ -266,6 +266,7 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
                             "12:00"
                           );
                         }}
+                        disabled={isLoading}
                       >
                         <CheckIcon />
                       </IconButton>
@@ -295,6 +296,7 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
                             "16:00"
                           );
                         }}
+                        disabled={isLoading}
                       >
                         <CheckIcon />
                       </IconButton>
@@ -323,6 +325,7 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
                             "20:00"
                           );
                         }}
+                        disabled={isLoading}
                       >
                         <CheckIcon />
                       </IconButton>
@@ -356,6 +359,7 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
           endIcon={<ShoppingCartCheckoutIcon />}
           style={{ marginRight: "10px" }}
           onClick={handleShoppingList}
+          disabled={isLoading}
         >
           View Cart
         </Button>
@@ -366,6 +370,7 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
           onClick={handleAddToCalendar}
           endIcon={<SaveAltIcon />}
           style={{ marginLeft: "10px" }}
+          disabled={isLoading}
         >
           Save Plan
         </Button>
