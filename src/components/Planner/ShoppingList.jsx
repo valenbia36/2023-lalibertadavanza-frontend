@@ -57,11 +57,19 @@ export function ShoppingList({ open, setOpen }) {
   };
 
   const handlePurchaseSubmit = (foodId) => {
+    const quantityToBuy = parseFloat(purchaseAmount[foodId]);
+    if (quantityToBuy <= 0) {
+      enqueueSnackbar("The purchased amount must be greater than 0", {
+        variant: "error",
+      });
+      return;
+    }
+
     const purchaseData = {
       foodId,
-      quantityToBuy: purchaseAmount[foodId] || 0,
+      quantityToBuy,
     };
-    console.log(purchaseAmount);
+
     // Send purchaseData to the backend API
     fetch(apiUrl + "/api/shoppingList", {
       method: "PUT",
@@ -71,19 +79,29 @@ export function ShoppingList({ open, setOpen }) {
       },
       body: JSON.stringify(purchaseData),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        response.json();
+        if (response.status == 400) {
+          enqueueSnackbar("Quantity to buy exceeds the weight consumed", {
+            variant: "error",
+          });
+        }
+      })
       .then((data) => {
-        console.log("Purchase data submitted: ", data);
+        //console.log("Purchase data submitted: ", data);
         // Optionally, refresh the list after submission
         handleGetShoppingList();
       })
       .catch((error) => {
         console.error("Error submitting purchase data: ", error);
         enqueueSnackbar("Error submitting quantity data", {
-          variant: "erro",
+          variant: "error",
         });
       });
-    setPurchaseAmount(0);
+    setPurchaseAmount((prevState) => ({
+      ...prevState,
+      [foodId]: 0,
+    }));
   };
 
   return (
@@ -196,11 +214,6 @@ export function ShoppingList({ open, setOpen }) {
             </List>
           </div>
         )}
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-          <Button variant="contained" type="submit" aria-label="save">
-            Save
-          </Button>
-        </Box>
       </Box>
     </Modal>
   );

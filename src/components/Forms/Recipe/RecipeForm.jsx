@@ -25,11 +25,8 @@ import StepField from "./StepField";
 import AddButton from "./AddButton";
 import AddMealButton from "./AddMealButton";
 import RemoveButton from "./RemoveButton";
-import FoodAutocomplete from "./FoodAutocomplete";
-import WeightField from "./WeightField";
 import AddPhoto from "./AddPhoto";
 import FoodForm from "../FoodForm";
-import FoodBankIcon from "@mui/icons-material/FoodBank";
 import { Autocomplete } from "@mui/material";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
@@ -57,7 +54,6 @@ const RecipeForm = ({
   const [dontShowAgain, setDontShowAgain] = useState(false);
   const [foodsLoaded, setFoodsLoaded] = useState(false); // Estado para controlar la carga de alimentos
   const [loadingFoods, setLoadingFoods] = useState(false); // Estado para controlar el estado de carga de alimentos en Autocomplete
-
   /* useEffect(() => {
     if (initialData) {
       setMealData({
@@ -84,7 +80,7 @@ const RecipeForm = ({
 
   // Inicializar mealData cuando cambia initialData o foodOptions
   useEffect(() => {
-    if (initialData) {
+    if (initialData && foodsLoaded) {
       initializeForm(initialData);
     } else {
       initializeForm(initialMealState);
