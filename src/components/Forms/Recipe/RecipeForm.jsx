@@ -30,6 +30,7 @@ import FoodForm from "../FoodForm";
 import { Autocomplete } from "@mui/material";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
+import FoodBankIcon from "@mui/icons-material/FoodBank";
 
 const apiUrl = getApiUrl();
 
@@ -54,23 +55,6 @@ const RecipeForm = ({
   const [dontShowAgain, setDontShowAgain] = useState(false);
   const [foodsLoaded, setFoodsLoaded] = useState(false); // Estado para controlar la carga de alimentos
   const [loadingFoods, setLoadingFoods] = useState(false); // Estado para controlar el estado de carga de alimentos en Autocomplete
-  /* useEffect(() => {
-    if (initialData) {
-      setMealData({
-        ...initialData,
-        foods: initialData.foods.map((food) => ({
-          foodId: food.foodId,
-          weightConsumed: food.weightConsumed.toString(),
-        })),
-      });
-    } else {
-      setMealData({
-        name: "",
-        steps: [{ text: "", images: [] }],
-        foods: [{ foodId: "", weightConsumed: "" }],
-      });
-    }
-  }, [initialData]); */
   // Cargar alimentos al montar el componente
   useEffect(() => {
     if (!foodsLoaded && !initialData) {
@@ -146,18 +130,6 @@ const RecipeForm = ({
     }
     setShowInstructions(false);
   };
-
-  /*  const getFoods = async () => {
-    const response = await fetch(apiUrl + "/api/foods/", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-    });
-    const data = await response.json();
-    setFoodOptions(data.data);
-  }; */
 
   const handleAddRecipe = () => {
     setIsLoading(true);
@@ -514,6 +486,17 @@ const RecipeForm = ({
                       onClick={() => handleRemoveFoodInput(index)}
                     >
                       <RemoveCircleRoundedIcon />
+                    </IconButton>
+                  </Grid>
+                )}
+                {!food.foodId && (
+                  <Grid
+                    item
+                    xs={2}
+                    sx={{ display: "flex", alignItems: "center" }}
+                  >
+                    <IconButton color="primary" onClick={handleOpenFoodModal}>
+                      <FoodBankIcon />
                     </IconButton>
                   </Grid>
                 )}
