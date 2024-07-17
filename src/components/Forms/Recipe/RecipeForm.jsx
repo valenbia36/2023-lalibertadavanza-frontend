@@ -4,16 +4,7 @@ import {
   Box,
   IconButton,
   Grid,
-  TableRow,
   TextField,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  Button,
-  Checkbox,
-  FormControlLabel,
   CircularProgress,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
@@ -61,6 +52,9 @@ const RecipeForm = ({
       getFoods();
     }
   }, [foodsLoaded, initialData]);
+  useEffect(() => {
+    getFoods();
+  }, [foodModal]);
 
   // Inicializar mealData cuando cambia initialData o foodOptions
   useEffect(() => {
@@ -406,94 +400,114 @@ const RecipeForm = ({
                   )}
                 </React.Fragment>
               ))}
-           <Grid container spacing={2} alignItems="center">
-  {mealData.foods.map((food, index) => (
-    <Grid container item spacing={1} key={index} alignItems="center">
-      <Grid item xs={6}>
-        <Autocomplete
-          id={`food-autocomplete-${index}`}
-          options={foodOptions}
-          loading={loadingFoods}
-          value={
-            food.foodId
-              ? foodOptions.find(
-                  (option) => option._id === food.foodId
-                )
-              : null
-          }
-          onChange={(e, newValue) =>
-            handleFoodInputChange(newValue, index)
-          }
-          getOptionLabel={(option) => option.name}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Food"
-              variant="outlined"
-              fullWidth
-              InputProps={{
-                ...params.InputProps,
-                endAdornment: (
-                  <React.Fragment>
-                    {loadingFoods ? (
-                      <CircularProgress color="inherit" size={20} />
-                    ) : null}
-                    {params.InputProps.endAdornment}
-                  </React.Fragment>
-                ),
-              }}
-            />
-          )}
-          noOptionsText="No foods available."
-          ListboxProps={{
-            style: {
-              maxHeight: 110,
-            },
-          }}
-        />
-      </Grid>
-      <Grid item xs={4}>
-        <TextField
-          InputProps={{
-            inputProps: { min: 1 },
-          }}
-          label={`Weight (gr/ml)`}
-          type="number"
-          variant="outlined"
-          fullWidth
-          value={food.weightConsumed}
-          onChange={(e) => handleQuantityInputChange(e, index)}
-        />
-      </Grid>
-      <Grid item xs={2} container spacing={1} justifyContent="flex-end" alignItems="center">
-        {index === 0 && (
-          <Grid item>
-            <IconButton color="primary" onClick={handleAddFoodInput}>
-              <AddCircleRoundedIcon />
-            </IconButton>
-          </Grid>
-        )}
-        {index > 0 && (
-          <Grid item>
-            <IconButton
-              color="primary"
-              onClick={() => handleRemoveFoodInput(index)}
-            >
-              <RemoveCircleRoundedIcon />
-            </IconButton>
-          </Grid>
-        )}
-        {!food.foodId && (
-          <Grid item>
-            <IconButton color="primary" onClick={handleOpenFoodModal}>
-              <FoodBankIcon />
-            </IconButton>
-          </Grid>
-        )}
-      </Grid>
-    </Grid>
-  ))}
-</Grid> <FoodForm open={foodModal} setOpen={setOpenFoodModal} />
+            <Grid container spacing={2} alignItems="center">
+              {mealData.foods.map((food, index) => (
+                <Grid
+                  container
+                  item
+                  spacing={1}
+                  key={index}
+                  alignItems="center"
+                >
+                  <Grid item xs={6}>
+                    <Autocomplete
+                      id={`food-autocomplete-${index}`}
+                      options={foodOptions}
+                      loading={loadingFoods}
+                      value={
+                        food.foodId
+                          ? foodOptions.find(
+                              (option) => option._id === food.foodId
+                            )
+                          : null
+                      }
+                      onChange={(e, newValue) =>
+                        handleFoodInputChange(newValue, index)
+                      }
+                      getOptionLabel={(option) => option.name}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Food"
+                          variant="outlined"
+                          fullWidth
+                          InputProps={{
+                            ...params.InputProps,
+                            endAdornment: (
+                              <React.Fragment>
+                                {loadingFoods ? (
+                                  <CircularProgress color="inherit" size={20} />
+                                ) : null}
+                                {params.InputProps.endAdornment}
+                              </React.Fragment>
+                            ),
+                          }}
+                        />
+                      )}
+                      noOptionsText="No foods available."
+                      ListboxProps={{
+                        style: {
+                          maxHeight: 110,
+                        },
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={4}>
+                    <TextField
+                      InputProps={{
+                        inputProps: { min: 1 },
+                      }}
+                      label={`Weight (gr/ml)`}
+                      type="number"
+                      variant="outlined"
+                      fullWidth
+                      value={food.weightConsumed}
+                      onChange={(e) => handleQuantityInputChange(e, index)}
+                    />
+                  </Grid>
+                  <Grid
+                    item
+                    xs={2}
+                    container
+                    spacing={1}
+                    justifyContent="flex-end"
+                    alignItems="center"
+                  >
+                    {index === 0 && (
+                      <Grid item>
+                        <IconButton
+                          color="primary"
+                          onClick={handleAddFoodInput}
+                        >
+                          <AddCircleRoundedIcon />
+                        </IconButton>
+                      </Grid>
+                    )}
+                    {index > 0 && (
+                      <Grid item>
+                        <IconButton
+                          color="primary"
+                          onClick={() => handleRemoveFoodInput(index)}
+                        >
+                          <RemoveCircleRoundedIcon />
+                        </IconButton>
+                      </Grid>
+                    )}
+                    {!food.foodId && (
+                      <Grid item>
+                        <IconButton
+                          color="primary"
+                          onClick={handleOpenFoodModal}
+                        >
+                          <FoodBankIcon />
+                        </IconButton>
+                      </Grid>
+                    )}
+                  </Grid>
+                </Grid>
+              ))}
+            </Grid>{" "}
+            <FoodForm open={foodModal} setOpen={setOpenFoodModal} />
             <AddMealButton
               initialData={initialData}
               handleAddMeal={handleAddRecipe}

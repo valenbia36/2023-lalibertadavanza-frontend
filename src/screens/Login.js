@@ -26,10 +26,6 @@ import "../styles/Login.css";
 const apiUrl = getApiUrl();
 const url = getUrl();
 
-function getUID() {
-  return Date.now().toString(36);
-}
-
 const Login = () => {
   const [user, setUser] = React.useState({
     email: "",
@@ -95,7 +91,6 @@ const Login = () => {
           //ACA SOLO MANDO EL MAIL
           body: JSON.stringify({
             email: recoveryEmail,
-            token: getUID(),
             userName: userName,
             userId: userId,
             url: url,

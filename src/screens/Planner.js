@@ -71,6 +71,14 @@ const Planner = () => {
     }
   }, []);
 
+  useEffect(() => {
+    async function fetchData() {
+      await Promise.all([getRecipes()]);
+      setIsDataLoaded(true);
+    }
+    fetchData();
+  }, [isModalRecipeOpen]);
+
   const handleCloseDialog = () => {
     if (dontShowAgain) {
       localStorage.setItem("dontShowPopup", "true");
@@ -179,7 +187,7 @@ const Planner = () => {
     },
     {
       icon: <RestaurantIcon />,
-      name: "Add Meal",
+      name: "Add Recipe",
       onClick: handelOpenMealForm,
     },
   ];
