@@ -10,6 +10,11 @@ import {
   ListItem,
   ListItemText,
   CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import getApiUrl from "../../helpers/apiConfig";
@@ -22,6 +27,7 @@ export function ShoppingList({ open, setOpen }) {
   const { enqueueSnackbar } = useSnackbar();
   const [purchaseAmount, setPurchaseAmount] = useState({});
   const [weeklyTotalConsumed, setWeeklyTotalConsumed] = useState({});
+  const [resetDialogOpen, setResetDialogOpen] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -70,7 +76,6 @@ export function ShoppingList({ open, setOpen }) {
       quantityToBuy,
     };
 
-    // Send purchaseData to the backend API
     fetch(apiUrl + "/api/shoppingList", {
       method: "PUT",
       headers: {
@@ -88,8 +93,6 @@ export function ShoppingList({ open, setOpen }) {
         }
       })
       .then((data) => {
-        //console.log("Purchase data submitted: ", data);
-        // Optionally, refresh the list after submission
         handleGetShoppingList();
       })
       .catch((error) => {
@@ -102,6 +105,31 @@ export function ShoppingList({ open, setOpen }) {
       ...prevState,
       [foodId]: 0,
     }));
+  };
+  const handleResetQuantities = () => {
+    setIsLoading(true);
+    fetch(apiUrl + "/api/shoppingList/reset", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        handleGetShoppingList();
+        enqueueSnackbar("Quantities to buy reset successfully", {
+          variant: "success",
+        });
+        setIsLoading(false);
+        setResetDialogOpen(false);
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        enqueueSnackbar("Error resetting quantities to buy", {
+          variant: "error",
+        });
+      });
   };
 
   return (
@@ -214,6 +242,40 @@ export function ShoppingList({ open, setOpen }) {
             </List>
           </div>
         )}
+        <Button
+          variant="contained"
+          sx={{
+            display: "block",
+            mx: "auto",
+            mt: 2,
+          }}
+          onClick={() => setResetDialogOpen(true)}
+        >
+          Reset Food Amounts
+        </Button>
+        <Dialog
+          open={resetDialogOpen}
+          onClose={() => setResetDialogOpen(false)}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+          disabled={false}
+        >
+          <DialogTitle id="alert-dialog-title">{"Confirm Reset"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Are you sure you want to reset the quantities to buy for all
+              foods?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setResetDialogOpen(false)} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={handleResetQuantities} color="primary" autoFocus>
+              Confirm
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Box>
     </Modal>
   );

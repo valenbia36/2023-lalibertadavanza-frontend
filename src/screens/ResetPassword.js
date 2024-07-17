@@ -14,8 +14,10 @@ const ResetPassword = () => {
   const [repeatPassword, setRepeatPassword] = React.useState("");
   const [isValid, setIsValid] = React.useState(false);
   const [userId, setUserId] = React.useState("");
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const handleResetPassword = async () => {
+    setIsLoading(true);
     if (password === repeatPassword) {
       const response = await fetch(apiUrl + "/api/auth/users/updatePassword/", {
         method: "PUT",
@@ -42,9 +44,11 @@ const ResetPassword = () => {
     } else {
       enqueueSnackbar("The passwords do not match.", { variant: "error" });
     }
+    setIsLoading(false);
   };
 
   const validateToken = async () => {
+    setIsLoading(true);
     if (token === "") {
       enqueueSnackbar("You need to enter the token.", { variant: "error" });
     } else {
@@ -67,6 +71,7 @@ const ResetPassword = () => {
         enqueueSnackbar("The token is incorrect.", { variant: "error" });
       }
     }
+    setIsLoading(false);
   };
 
   return (
@@ -111,6 +116,7 @@ const ResetPassword = () => {
               fontWeight: "bold",
             }}
             onClick={() => validateToken()}
+            disabled={isLoading}
           >
             Validate
           </Button>
@@ -189,6 +195,7 @@ const ResetPassword = () => {
               fontWeight: "bold",
             }}
             onClick={() => handleResetPassword()}
+            disabled={isLoading}
           >
             Reset Password
           </Button>
