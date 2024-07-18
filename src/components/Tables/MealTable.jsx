@@ -18,6 +18,7 @@ import MealForm from "../Forms/MealForm";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useSnackbar } from "notistack";
 import getApiUrl from "../../helpers/apiConfig";
+import { CircularProgress } from "@mui/material";
 
 const apiUrl = getApiUrl();
 
@@ -179,6 +180,9 @@ export default function MealTable({ modalOpen }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editMeal, setEditMeal] = useState(null);
   const [totalMeals, setTotalMeals] = useState(0);
+  const [isLoadingMeals, setIsLoadingMeals] = useState(false);
+
+  const rowsPerPage = 10; // Asumiendo un número de filas por página
 
   const startIndex = page * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
@@ -188,23 +192,32 @@ export default function MealTable({ modalOpen }) {
   }, [isModalOpen, modalOpen, page]);
 
   const getMeals = async () => {
-    const response = await fetch(apiUrl + "/api/meals/user/", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-    });
+    setIsLoadingMeals(true); // Activar el spinner
 
-    const data = await response.json();
-    const mealsWithShortenedDates = data.data.map((meal) => {
-      return {
-        ...meal,
-        date: meal.date.substring(0, 10),
-      };
-    });
-    setMeals(mealsWithShortenedDates);
-    setTotalMeals(mealsWithShortenedDates.length);
+    try {
+      const response = await fetch(apiUrl + "/api/meals/user/", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      });
+
+      const data = await response.json();
+      const mealsWithShortenedDates = data.data.map((meal) => {
+        return {
+          ...meal,
+          date: meal.date.substring(0, 10),
+        };
+      });
+      setMeals(mealsWithShortenedDates);
+      setTotalMeals(mealsWithShortenedDates.length);
+    } catch (error) {
+      console.error("Error fetching meals:", error);
+      // Manejar errores aquí si es necesario
+    } finally {
+      setIsLoadingMeals(false); // Desactivar el spinner
+    }
   };
 
   const handleEditClick = (meal) => {
@@ -244,15 +257,19 @@ export default function MealTable({ modalOpen }) {
             <TableCell sx={{ fontWeight: "bold" }} align="center">
               Hours&nbsp;
             </TableCell>
-            {
-              <TableCell sx={{ fontWeight: "bold" }} align="center">
-                Actions&nbsp;
-              </TableCell>
-            }
+            <TableCell sx={{ fontWeight: "bold" }} align="center">
+              Actions&nbsp;
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody sx={{ textAlign: "center" }}>
-          {meals.length > 0 ? (
+          {isLoadingMeals ? (
+            <TableRow>
+              <TableCell colSpan={5} align="center" style={{ padding: "20px" }}>
+                <CircularProgress />
+              </TableCell>
+            </TableRow>
+          ) : meals.length > 0 ? (
             meals
               .slice(startIndex, endIndex)
               .map((row) => (

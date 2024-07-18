@@ -118,11 +118,11 @@ const Login = () => {
   };
 
   const handleLogin = () => {
+    setIsLoading(true);
     if (user.email === "" || user.password === "") {
       enqueueSnackbar("Email or password is empty.", { variant: "error" });
       return;
     } else {
-      setIsLoading(true);
       fetch(apiUrl + "/api/auth/login", {
         method: "POST",
         headers: {
