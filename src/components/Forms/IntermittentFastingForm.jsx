@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Box, Grid, Button, IconButton } from "@mui/material";
+import {
+  Modal,
+  Box,
+  Grid,
+  Button,
+  IconButton,
+  CircularProgress,
+} from "@mui/material";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers";
@@ -21,7 +28,8 @@ const IntermittentFastingForm = ({
   const [activeIntermittentFastings, setActiveIntermittentFastings] =
     useState();
   const [nextIntermittentFastings, setNextIntermittentFastings] = useState();
-  const [isSubmitting, setIsSubmitting] = useState(false); // Estado para controlar el estado de envío
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setActiveIntermittentFastings("");
@@ -32,7 +40,7 @@ const IntermittentFastingForm = ({
   }, [openIntermittentFastingModal]);
 
   const handleGetActiveIntermittentFasting = async () => {
-    // Función para obtener el ayuno intermitente activo
+    setIsLoading(true);
     try {
       const response = await fetch(apiUrl + "/api/intermittentFasting/active", {
         method: "GET",
@@ -49,11 +57,12 @@ const IntermittentFastingForm = ({
       }
     } catch (error) {
       console.error("Error fetching active intermittent fasting:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleGetNextIntermittentFasting = async () => {
-    // Función para obtener el ayuno intermitente activo
     try {
       const response = await fetch(apiUrl + "/api/intermittentFasting/next", {
         method: "GET",
@@ -76,7 +85,6 @@ const IntermittentFastingForm = ({
       ? activeIntermittentFastings._id
       : nextIntermittentFastings[0]._id;
     const cancel = activeIntermittentFastings ? "active" : "next";
-    // Función para cancelar el ayuno intermitente activo
     try {
       const response = await fetch(
         apiUrl + "/api/intermittentFasting/active/" + id,
@@ -89,10 +97,13 @@ const IntermittentFastingForm = ({
         }
       );
       if (response.status === 200) {
-        enqueueSnackbar("The intermittent fasting was cancel successfully.", {
-          variant: "success",
-        });
-        if (cancel == "active") {
+        enqueueSnackbar(
+          "The intermittent fasting was cancelled successfully.",
+          {
+            variant: "success",
+          }
+        );
+        if (cancel === "active") {
           setActiveIntermittentFastings("");
           await handleGetNextIntermittentFasting();
         } else {
@@ -100,7 +111,7 @@ const IntermittentFastingForm = ({
         }
       } else if (response.status === 500) {
         enqueueSnackbar(
-          "An error occurred while canceling the intermittent fasting.",
+          "An error occurred while cancelling the intermittent fasting.",
           {
             variant: "error",
           }
@@ -112,9 +123,7 @@ const IntermittentFastingForm = ({
   };
 
   const handleStartIntermittentFasting = () => {
-    setIsSubmitting(true); // Indicamos que se está enviando la solicitud
-
-    // Lógica para validar y enviar la solicitud de inicio de ayuno intermitente
+    setIsSubmitting(true);
     const timeDifferenceMillis = endDateTime - startDateTime;
     const timeDifferenceHours = timeDifferenceMillis / (1000 * 60 * 60);
 
@@ -125,12 +134,12 @@ const IntermittentFastingForm = ({
           variant: "error",
         }
       );
-      setIsSubmitting(false); // Habilitamos el botón nuevamente
+      setIsSubmitting(false);
     } else if (timeDifferenceHours < 1) {
       enqueueSnackbar("The fasting period must be at least 1 hour.", {
         variant: "error",
       });
-      setIsSubmitting(false); // Habilitamos el botón nuevamente
+      setIsSubmitting(false);
     } else {
       startDateTime.setHours(startDateTime.getHours() - 3);
       startDateTime.setSeconds(0);
@@ -174,7 +183,7 @@ const IntermittentFastingForm = ({
           console.error("Error starting intermittent fasting:", error);
         })
         .finally(function () {
-          setIsSubmitting(false); // Habilitamos el botón nuevamente después de la respuesta
+          setIsSubmitting(false);
         });
     }
   };
@@ -222,114 +231,120 @@ const IntermittentFastingForm = ({
         >
           <CloseIcon />
         </IconButton>
-        {activeIntermittentFastings && (
-          <Grid sx={{ textAlign: "center" }}>
-            <span style={{ marginBottom: "5%", fontWeight: "bold" }}>
-              Active Intermittent Fasting:{" "}
-            </span>
-            <br />
-            <span>
-              Start: {formatDate(activeIntermittentFastings.startDateTime)}
-            </span>
-            <br />
-            <span>
-              End: {formatDate(activeIntermittentFastings.endDateTime)}
-            </span>
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{
-                mt: 3,
-                mb: 2,
-                backgroundColor: "#373D20",
-                "&:hover": { backgroundColor: "#373D20" },
-                fontWeight: "bold",
-              }}
-              fullWidth
-              onClick={cancelIntermittentFasting}
-            >
-              Cancel
-            </Button>
-          </Grid>
-        )}
-        {!activeIntermittentFastings && nextIntermittentFastings && (
-          <Grid sx={{ textAlign: "center" }}>
-            <span style={{ marginBottom: "5%", fontWeight: "bold" }}>
-              Next Intermittent Fasting:{" "}
-            </span>
-            <br />
-            <span>
-              Start: {formatDate(nextIntermittentFastings[0].startDateTime)}
-            </span>
-            <br />
-            <span>
-              End: {formatDate(nextIntermittentFastings[0].endDateTime)}
-            </span>
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{
-                mt: 3,
-                mb: 2,
-                backgroundColor: "#373D20",
-                "&:hover": { backgroundColor: "#373D20" },
-                fontWeight: "bold",
-              }}
-              fullWidth
-              onClick={cancelIntermittentFasting}
-            >
-              Cancel
-            </Button>
-          </Grid>
-        )}
+        {isLoading ? (
+          <CircularProgress />
+        ) : (
+          <>
+            {activeIntermittentFastings && (
+              <Grid sx={{ textAlign: "center" }}>
+                <span style={{ marginBottom: "5%", fontWeight: "bold" }}>
+                  Active Intermittent Fasting:{" "}
+                </span>
+                <br />
+                <span>
+                  Start: {formatDate(activeIntermittentFastings.startDateTime)}
+                </span>
+                <br />
+                <span>
+                  End: {formatDate(activeIntermittentFastings.endDateTime)}
+                </span>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  sx={{
+                    mt: 3,
+                    mb: 2,
+                    backgroundColor: "#373D20",
+                    "&:hover": { backgroundColor: "#373D20" },
+                    fontWeight: "bold",
+                  }}
+                  fullWidth
+                  onClick={cancelIntermittentFasting}
+                >
+                  Cancel
+                </Button>
+              </Grid>
+            )}
+            {!activeIntermittentFastings && nextIntermittentFastings && (
+              <Grid sx={{ textAlign: "center" }}>
+                <span style={{ marginBottom: "5%", fontWeight: "bold" }}>
+                  Next Intermittent Fasting:{" "}
+                </span>
+                <br />
+                <span>
+                  Start: {formatDate(nextIntermittentFastings[0].startDateTime)}
+                </span>
+                <br />
+                <span>
+                  End: {formatDate(nextIntermittentFastings[0].endDateTime)}
+                </span>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  sx={{
+                    mt: 3,
+                    mb: 2,
+                    backgroundColor: "#373D20",
+                    "&:hover": { backgroundColor: "#373D20" },
+                    fontWeight: "bold",
+                  }}
+                  fullWidth
+                  onClick={cancelIntermittentFasting}
+                >
+                  Cancel
+                </Button>
+              </Grid>
+            )}
 
-        <span
-          style={{
-            marginTop: "5%",
-            marginBottom: "5%",
-            fontWeight: "bold",
-            textAlign: "center",
-          }}
-        >
-          Configure your Intermittent Fasting:{" "}
-        </span>
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <div style={{ marginBottom: "15px" }}>
-            <DateTimePicker
-              value={startDateTime}
-              label="Start Date Time"
-              disablePast
-              onChange={(newDate) => setStartDateTime(newDate)}
-            />
-          </div>
-          <div>
-            <DateTimePicker
-              value={endDateTime}
-              label="End Date Time"
-              disabled={!startDateTime}
-              minDate={startDateTime}
-              onChange={(newDate) => setEndDateTime(newDate)}
-            />
-          </div>
-        </LocalizationProvider>
-        <Grid item xs={12}>
-          <Button
-            variant="contained"
-            color="primary"
-            sx={{
-              mt: 3,
-              mb: 2,
-              backgroundColor: "#373D20",
-              "&:hover": { backgroundColor: "#373D20" },
-              fontWeight: "bold",
-            }}
-            fullWidth
-            disabled={isSubmitting} // Deshabilitar el botón si se está enviando la solicitud
-            onClick={handleStartIntermittentFasting}
-          >
-            {isSubmitting ? "Submitting..." : "Start Intermittent Fasting"}
-          </Button>
-        </Grid>
+            <span
+              style={{
+                marginTop: "5%",
+                marginBottom: "5%",
+                fontWeight: "bold",
+                textAlign: "center",
+              }}
+            >
+              Configure your Intermittent Fasting:{" "}
+            </span>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <div style={{ marginBottom: "15px" }}>
+                <DateTimePicker
+                  value={startDateTime}
+                  label="Start Date Time"
+                  disablePast
+                  onChange={(newDate) => setStartDateTime(newDate)}
+                />
+              </div>
+              <div>
+                <DateTimePicker
+                  value={endDateTime}
+                  label="End Date Time"
+                  disabled={!startDateTime}
+                  minDate={startDateTime}
+                  onChange={(newDate) => setEndDateTime(newDate)}
+                />
+              </div>
+            </LocalizationProvider>
+            <Grid item xs={12}>
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{
+                  mt: 3,
+                  mb: 2,
+                  backgroundColor: "#373D20",
+                  "&:hover": { backgroundColor: "#373D20" },
+                  fontWeight: "bold",
+                }}
+                fullWidth
+                disabled={isSubmitting}
+                onClick={handleStartIntermittentFasting}
+              >
+                {isSubmitting ? "Submitting..." : "Start Intermittent Fasting"}
+              </Button>
+            </Grid>
+          </>
+        )}
       </Box>
     </Modal>
   );

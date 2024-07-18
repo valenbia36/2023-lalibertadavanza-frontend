@@ -17,6 +17,7 @@ import getApiUrl from "../helpers/apiConfig";
 import { useSnackbar } from "notistack";
 import getUrl from "../helpers/urlConfig";
 import RecipeList from "../components/Lists/RecipeList";
+import IntermittentFastingForm from "../components/Forms/IntermittentFastingForm";
 
 const apiUrl = getApiUrl();
 
@@ -47,7 +48,6 @@ const Recipes = () => {
       },
       body: JSON.stringify({
         date: new Date(),
-        userId: localStorage.getItem("userId"),
       }),
     }).then(function (response) {
       if (response.status === 200) {
@@ -55,7 +55,7 @@ const Recipes = () => {
           variant: "success",
         });
       } else {
-        enqueueSnackbar("An error occurred while adding the water glss.", {
+        enqueueSnackbar("An error occurred while adding the water glass.", {
           variant: "error",
         });
       }
@@ -121,6 +121,10 @@ const Recipes = () => {
           </div>
         </div>
       </div>
+      <IntermittentFastingForm
+        openIntermittentFastingModal={openIntermittentFastingModal}
+        closeModal={closeModal}
+      />
     </div>
   );
 };

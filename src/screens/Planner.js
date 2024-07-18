@@ -94,6 +94,7 @@ const Planner = () => {
           recipes={recipes}
           isMobile={isMobile}
           setPlan={setPlan}
+          isModalRecipeOpen={isModalRecipeOpen}
         />
       );
     } else {
@@ -121,7 +122,6 @@ const Planner = () => {
       },
       body: JSON.stringify({
         date: new Date(),
-        userId: localStorage.getItem("userId"),
       }),
     }).then(function (response) {
       if (response.status === 200) {
@@ -144,7 +144,7 @@ const Planner = () => {
     }, 5000);
   };
 
-  const handelOpenMealForm = () => {
+  const handelOpenMealForm = async () => {
     setIsModalRecipeOpen(true);
   };
 

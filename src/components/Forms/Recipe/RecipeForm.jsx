@@ -400,18 +400,19 @@ const RecipeForm = ({
                   )}
                 </React.Fragment>
               ))}
-            <Grid container spacing={2} alignItems="center">
+            <Grid
+              container
+              spacing={1}
+              marginTop={2}
+              marginLeft={1}
+              alignItems="center"
+            >
               {mealData.foods.map((food, index) => (
-                <Grid
-                  container
-                  item
-                  spacing={1}
-                  key={index}
-                  alignItems="center"
-                >
+                <Grid container item spacing={2} key={index}>
                   <Grid item xs={6}>
                     <Autocomplete
                       id={`food-autocomplete-${index}`}
+                      sx={{ display: "flex", alignItems: "center" }}
                       options={foodOptions}
                       loading={loadingFoods}
                       value={
@@ -467,14 +468,15 @@ const RecipeForm = ({
                   </Grid>
                   <Grid
                     item
-                    xs={2}
-                    container
-                    spacing={1}
+                    xs={1}
+                    sm={0}
+                    direction="row"
+                    spacing={0}
                     justifyContent="flex-end"
                     alignItems="center"
                   >
                     {index === 0 && (
-                      <Grid item>
+                      <Grid item xs="auto">
                         <IconButton
                           color="primary"
                           onClick={handleAddFoodInput}
@@ -484,7 +486,7 @@ const RecipeForm = ({
                       </Grid>
                     )}
                     {index > 0 && (
-                      <Grid item>
+                      <Grid item xs="auto">
                         <IconButton
                           color="primary"
                           onClick={() => handleRemoveFoodInput(index)}
@@ -494,7 +496,7 @@ const RecipeForm = ({
                       </Grid>
                     )}
                     {!food.foodId && (
-                      <Grid item>
+                      <Grid item xs="auto">
                         <IconButton
                           color="primary"
                           onClick={handleOpenFoodModal}
@@ -506,7 +508,7 @@ const RecipeForm = ({
                   </Grid>
                 </Grid>
               ))}
-            </Grid>{" "}
+            </Grid>
             <FoodForm open={foodModal} setOpen={setOpenFoodModal} />
             <AddMealButton
               initialData={initialData}

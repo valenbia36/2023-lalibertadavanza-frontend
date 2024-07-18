@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import html2canvas from "html2canvas";
+import { saveAs } from "file-saver";
 import {
   Container,
   Grid,
@@ -17,6 +19,7 @@ import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
 import RecipeAutocomplete from "./RecipeAutocomplete";
 import getApiUrl from "../../helpers/apiConfig";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
+import SaveIcon from "@mui/icons-material/Save";
 import CheckIcon from "@mui/icons-material/Check";
 import { useSnackbar } from "notistack";
 import { ShoppingList } from "./ShoppingList";
@@ -43,7 +46,13 @@ const initialPlanState = {
   Sunday: { breakfast: null, lunch: null, snack: null, dinner: null },
 };
 
-const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
+const Calendar = ({
+  initialData,
+  recipes,
+  isMobile,
+  setPlan,
+  isModalRecipeOpen,
+}) => {
   const { enqueueSnackbar } = useSnackbar();
   const [openList, setOpenList] = useState(false);
   const [selectedRecipes, setSelectedRecipes] = useState([]);
@@ -58,9 +67,11 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
     } else {
       setSelectedRecipes({ ...initialPlanState });
     }
-  }, [initialData]);
+    console.log(recipes);
+  }, [initialData, isModalRecipeOpen]);
 
-  const handleShoppingList = () => {
+  const handleShoppingList = async () => {
+    await handleAddToCalendar();
     setOpenList(true);
   };
 
@@ -100,6 +111,22 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+  const handleDownloadPlan = async () => {
+    try {
+      // Selecciona el contenedor que deseas capturar
+      const container = document.querySelector("#calendar");
+
+      // Captura el contenido del contenedor
+      const canvas = await html2canvas(container);
+      const dataURL = canvas.toDataURL("image/png");
+
+      // Crea un blob a partir del dataURL y lo descarga
+      const blob = await (await fetch(dataURL)).blob();
+      saveAs(blob, "meal-plan.png");
+    } catch (error) {
+      console.error("Error capturing plan:", error);
     }
   };
 
@@ -161,6 +188,7 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
     } finally {
       setIsLoading(false);
     }
+    await handleAddToCalendar();
   };
 
   const handleConfirmAddMeal = () => {
@@ -188,6 +216,7 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
 
   return (
     <Container
+      id="calendar"
       maxWidth="lg"
       style={{
         paddingBottom: isMobile ? "45px" : "0",
@@ -225,22 +254,23 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
                 <Typography variant="subtitle1">
                   Breakfast:
                   {today.toLocaleDateString("en", { weekday: "long" }) ===
-                    day && (
-                    <Tooltip title="Add to meals">
-                      <IconButton
-                        onClick={() => {
-                          handleAddMeal(
-                            (selectedRecipes[day] || {}).breakfast,
-                            "Breakfast: ",
-                            "10:00"
-                          );
-                        }}
-                        disabled={isLoading}
-                      >
-                        <CheckIcon />
-                      </IconButton>
-                    </Tooltip>
-                  )}
+                    day &&
+                    (selectedRecipes[day] || {}).breakfast && (
+                      <Tooltip title="Add to meals">
+                        <IconButton
+                          onClick={() => {
+                            handleAddMeal(
+                              (selectedRecipes[day] || {}).breakfast,
+                              "Breakfast: ",
+                              "10:00"
+                            );
+                          }}
+                          disabled={isLoading}
+                        >
+                          <CheckIcon />
+                        </IconButton>
+                      </Tooltip>
+                    )}
                 </Typography>
 
                 <RecipeAutocomplete
@@ -256,22 +286,23 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
                 <Typography variant="subtitle1">
                   Lunch:
                   {today.toLocaleDateString("en", { weekday: "long" }) ===
-                    day && (
-                    <Tooltip title="Add to meals">
-                      <IconButton
-                        onClick={() => {
-                          handleAddMeal(
-                            (selectedRecipes[day] || {}).lunch,
-                            "Lunch: ",
-                            "12:00"
-                          );
-                        }}
-                        disabled={isLoading}
-                      >
-                        <CheckIcon />
-                      </IconButton>
-                    </Tooltip>
-                  )}
+                    day &&
+                    (selectedRecipes[day] || {}).lunch && (
+                      <Tooltip title="Add to meals">
+                        <IconButton
+                          onClick={() => {
+                            handleAddMeal(
+                              (selectedRecipes[day] || {}).lunch,
+                              "Lunch: ",
+                              "12:00"
+                            );
+                          }}
+                          disabled={isLoading}
+                        >
+                          <CheckIcon />
+                        </IconButton>
+                      </Tooltip>
+                    )}
                 </Typography>
 
                 <RecipeAutocomplete
@@ -286,22 +317,23 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
                 <Typography variant="subtitle1">
                   Snack:
                   {today.toLocaleDateString("en", { weekday: "long" }) ===
-                    day && (
-                    <Tooltip title="Add to meals">
-                      <IconButton
-                        onClick={() => {
-                          handleAddMeal(
-                            (selectedRecipes[day] || {}).snack,
-                            "Snack: ",
-                            "16:00"
-                          );
-                        }}
-                        disabled={isLoading}
-                      >
-                        <CheckIcon />
-                      </IconButton>
-                    </Tooltip>
-                  )}
+                    day &&
+                    (selectedRecipes[day] || {}).snack && (
+                      <Tooltip title="Add to meals">
+                        <IconButton
+                          onClick={() => {
+                            handleAddMeal(
+                              (selectedRecipes[day] || {}).snack,
+                              "Snack: ",
+                              "16:00"
+                            );
+                          }}
+                          disabled={isLoading}
+                        >
+                          <CheckIcon />
+                        </IconButton>
+                      </Tooltip>
+                    )}
                 </Typography>
                 <RecipeAutocomplete
                   selectedRecipe={(selectedRecipes[day] || {}).snack}
@@ -315,22 +347,23 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
                 <Typography variant="subtitle1">
                   Dinner:
                   {today.toLocaleDateString("en", { weekday: "long" }) ===
-                    day && (
-                    <Tooltip title="Add to meals">
-                      <IconButton
-                        onClick={() => {
-                          handleAddMeal(
-                            (selectedRecipes[day] || {}).dinner,
-                            "Dinner: ",
-                            "20:00"
-                          );
-                        }}
-                        disabled={isLoading}
-                      >
-                        <CheckIcon />
-                      </IconButton>
-                    </Tooltip>
-                  )}
+                    day &&
+                    (selectedRecipes[day] || {}).dinner && (
+                      <Tooltip title="Add to meals">
+                        <IconButton
+                          onClick={() => {
+                            handleAddMeal(
+                              (selectedRecipes[day] || {}).dinner,
+                              "Dinner: ",
+                              "20:00"
+                            );
+                          }}
+                          disabled={isLoading}
+                        >
+                          <CheckIcon />
+                        </IconButton>
+                      </Tooltip>
+                    )}
                 </Typography>
 
                 <RecipeAutocomplete
@@ -368,11 +401,22 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
           type="submit"
           aria-label="search"
           onClick={handleAddToCalendar}
-          endIcon={<SaveAltIcon />}
+          endIcon={<SaveIcon />}
           style={{ marginLeft: "10px" }}
           disabled={isLoading}
         >
           Save Plan
+        </Button>
+        <Button
+          variant="contained"
+          type="submit"
+          aria-label="search"
+          style={{ marginLeft: "10px" }}
+          endIcon={<SaveAltIcon />}
+          disabled={isLoading}
+          onClick={handleDownloadPlan}
+        >
+          Download
         </Button>
       </div>
       {initialData?.lastUpdate && (

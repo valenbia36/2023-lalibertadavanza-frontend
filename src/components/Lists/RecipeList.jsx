@@ -1,30 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { Typography, Box } from "@mui/material";
 import RecipeTable from "../Tables/RecipeTable";
+import { useTheme } from "@mui/material/styles";
 
 const RecipeList = () => {
   const [isModalRecipeOpen, setIsModalRecipeOpen] = useState(false);
   const [tableWidth, setTableWidth] = useState("100%");
+  const theme = useTheme();
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const handleResize = () => {
-      const windowWidth = window.innerWidth;
-      // Ajusta el ancho de la tabla dependiendo del tamaño de la ventana
-      if (windowWidth >= 1200) {
-        setTableWidth("100%");
-      } else {
-        setTableWidth("1200px"); // Ajusta este valor según tus necesidades
-      }
-    };
-
-    handleResize(); // Llama a la función una vez al inicio para establecer el ancho inicial
-
-    window.addEventListener("resize", handleResize); // Agrega el event listener para manejar cambios de tamaño de ventana
-
+    function handleResize() {
+      setIsMobile(window.innerWidth <= theme.breakpoints.values.sm);
+    }
+    window.addEventListener("resize", handleResize);
+    handleResize();
     return () => {
-      window.removeEventListener("resize", handleResize); // Limpia el event listener al desmontar el componente
+      window.removeEventListener("resize", handleResize);
     };
-  }, []);
+  }, [theme]);
 
   return (
     <Box
@@ -33,6 +27,10 @@ const RecipeList = () => {
         color: "black",
         //maxWidth: "100%",
         margin: "auto",
+        //bgcolor: "grey",
+        //width: tableWidth,
+        minWidth: isMobile ? 300 : 600,
+        minHeight: 800,
       }}
     >
       <Typography
@@ -46,9 +44,10 @@ const RecipeList = () => {
       <br />
       <Box
         sx={{
-          overflowX: "auto",
-          maxWidth: "100%",
-          margin: "auto",
+          //overflowX: "auto",
+          //margin: "auto",
+          widht: "100%",
+          minHeight: "100%",
         }}
       >
         <RecipeTable

@@ -86,7 +86,7 @@ export function ShoppingList({ open, setOpen }) {
     })
       .then((response) => {
         response.json();
-        if (response.status == 400) {
+        if (response.status === 400) {
           enqueueSnackbar("Quantity to buy exceeds the weight consumed", {
             variant: "error",
           });
@@ -106,6 +106,7 @@ export function ShoppingList({ open, setOpen }) {
       [foodId]: 0,
     }));
   };
+
   const handleResetQuantities = () => {
     setIsLoading(true);
     fetch(apiUrl + "/api/shoppingList/reset", {
@@ -130,6 +131,28 @@ export function ShoppingList({ open, setOpen }) {
           variant: "error",
         });
       });
+  };
+
+  const downloadShoppingList = () => {
+    const header = "Food,Quantity to Buy\n";
+    const rows = Object.keys(weeklyTotalConsumed)
+      .map((foodId) => {
+        const food = weeklyTotalConsumed[foodId];
+        return `${food.foodId.name},${
+          food.weightConsumed - food.quantityToBuy
+        }`;
+      })
+      .join("\n");
+
+    const csvContent = "data:text/csv;charset=utf-8," + header + rows;
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "shopping_list.csv");
+    document.body.appendChild(link); // Required for FF
+
+    link.click(); // This will download the file
+    document.body.removeChild(link); // Clean up
   };
 
   return (
@@ -199,6 +222,9 @@ export function ShoppingList({ open, setOpen }) {
                       weeklyTotalConsumed[foodId].weightConsumed -
                       weeklyTotalConsumed[foodId].quantityToBuy
                     } grams/ml`}
+                    secondary={`Purchased: ${
+                      weeklyTotalConsumed[foodId].quantityToBuy || 0
+                    } grams/ml`}
                     sx={{
                       flex: { xs: "1 1 100%", md: "0 0 auto" },
                       mb: { xs: 1, md: 0 },
@@ -242,23 +268,19 @@ export function ShoppingList({ open, setOpen }) {
             </List>
           </div>
         )}
-        <Button
-          variant="contained"
-          sx={{
-            display: "block",
-            mx: "auto",
-            mt: 2,
-          }}
-          onClick={() => setResetDialogOpen(true)}
-        >
-          Reset Food Amounts
-        </Button>
+        <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mt: 2 }}>
+          <Button variant="contained" onClick={downloadShoppingList}>
+            Download Shopping List
+          </Button>
+          <Button variant="contained" onClick={() => setResetDialogOpen(true)}>
+            Reset Food Amounts
+          </Button>
+        </Box>
         <Dialog
           open={resetDialogOpen}
           onClose={() => setResetDialogOpen(false)}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
-          disabled={false}
         >
           <DialogTitle id="alert-dialog-title">{"Confirm Reset"}</DialogTitle>
           <DialogContent>

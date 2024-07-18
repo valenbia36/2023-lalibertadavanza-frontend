@@ -92,6 +92,7 @@ export default function RecipeTable({}) {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [isLoading, setIsLoading] = useState(false);
   const [previousSearchQuery, setPreviousSearchQuery] = useState("");
+  const [isLoadingMeals, setIsLoadingMeals] = useState(false);
 
   const handleOpenForm = () => {
     setIsModalRecipeOpen(true);
@@ -232,33 +233,33 @@ export default function RecipeTable({}) {
   return (
     <Box
       sx={{
-        textAlign: "center",
-        maxWidth: "100%",
-        margin: "auto",
-        //minHeight: "400px", // Ajusta según sea necesario para evitar el scroll vertical
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-
-        overflowX: "auto", // Asegura que el contenido no se desborde horizontalmente
+        //textAlign: "center",
+        //margin: "auto",
+        //display: "flex",
+        //flexDirection: "column",
+        //alignItems: "center",
+        //overflowX: "auto",
+        width: "100%",
+        minHeight: "100%",
+        //bgcolor: "blue", // Asegura que el contenedor ocupe todo el ancho disponible
       }}
     >
       <SearchBar setSearchQuery={handleSearch} />
       <TableContainer
         component={Paper}
         sx={{
-          minHeight: "450px", // Ajusta según sea necesario
-          minWidth: "300px", // Ajusta según sea necesario
-          maxWidth: "100%", // Ajusta según sea necesario para que sea responsive
           paddingBottom: "20px",
           marginTop: "20px",
+          //width: "100%",
+          //bgcolor: "red",
+          width: "100%",
+          minWidth: "100%",
+          minHeight: "500px", // Asegura que el contenedor ocupe todo el ancho disponible
         }}
       >
         <Table
           aria-label="custom pagination table"
           sx={{
-            tableLayout: "fixed",
-            minWidth: 650,
             "& .MuiTableCell-root": {
               textAlign: "center",
               fontWeight: "bold",
@@ -267,6 +268,11 @@ export default function RecipeTable({}) {
             "& .MuiTableCell-head": {
               backgroundColor: "#f5f5f5",
             },
+            //width: "100%",
+            //minHeight: "100%",
+            //bgcolor: "yellow",
+            minWidth: "100%",
+            //height: "450px", // Asegura que la tabla ocupe todo el ancho disponible
           }}
         >
           <TableHead>
@@ -302,8 +308,6 @@ export default function RecipeTable({}) {
                       precision={0.5}
                       readOnly={true}
                     />
-                    {/* Esto no funciona porque no existe mas el localStorage.getItem("userId") Volver a poner el userId en el localStorage
-                    ya que tambien va a servir para el boton de editar */}
                     {row.ratings &&
                       !row.ratings.find(
                         (rating) =>
