@@ -62,7 +62,12 @@ const MyProfile = () => {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
     });
+    if (response.status === 401) {
+      // Token ha expirado, desloguear al usuario
+      localStorage.removeItem("token");
 
+      window.location.href = "/";
+    }
     const data = await response.json();
     setUser(data.data);
   };
@@ -121,6 +126,12 @@ const MyProfile = () => {
       },
       body: JSON.stringify(user),
     }).then(function (response) {
+      if (response.status === 401) {
+        // Token ha expirado, desloguear al usuario
+        localStorage.removeItem("token");
+
+        window.location.href = "/";
+      }
       if (response.status === 200) {
         enqueueSnackbar("User updated successfully.", { variant: "success" });
         getUserById();
