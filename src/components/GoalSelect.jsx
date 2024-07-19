@@ -30,7 +30,7 @@ const GoalSelect = ({ onChangeGoal }) => {
     if (response.status === 401) {
       // Token ha expirado, desloguear al usuario
       localStorage.removeItem("token");
-
+      localStorage.setItem("sessionExpired", "true");
       window.location.href = "/";
     }
     const data = await response.json();

@@ -51,7 +51,7 @@ const Statistics = () => {
       if (response.status === 401) {
         // Token ha expirado, desloguear al usuario
         localStorage.removeItem("token");
-
+        localStorage.setItem("sessionExpired", "true");
         window.location.href = "/";
       }
       if (response.status === 200) {

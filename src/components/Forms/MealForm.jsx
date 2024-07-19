@@ -95,7 +95,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
       if (response.status === 401) {
         // Token ha expirado, desloguear al usuario
         localStorage.removeItem("token");
-
+        localStorage.setItem("sessionExpired", "true");
         window.location.href = "/";
       }
       if (response.ok) {
@@ -126,7 +126,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
       if (response.status === 401) {
         // Token ha expirado, desloguear al usuario
         localStorage.removeItem("token");
-
+        localStorage.setItem("sessionExpired", "true");
         window.location.href = "/";
       }
       const data = await response.json();
@@ -199,7 +199,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
     if (response.status === 401) {
       // Token ha expirado, desloguear al usuario
       localStorage.removeItem("token");
-
+      localStorage.setItem("sessionExpired", "true");
       window.location.href = "/";
     }
     if (response.status === 200) {

@@ -43,7 +43,7 @@ function Row(props) {
         if (response.status === 401) {
           // Token ha expirado, desloguear al usuario
           localStorage.removeItem("token");
-
+          localStorage.setItem("sessionExpired", "true");
           window.location.href = "/";
         }
 
@@ -326,7 +326,7 @@ export default function MealTable({ modalOpen }) {
       if (response.status === 401) {
         // Token ha expirado, desloguear al usuario
         localStorage.removeItem("token");
-
+        localStorage.setItem("sessionExpired", "true");
         window.location.href = "/";
       }
       const mealsWithShortenedDates = data.data.map((meal) => {
