@@ -45,6 +45,7 @@ function Row(props) {
           localStorage.removeItem("token");
           localStorage.setItem("sessionExpired", "true");
           window.location.href = "/";
+          return;
         }
 
         if (response.status === 200) {
@@ -328,6 +329,7 @@ export default function MealTable({ modalOpen }) {
         localStorage.removeItem("token");
         localStorage.setItem("sessionExpired", "true");
         window.location.href = "/";
+        return;
       }
       const mealsWithShortenedDates = data.data.map((meal) => {
         return {

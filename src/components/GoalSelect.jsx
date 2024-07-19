@@ -32,6 +32,7 @@ const GoalSelect = ({ onChangeGoal }) => {
       localStorage.removeItem("token");
       localStorage.setItem("sessionExpired", "true");
       window.location.href = "/";
+      return;
     }
     const data = await response.json();
     if (data.filteredData.length > 0) {

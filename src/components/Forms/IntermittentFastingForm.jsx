@@ -54,6 +54,7 @@ const IntermittentFastingForm = ({
         localStorage.removeItem("token");
         localStorage.setItem("sessionExpired", "true");
         window.location.href = "/";
+        return;
       }
       const data = await response.json();
       if (data.filteredData) {
@@ -82,6 +83,7 @@ const IntermittentFastingForm = ({
         localStorage.removeItem("token");
         localStorage.setItem("sessionExpired", "true");
         window.location.href = "/";
+        return;
       }
       const data = await response.json();
       if (data.filteredData.length > 0) {
@@ -113,6 +115,7 @@ const IntermittentFastingForm = ({
         localStorage.removeItem("token");
         localStorage.setItem("sessionExpired", "true");
         window.location.href = "/";
+        return;
       }
       if (response.status === 200) {
         enqueueSnackbar(
@@ -183,6 +186,7 @@ const IntermittentFastingForm = ({
             localStorage.removeItem("token");
             localStorage.setItem("sessionExpired", "true");
             window.location.href = "/";
+            return;
           }
           if (response.status === 200) {
             enqueueSnackbar(

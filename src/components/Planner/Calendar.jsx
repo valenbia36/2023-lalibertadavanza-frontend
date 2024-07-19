@@ -101,6 +101,7 @@ const Calendar = ({
         localStorage.removeItem("token");
         localStorage.setItem("sessionExpired", "true");
         window.location.href = "/";
+        return;
       }
 
       if (response.ok) {
@@ -180,6 +181,7 @@ const Calendar = ({
           localStorage.removeItem("token");
           localStorage.setItem("sessionExpired", "true");
           window.location.href = "/";
+          return;
         }
 
         if (response.ok) {

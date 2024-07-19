@@ -94,8 +94,9 @@ const RecipeForm = ({
       if (response.status === 401) {
         // Token ha expirado, desloguear al usuario
         localStorage.removeItem("token");
-
+        localStorage.setItem("sessionExpired", "true");
         window.location.href = "/";
+        return;
       }
       if (response.ok) {
         const data = await response.json();
@@ -166,8 +167,9 @@ const RecipeForm = ({
           if (response.status === 401) {
             // Token ha expirado, desloguear al usuario
             localStorage.removeItem("token");
-
+            localStorage.setItem("sessionExpired", "true");
             window.location.href = "/";
+            return;
           }
           if (response.status === 200) {
             enqueueSnackbar(

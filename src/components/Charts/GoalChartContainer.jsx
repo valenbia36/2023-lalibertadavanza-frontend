@@ -37,6 +37,7 @@ const GoalChartContainer = () => {
       localStorage.removeItem("token");
       localStorage.setItem("sessionExpired", "true");
       window.location.href = "/";
+      return;
     }
     const data = await response.json();
     setProgress(data.totalCalorias);

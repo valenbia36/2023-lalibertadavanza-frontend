@@ -53,6 +53,7 @@ export function ShoppingList({ open, setOpen }) {
       localStorage.removeItem("token");
       localStorage.setItem("sessionExpired", "true");
       window.location.href = "/";
+      return;
     }
     const data = await response.json();
     setWeeklyTotalConsumed(data.shoppingList.weeklyTotal);
@@ -96,6 +97,7 @@ export function ShoppingList({ open, setOpen }) {
           localStorage.removeItem("token");
           localStorage.setItem("sessionExpired", "true");
           window.location.href = "/";
+          return;
         }
         response.json();
         if (response.status === 400) {
@@ -134,6 +136,7 @@ export function ShoppingList({ open, setOpen }) {
           localStorage.removeItem("token");
           localStorage.setItem("sessionExpired", "true");
           window.location.href = "/";
+          return;
         }
         response.json();
       })

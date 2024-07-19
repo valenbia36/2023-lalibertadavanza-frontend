@@ -59,6 +59,7 @@ const FoodForm = ({ open, setOpen }) => {
           localStorage.removeItem("token");
           localStorage.setItem("sessionExpired", "true");
           window.location.href = "/";
+          return;
         }
         if (response.status === 200) {
           enqueueSnackbar("The food was created successfully.", {

@@ -53,6 +53,7 @@ const Statistics = () => {
         localStorage.removeItem("token");
         localStorage.setItem("sessionExpired", "true");
         window.location.href = "/";
+        return;
       }
       if (response.status === 200) {
         enqueueSnackbar("The water glass was add successfully.", {

@@ -105,6 +105,7 @@ export default function GoalTable({ filterOpen, isCreateModalOpen }) {
       localStorage.removeItem("token");
       localStorage.setItem("sessionExpired", "true");
       window.location.href = "/";
+      return;
     }
     const data = await response.json();
     if (selectedFilter !== "" && filterOpen) {
@@ -132,6 +133,7 @@ export default function GoalTable({ filterOpen, isCreateModalOpen }) {
       localStorage.removeItem("token");
       localStorage.setItem("sessionExpired", "true");
       window.location.href = "/";
+      return;
     }
 
     if (response.status === 200) {
@@ -185,6 +187,7 @@ export default function GoalTable({ filterOpen, isCreateModalOpen }) {
         localStorage.removeItem("token");
         localStorage.setItem("sessionExpired", "true");
         window.location.href = "/";
+        return;
       }
       if (response.status === 200) {
         enqueueSnackbar("Recurrency Canceled", {

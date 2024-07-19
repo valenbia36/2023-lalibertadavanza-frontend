@@ -97,6 +97,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
         localStorage.removeItem("token");
         localStorage.setItem("sessionExpired", "true");
         window.location.href = "/";
+        return;
       }
       if (response.ok) {
         const data = await response.json();
@@ -128,6 +129,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
         localStorage.removeItem("token");
         localStorage.setItem("sessionExpired", "true");
         window.location.href = "/";
+        return;
       }
       const data = await response.json();
       if (data.filteredData) {
@@ -201,6 +203,7 @@ const MealForm = ({ open, setOpen, initialData }) => {
       localStorage.removeItem("token");
       localStorage.setItem("sessionExpired", "true");
       window.location.href = "/";
+      return;
     }
     if (response.status === 200) {
       enqueueSnackbar(

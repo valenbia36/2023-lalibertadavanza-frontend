@@ -130,6 +130,7 @@ const Planner = () => {
         localStorage.removeItem("token");
         localStorage.setItem("sessionExpired", "true");
         window.location.href = "/";
+        return;
       }
       if (response.status === 200) {
         enqueueSnackbar("The water glass was added successfully.", {
@@ -160,45 +161,67 @@ const Planner = () => {
   };
 
   const getPlan = async () => {
-    const response = await fetch(apiUrl + `/api/weeks/`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-    })
-      .then((response) => {
-        if (response.status === 401) {
-          // Token ha expirado, desloguear al usuario
-          localStorage.removeItem("token");
-          localStorage.setItem("sessionExpired", "true");
-          window.location.href = "/";
-        }
-        response.json();
-      })
-      .then((data) => {
-        setPlan(data[0]);
+    try {
+      const response = await fetch(apiUrl + `/api/weeks/`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
       });
+
+      if (response.status === 401) {
+        // Token ha expirado, desloguear al usuario
+        localStorage.removeItem("token");
+        localStorage.setItem("sessionExpired", "true");
+        window.location.href = "/";
+        return;
+      }
+
+      const data = await response.json();
+
+      if (Array.isArray(data) && data.length > 0) {
+        setPlan(data[0]);
+      } else {
+        console.error("No data found");
+        setPlan({});
+      }
+    } catch (error) {
+      console.error("Error fetching plan:", error);
+      setPlan({});
+    }
   };
 
   const getRecipes = async () => {
-    const response = await fetch(apiUrl + "/api/recipes/", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-    })
-      .then((response) => {
-        if (response.status === 401) {
-          // Token ha expirado, desloguear al usuario
-          localStorage.removeItem("token");
-          localStorage.setItem("sessionExpired", "true");
-          window.location.href = "/";
-        }
-        response.json();
-      })
-      .then((data) => setRecipes(data.data));
+    try {
+      const response = await fetch(apiUrl + "/api/recipes/", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      });
+
+      if (response.status === 401) {
+        // Token ha expirado, desloguear al usuario
+        localStorage.removeItem("token");
+        localStorage.setItem("sessionExpired", "true");
+        window.location.href = "/";
+        return;
+      }
+
+      const data = await response.json();
+
+      if (data && data.data) {
+        setRecipes(data.data);
+      } else {
+        console.error("No recipes found");
+        setRecipes([]);
+      }
+    } catch (error) {
+      console.error("Error fetching recipes:", error);
+      setRecipes([]);
+    }
   };
 
   const actions = [

@@ -101,6 +101,7 @@ export default function FoodTable({ filterOpen, modalOpen }) {
       localStorage.removeItem("token");
       localStorage.setItem("sessionExpired", "true");
       window.location.href = "/";
+      return;
     }
     const data = await response.json();
     setNoResults(data.data.length === 0);
@@ -127,6 +128,7 @@ export default function FoodTable({ filterOpen, modalOpen }) {
         localStorage.removeItem("token");
         localStorage.setItem("sessionExpired", "true");
         window.location.href = "/";
+        return;
       }
       const data = await response.json();
       setNoResults(data.data.length === 0);

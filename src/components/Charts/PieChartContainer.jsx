@@ -28,6 +28,7 @@ const getMealsByUserIdAndDay = async (
     localStorage.removeItem("token");
     localStorage.setItem("sessionExpired", "true");
     window.location.href = "/";
+    return;
   }
   const data = await response.json();
   const groupedFoods = {};

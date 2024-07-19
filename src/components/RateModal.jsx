@@ -36,6 +36,7 @@ export default function RateModal({ open, setOpen, row, setLoaded }) {
           localStorage.removeItem("token");
           localStorage.setItem("sessionExpired", "true");
           window.location.href = "/";
+          return;
         }
         if (response.status === 200) {
           enqueueSnackbar("Rate was added successfully", {

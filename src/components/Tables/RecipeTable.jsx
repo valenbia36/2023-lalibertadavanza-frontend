@@ -145,6 +145,7 @@ export default function RecipeTable({}) {
         localStorage.removeItem("token");
         localStorage.setItem("sessionExpired", "true");
         window.location.href = "/";
+        return;
       }
       const data = await response.json();
 
@@ -230,6 +231,7 @@ export default function RecipeTable({}) {
             localStorage.removeItem("token");
             localStorage.setItem("sessionExpired", "true");
             window.location.href = "/";
+            return;
           }
           if (response.status === 200) {
             enqueueSnackbar("The meal was created successfully.", {

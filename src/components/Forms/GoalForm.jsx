@@ -103,6 +103,7 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
           localStorage.removeItem("token");
           localStorage.setItem("sessionExpired", "true");
           window.location.href = "/";
+          return;
         }
         if (response.status === 200) {
           enqueueSnackbar(
