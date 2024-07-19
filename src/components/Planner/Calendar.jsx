@@ -23,6 +23,8 @@ import SaveIcon from "@mui/icons-material/Save";
 import CheckIcon from "@mui/icons-material/Check";
 import { useSnackbar } from "notistack";
 import { ShoppingList } from "./ShoppingList";
+import RecipeInfoDialog from "../RecipeInfoDialog";
+import InfoIcon from "@mui/icons-material/Info";
 
 const apiUrl = getApiUrl();
 const today = new Date();
@@ -60,6 +62,8 @@ const Calendar = ({
   const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
   const [addedMealsCount, setAddedMealsCount] = useState(0);
   const [mealToAdd, setMealToAdd] = useState(null);
+  const [infoDialogOpen, setInfoDialogOpen] = useState(false);
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
 
   useEffect(() => {
     if (initialData && Object.keys(initialData).length > 0) {
@@ -67,7 +71,6 @@ const Calendar = ({
     } else {
       setSelectedRecipes({ ...initialPlanState });
     }
-    console.log(recipes);
   }, [initialData, isModalRecipeOpen]);
 
   const handleShoppingList = async () => {
@@ -213,6 +216,15 @@ const Calendar = ({
       minutos < 10 ? "0" : ""
     }${minutos} ${dia}/${mes}/${anio}`;
   }
+  const handleOpenInfoDialog = (recipe) => {
+    setSelectedRecipe(recipe);
+    setInfoDialogOpen(true);
+  };
+
+  const handleCloseInfoDialog = () => {
+    setInfoDialogOpen(false);
+    setSelectedRecipe(null);
+  };
 
   return (
     <Container
@@ -271,6 +283,19 @@ const Calendar = ({
                         </IconButton>
                       </Tooltip>
                     )}
+                  {(selectedRecipes[day] || {}).breakfast && (
+                    <Tooltip title="View recipe info">
+                      <IconButton
+                        onClick={() =>
+                          handleOpenInfoDialog(
+                            (selectedRecipes[day] || {}).breakfast
+                          )
+                        }
+                      >
+                        <InfoIcon />
+                      </IconButton>
+                    </Tooltip>
+                  )}
                 </Typography>
 
                 <RecipeAutocomplete
@@ -303,6 +328,19 @@ const Calendar = ({
                         </IconButton>
                       </Tooltip>
                     )}
+                  {(selectedRecipes[day] || {}).lunch && (
+                    <Tooltip title="View recipe info">
+                      <IconButton
+                        onClick={() =>
+                          handleOpenInfoDialog(
+                            (selectedRecipes[day] || {}).lunch
+                          )
+                        }
+                      >
+                        <InfoIcon />
+                      </IconButton>
+                    </Tooltip>
+                  )}
                 </Typography>
 
                 <RecipeAutocomplete
@@ -334,6 +372,19 @@ const Calendar = ({
                         </IconButton>
                       </Tooltip>
                     )}
+                  {(selectedRecipes[day] || {}).snack && (
+                    <Tooltip title="View recipe info">
+                      <IconButton
+                        onClick={() =>
+                          handleOpenInfoDialog(
+                            (selectedRecipes[day] || {}).snack
+                          )
+                        }
+                      >
+                        <InfoIcon />
+                      </IconButton>
+                    </Tooltip>
+                  )}
                 </Typography>
                 <RecipeAutocomplete
                   selectedRecipe={(selectedRecipes[day] || {}).snack}
@@ -364,8 +415,20 @@ const Calendar = ({
                         </IconButton>
                       </Tooltip>
                     )}
+                  {(selectedRecipes[day] || {}).dinner && (
+                    <Tooltip title="View recipe info">
+                      <IconButton
+                        onClick={() =>
+                          handleOpenInfoDialog(
+                            (selectedRecipes[day] || {}).dinner
+                          )
+                        }
+                      >
+                        <InfoIcon />
+                      </IconButton>
+                    </Tooltip>
+                  )}
                 </Typography>
-
                 <RecipeAutocomplete
                   selectedRecipe={(selectedRecipes[day] || {}).dinner}
                   recipes={recipes}
@@ -458,6 +521,13 @@ const Calendar = ({
           </Button>
         </DialogActions>
       </Dialog>
+      {selectedRecipe && (
+        <RecipeInfoDialog
+          open={infoDialogOpen}
+          onClose={handleCloseInfoDialog}
+          recipe={selectedRecipe}
+        />
+      )}
     </Container>
   );
 };

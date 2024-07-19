@@ -135,9 +135,12 @@ const RecipeForm = ({
       !mealData.steps.every((step) => step.text.trim().length > 0)
     ) {
       setIsLoading(false);
-      enqueueSnackbar("Please complete all the fields correctly.", {
-        variant: "error",
-      });
+      enqueueSnackbar(
+        "Please complete all the fields correctly (Image is optional).",
+        {
+          variant: "error",
+        }
+      );
       return;
     } else {
       const requestBody = JSON.stringify(mealData);

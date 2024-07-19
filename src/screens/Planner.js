@@ -73,7 +73,7 @@ const Planner = () => {
 
   useEffect(() => {
     async function fetchData() {
-      await Promise.all([getRecipes()]);
+      await getRecipes();
       setIsDataLoaded(true);
     }
     fetchData();
@@ -95,6 +95,7 @@ const Planner = () => {
           isMobile={isMobile}
           setPlan={setPlan}
           isModalRecipeOpen={isModalRecipeOpen}
+          getRecipes={getRecipes}
         />
       );
     } else {

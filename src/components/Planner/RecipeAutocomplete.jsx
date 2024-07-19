@@ -12,7 +12,7 @@ const RecipeAutocomplete = ({
     if (recipes && recipes.length > 0) {
       setOptions(recipes);
     }
-  }, []);
+  }, [recipes]);
 
   return (
     <Autocomplete

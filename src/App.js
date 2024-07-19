@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./screens/Login";
 import SignUp from "./screens/SignUp";
 import Main from "./screens/Main";
@@ -21,6 +21,7 @@ const customTheme = createTheme({
 });
 
 export default function App() {
+  const isAuthenticated = !!localStorage.getItem("token");
   return (
     <ThemeProvider theme={customTheme}>
       <div className="Home-header" style={{ backgroundColor: "#CECFC7" }}>
@@ -36,7 +37,10 @@ export default function App() {
           )}
         >
           <Routes>
-            <Route path="/" element={<Login />} />
+            <Route
+              path="/"
+              element={isAuthenticated ? <Navigate to="main" /> : <Login />}
+            />
             <Route path="signUp" element={<SignUp />} />
             <Route
               path="main"

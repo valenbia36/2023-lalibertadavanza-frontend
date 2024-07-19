@@ -25,6 +25,7 @@ import DialogMessage from "../DialogMessage";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import RestaurantIcon from "@mui/icons-material/Restaurant";
 import { useSnackbar } from "notistack";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const apiUrl = getApiUrl();
 const initialMealState = {
@@ -130,25 +131,37 @@ export default function RecipeTable({}) {
   }, [filteredRecipes, searchQuery, previousSearchQuery]);
 
   const getRecipes = async () => {
-    setIsLoading(true);
-    const response = await fetch(apiUrl + "/api/recipes/", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-    });
-    const data = await response.json();
-    if (data.length > 0) {
-      const sortedRecipes = data.data.sort((a, b) => {
-        const ratingA = calculateAverageRating(a.ratings);
-        const ratingB = calculateAverageRating(b.ratings);
-        return ratingB - ratingA;
+    setIsLoadingMeals(true);
+    try {
+      const response = await fetch(apiUrl + "/api/recipes/", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
       });
-    }
+      const data = await response.json();
 
-    setRecipes(data.data);
-    setIsLoading(false);
+      if (data.data && data.data.length > 0) {
+        // Ordena las recetas por rating
+        const sortedRecipes = data.data.sort((a, b) => {
+          const ratingA = calculateAverageRating(a.ratings);
+          const ratingB = calculateAverageRating(b.ratings);
+          return ratingB - ratingA;
+        });
+
+        setRecipes(sortedRecipes); // Actualiza el estado con las recetas ordenadas
+      } else {
+        setRecipes([]); // Establece un arreglo vacío si no hay datos
+      }
+    } catch (error) {
+      console.error("Error fetching recipes:", error);
+      enqueueSnackbar("An error occurred while fetching recipes.", {
+        variant: "error",
+      });
+    } finally {
+      setIsLoadingMeals(false);
+    }
   };
 
   const handleChangePage = (event, newPage) => {
@@ -286,7 +299,23 @@ export default function RecipeTable({}) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {noResults ? (
+            {isLoadingMeals ? (
+              <TableRow>
+                <TableCell colSpan={6} align="center">
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: "100%",
+                      height: "100%",
+                    }}
+                  >
+                    <CircularProgress />
+                  </Box>
+                </TableCell>
+              </TableRow>
+            ) : noResults ? (
               <TableRow>
                 <TableCell colSpan={6} align="center">
                   No results found.
@@ -306,7 +335,7 @@ export default function RecipeTable({}) {
                       name={`rating-${row._id}`}
                       value={calculateAverageRating(row.ratings)}
                       precision={0.5}
-                      readOnly={true}
+                      readOnly
                     />
                     {row.ratings &&
                       !row.ratings.find(
@@ -380,6 +409,7 @@ export default function RecipeTable({}) {
             )}
           </TableBody>
         </Table>
+
         <Box sx={{ display: "flex", justifyContent: "center" }}>
           <TablePaginationActions
             count={totalItems}

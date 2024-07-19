@@ -10,20 +10,50 @@ export default function SearchBar({ setSearchQuery }) {
   };
 
   return (
-    <div>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        maxWidth: 600,
+        margin: "auto",
+        borderRadius: 1,
+        boxShadow: 1,
+        backgroundColor: "background.paper",
+      }}
+    >
       <TextField
         id="search-bar"
-        className="text"
-        onInput={handleInputChange}
-        label="Enter a recipe name"
+        onChange={handleInputChange}
+        label="Search Recipes"
         variant="outlined"
-        placeholder="Search..."
+        placeholder="Enter a recipe name..."
         size="small"
-        sx={{ maxWidth: 450, left: "5%" }}
+        fullWidth
+        sx={{
+          borderRadius: 1,
+          backgroundColor: "white",
+          "& .MuiInputBase-root": {
+            borderRadius: 1,
+          },
+          "& .MuiOutlinedInput-root": {
+            borderRadius: 1,
+          },
+        }}
       />
-      <IconButton type="button" aria-label="search" sx={{ left: "5%" }}>
-        <SearchIcon />
+      <IconButton
+        type="button"
+        aria-label="search"
+        sx={{
+          marginLeft: -1,
+          borderRadius: 0,
+          bgcolor: "primary.main",
+          "&:hover": {
+            bgcolor: "primary.dark",
+          },
+        }}
+      >
+        <SearchIcon sx={{ color: "white" }} />
       </IconButton>
-      </div>
+    </Box>
   );
 }
