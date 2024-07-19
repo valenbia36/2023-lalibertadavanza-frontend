@@ -100,7 +100,12 @@ export default function GoalTable({ filterOpen, isCreateModalOpen }) {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
     });
+    if (response.status === 401) {
+      // Token ha expirado, desloguear al usuario
+      localStorage.removeItem("token");
 
+      window.location.href = "/";
+    }
     const data = await response.json();
     if (selectedFilter !== "" && filterOpen) {
       const filteredGoals = data.goalsWithProgress.filter(
@@ -122,6 +127,12 @@ export default function GoalTable({ filterOpen, isCreateModalOpen }) {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
     });
+    if (response.status === 401) {
+      // Token ha expirado, desloguear al usuario
+      localStorage.removeItem("token");
+
+      window.location.href = "/";
+    }
 
     if (response.status === 200) {
       setSelectedGoal(null);
@@ -169,6 +180,12 @@ export default function GoalTable({ filterOpen, isCreateModalOpen }) {
       },
       body: JSON.stringify(goal),
     }).then(function (response) {
+      if (response.status === 401) {
+        // Token ha expirado, desloguear al usuario
+        localStorage.removeItem("token");
+
+        window.location.href = "/";
+      }
       if (response.status === 200) {
         enqueueSnackbar("Recurrency Canceled", {
           variant: "success",

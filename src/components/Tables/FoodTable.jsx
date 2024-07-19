@@ -96,6 +96,12 @@ export default function FoodTable({ filterOpen, modalOpen }) {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
     });
+    if (response.status === 401) {
+      // Token ha expirado, desloguear al usuario
+      localStorage.removeItem("token");
+
+      window.location.href = "/";
+    }
     const data = await response.json();
     setNoResults(data.data.length === 0);
     setFoods(data.data);
@@ -116,6 +122,12 @@ export default function FoodTable({ filterOpen, modalOpen }) {
           },
         }
       );
+      if (response.status === 401) {
+        // Token ha expirado, desloguear al usuario
+        localStorage.removeItem("token");
+
+        window.location.href = "/";
+      }
       const data = await response.json();
       setNoResults(data.data.length === 0);
       setFoods(data.data);

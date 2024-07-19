@@ -96,6 +96,12 @@ const Calendar = ({
         },
         body: JSON.stringify({ ...selectedRecipes }),
       });
+      if (response.status === 401) {
+        // Token ha expirado, desloguear al usuario
+        localStorage.removeItem("token");
+
+        window.location.href = "/";
+      }
 
       if (response.ok) {
         enqueueSnackbar("The plan was created successfully.", {
@@ -169,6 +175,12 @@ const Calendar = ({
           },
           body: JSON.stringify(mealToAdd),
         });
+        if (response.status === 401) {
+          // Token ha expirado, desloguear al usuario
+          localStorage.removeItem("token");
+
+          window.location.href = "/";
+        }
 
         if (response.ok) {
           enqueueSnackbar("The meal was created successfully.", {

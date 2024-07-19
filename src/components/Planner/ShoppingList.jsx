@@ -48,6 +48,12 @@ export function ShoppingList({ open, setOpen }) {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
     });
+    if (response.status === 401) {
+      // Token ha expirado, desloguear al usuario
+      localStorage.removeItem("token");
+
+      window.location.href = "/";
+    }
     const data = await response.json();
     setWeeklyTotalConsumed(data.shoppingList.weeklyTotal);
     setIsLoading(false);
@@ -85,6 +91,12 @@ export function ShoppingList({ open, setOpen }) {
       body: JSON.stringify(purchaseData),
     })
       .then((response) => {
+        if (response.status === 401) {
+          // Token ha expirado, desloguear al usuario
+          localStorage.removeItem("token");
+
+          window.location.href = "/";
+        }
         response.json();
         if (response.status === 400) {
           enqueueSnackbar("Quantity to buy exceeds the weight consumed", {
@@ -116,7 +128,15 @@ export function ShoppingList({ open, setOpen }) {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (response.status === 401) {
+          // Token ha expirado, desloguear al usuario
+          localStorage.removeItem("token");
+
+          window.location.href = "/";
+        }
+        response.json();
+      })
       .then((data) => {
         handleGetShoppingList();
         enqueueSnackbar("Quantities to buy reset successfully", {

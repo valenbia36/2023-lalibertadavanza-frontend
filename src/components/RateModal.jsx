@@ -31,6 +31,12 @@ export default function RateModal({ open, setOpen, row, setLoaded }) {
           id: recipeId,
         }),
       }).then(function (response) {
+        if (response.status === 401) {
+          // Token ha expirado, desloguear al usuario
+          localStorage.removeItem("token");
+
+          window.location.href = "/";
+        }
         if (response.status === 200) {
           enqueueSnackbar("Rate was added successfully", {
             variant: "success",

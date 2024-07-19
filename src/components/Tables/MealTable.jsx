@@ -40,6 +40,13 @@ function Row(props) {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       }).then(function (response) {
+        if (response.status === 401) {
+          // Token ha expirado, desloguear al usuario
+          localStorage.removeItem("token");
+
+          window.location.href = "/";
+        }
+
         if (response.status === 200) {
           enqueueSnackbar("The meal was deleted successfully.", {
             variant: "success",
@@ -316,6 +323,12 @@ export default function MealTable({ modalOpen }) {
       });
 
       const data = await response.json();
+      if (response.status === 401) {
+        // Token ha expirado, desloguear al usuario
+        localStorage.removeItem("token");
+
+        window.location.href = "/";
+      }
       const mealsWithShortenedDates = data.data.map((meal) => {
         return {
           ...meal,

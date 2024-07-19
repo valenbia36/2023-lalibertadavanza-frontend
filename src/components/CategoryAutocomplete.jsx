@@ -23,6 +23,12 @@ const CategoryAutocomplete = ({
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
     });
+    if (response.status === 401) {
+      // Token ha expirado, desloguear al usuario
+      localStorage.removeItem("token");
+
+      window.location.href = "/";
+    }
     const data = await response.json();
     setCategoriesOptions(data.data);
   };

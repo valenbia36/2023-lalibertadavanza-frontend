@@ -40,7 +40,6 @@ const MealForm = ({ open, setOpen, initialData }) => {
   const [openCancelDialog, setOpenCancelDialog] = useState(false);
 
   const { enqueueSnackbar } = useSnackbar();
-  console.log(mealData);
 
   useEffect(() => {
     if (!foodsLoaded) {
@@ -93,6 +92,12 @@ const MealForm = ({ open, setOpen, initialData }) => {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       });
+      if (response.status === 401) {
+        // Token ha expirado, desloguear al usuario
+        localStorage.removeItem("token");
+
+        window.location.href = "/";
+      }
       if (response.ok) {
         const data = await response.json();
         setFoodOptions(data.data);
@@ -118,6 +123,12 @@ const MealForm = ({ open, setOpen, initialData }) => {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       });
+      if (response.status === 401) {
+        // Token ha expirado, desloguear al usuario
+        localStorage.removeItem("token");
+
+        window.location.href = "/";
+      }
       const data = await response.json();
       if (data.filteredData) {
         return data.filteredData;
@@ -185,7 +196,12 @@ const MealForm = ({ open, setOpen, initialData }) => {
       },
       body: JSON.stringify(mealData),
     });
+    if (response.status === 401) {
+      // Token ha expirado, desloguear al usuario
+      localStorage.removeItem("token");
 
+      window.location.href = "/";
+    }
     if (response.status === 200) {
       enqueueSnackbar(
         initialData

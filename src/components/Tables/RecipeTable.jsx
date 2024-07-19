@@ -140,6 +140,12 @@ export default function RecipeTable({}) {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       });
+      if (response.status === 401) {
+        // Token ha expirado, desloguear al usuario
+        localStorage.removeItem("token");
+
+        window.location.href = "/";
+      }
       const data = await response.json();
 
       if (data.data && data.data.length > 0) {
@@ -219,6 +225,12 @@ export default function RecipeTable({}) {
         body: JSON.stringify(mealToAdd),
       })
         .then(function (response) {
+          if (response.status === 401) {
+            // Token ha expirado, desloguear al usuario
+            localStorage.removeItem("token");
+
+            window.location.href = "/";
+          }
           if (response.status === 200) {
             enqueueSnackbar("The meal was created successfully.", {
               variant: "success",

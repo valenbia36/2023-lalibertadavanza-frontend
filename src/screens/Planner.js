@@ -125,6 +125,12 @@ const Planner = () => {
         date: new Date(),
       }),
     }).then(function (response) {
+      if (response.status === 401) {
+        // Token ha expirado, desloguear al usuario
+        localStorage.removeItem("token");
+
+        window.location.href = "/";
+      }
       if (response.status === 200) {
         enqueueSnackbar("The water glass was added successfully.", {
           variant: "success",
@@ -161,7 +167,15 @@ const Planner = () => {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (response.status === 401) {
+          // Token ha expirado, desloguear al usuario
+          localStorage.removeItem("token");
+
+          window.location.href = "/";
+        }
+        response.json();
+      })
       .then((data) => {
         setPlan(data[0]);
       });
@@ -175,7 +189,15 @@ const Planner = () => {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (response.status === 401) {
+          // Token ha expirado, desloguear al usuario
+          localStorage.removeItem("token");
+
+          window.location.href = "/";
+        }
+        response.json();
+      })
       .then((data) => setRecipes(data.data));
   };
 
