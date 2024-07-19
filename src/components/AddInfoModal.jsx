@@ -78,11 +78,11 @@ const InfoModal = ({ open, setOpen, newFood, setNewFood }) => {
           <Grid item xs={10}>
             <TextField
               InputProps={{
-                inputProps: { min: 1 },
-                sx: { textAlign: "center" },
+                inputProps: {
+                  maxLength: 3,
+                },
               }}
               label="Carbs"
-              type="number"
               variant="outlined"
               fullWidth
               value={newFood.carbs}
@@ -92,11 +92,11 @@ const InfoModal = ({ open, setOpen, newFood, setNewFood }) => {
           <Grid item xs={10}>
             <TextField
               InputProps={{
-                inputProps: { min: 1 },
-                sx: { textAlign: "center" },
+                inputProps: {
+                  maxLength: 3,
+                },
               }}
               label="Proteins"
-              type="number"
               variant="outlined"
               fullWidth
               value={newFood.proteins}
@@ -106,11 +106,11 @@ const InfoModal = ({ open, setOpen, newFood, setNewFood }) => {
           <Grid item xs={10}>
             <TextField
               InputProps={{
-                inputProps: { min: 1 },
-                sx: { textAlign: "center" },
+                inputProps: {
+                  maxLength: 3,
+                },
               }}
               label="Fats"
-              type="number"
               variant="outlined"
               fullWidth
               value={newFood.fats}

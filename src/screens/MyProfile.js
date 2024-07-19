@@ -175,7 +175,9 @@ const MyProfile = () => {
                       style: { color: "black" },
                     }}
                     InputProps={{
-                      style: { color: "black" },
+                      inputProps: {
+                        maxLength: 25,
+                      },
                     }}
                     autoFocus
                     value={user.firstName}
@@ -197,7 +199,9 @@ const MyProfile = () => {
                       style: { color: "black" },
                     }}
                     InputProps={{
-                      style: { color: "black" },
+                      inputProps: {
+                        maxLength: 25,
+                      },
                     }}
                     onChange={(e) =>
                       setUser({ ...user, lastName: e.target.value })
@@ -217,7 +221,9 @@ const MyProfile = () => {
                       style: { color: "black" },
                     }}
                     InputProps={{
-                      style: { color: "black" },
+                      inputProps: {
+                        maxLength: 50,
+                      },
                     }}
                     onChange={(e) =>
                       setUser({ ...user, email: e.target.value })
@@ -231,14 +237,14 @@ const MyProfile = () => {
                     id="age"
                     label="Age"
                     name="age"
-                    type="number"
                     value={user.age}
                     InputLabelProps={{
                       style: { color: "black" },
                     }}
                     InputProps={{
-                      style: { color: "black" },
-                      inputProps: { min: 1 },
+                      inputProps: {
+                        maxLength: 2,
+                      },
                     }}
                     onChange={(e) => handleAgeInputChange(e)}
                   />
@@ -275,16 +281,14 @@ const MyProfile = () => {
                     id="height"
                     label="Height (cm)"
                     name="height"
-                    type="number"
                     value={user.height}
                     InputLabelProps={{
                       style: { color: "black" },
                     }}
                     InputProps={{
-                      style: {
-                        color: "black",
+                      inputProps: {
+                        maxLength: 3,
                       },
-                      inputProps: { min: 1 },
                     }}
                     onChange={(e) => handleHeightInputChange(e)}
                   />
@@ -296,16 +300,14 @@ const MyProfile = () => {
                     id="weight"
                     label="Weight (kg)"
                     name="weight"
-                    type="number"
                     value={user.weight}
                     InputLabelProps={{
                       style: { color: "black" },
                     }}
                     InputProps={{
-                      style: {
-                        color: "black",
+                      inputProps: {
+                        maxLength: 3,
                       },
-                      inputProps: { min: 1 },
                     }}
                     onChange={(e) => handleWeightInputChange(e)}
                   />

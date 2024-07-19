@@ -150,6 +150,11 @@ const FoodForm = ({ open, setOpen }) => {
           <TextField
             label="Name"
             variant="outlined"
+            InputProps={{
+              inputProps: {
+                maxLength: 17,
+              },
+            }}
             fullWidth
             margin="normal"
             value={newFood.name}
@@ -163,10 +168,11 @@ const FoodForm = ({ open, setOpen }) => {
 
           <TextField
             InputProps={{
-              inputProps: { min: 1 },
+              inputProps: {
+                maxLength: 5,
+              },
             }}
             label={`Weight (gr/ml)`}
-            type="number"
             variant="outlined"
             fullWidth
             value={newFood.weight}
@@ -202,11 +208,10 @@ const FoodForm = ({ open, setOpen }) => {
               <TextField
                 InputProps={{
                   inputProps: {
-                    step: 1,
+                    maxLength: 4,
                   },
                 }}
                 label={`Calories`}
-                type="number"
                 variant="outlined"
                 fullWidth
                 value={newFood.calories}

@@ -272,199 +272,225 @@ export default function RecipeTable({}) {
       }}
     >
       <SearchBar setSearchQuery={handleSearch} />
-      <TableContainer
-        component={Paper}
-        sx={{
-          paddingBottom: "20px",
-          marginTop: "20px",
-          //width: "100%",
-          //bgcolor: "red",
-          width: "100%",
-          minWidth: "100%",
-          minHeight: "500px", // Asegura que el contenedor ocupe todo el ancho disponible
+      <div
+        style={{
+          textAlign: "center",
+          maxWidth: "100%",
+          margin: "auto",
+          minHeight: "400px",
+          overflowY: "auto",
+          position: "relative", // Asegúrate de que el contenedor tenga posición relativa
+          paddingBottom: "60px", // Ajusta esto según el alto de tus flechas de paginación
         }}
       >
-        <Table
-          aria-label="custom pagination table"
+        <TableContainer
+          component={Paper}
           sx={{
-            "& .MuiTableCell-root": {
-              textAlign: "center",
-              fontWeight: "bold",
-              padding: "8px",
-            },
-            "& .MuiTableCell-head": {
-              backgroundColor: "#f5f5f5",
-            },
+            paddingBottom: "20px",
+            marginTop: "20px",
             //width: "100%",
-            //minHeight: "100%",
-            //bgcolor: "yellow",
+            //bgcolor: "red",
+            width: "100%",
             minWidth: "100%",
-            //height: "450px", // Asegura que la tabla ocupe todo el ancho disponible
+            minHeight: "500px", // Asegura que el contenedor ocupe todo el ancho disponible
           }}
         >
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Rating</TableCell>
-              <TableCell>Actions</TableCell>
-              <TableCell>Ingredients</TableCell>
-              <TableCell>Info</TableCell>
-              <TableCell>Add to Meals</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {isLoadingMeals ? (
+          <Table
+            aria-label="custom pagination table"
+            sx={{
+              "& .MuiTableCell-root": {
+                textAlign: "center",
+                fontWeight: "bold",
+                padding: "8px",
+              },
+              "& .MuiTableCell-head": {
+                backgroundColor: "#f5f5f5",
+              },
+              //width: "100%",
+              //minHeight: "100%",
+              //bgcolor: "yellow",
+              minWidth: "100%",
+              //height: "450px", // Asegura que la tabla ocupe todo el ancho disponible
+            }}
+          >
+            <TableHead>
               <TableRow>
-                <TableCell colSpan={6} align="center">
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      width: "100%",
-                      height: "100%",
-                    }}
-                  >
-                    <CircularProgress />
-                  </Box>
-                </TableCell>
+                <TableCell>Name</TableCell>
+                <TableCell>Rating</TableCell>
+                <TableCell>Actions</TableCell>
+                <TableCell>Ingredients</TableCell>
+                <TableCell>Info</TableCell>
+                <TableCell>Add to Meals</TableCell>
               </TableRow>
-            ) : noResults ? (
-              <TableRow>
-                <TableCell colSpan={6} align="center">
-                  No results found.
-                </TableCell>
-              </TableRow>
-            ) : (
-              (filteredRecipes.length > 0
-                ? filteredRecipes.slice(page * 5, page * 5 + 5)
-                : filteredRecipes
-              ).map((row) => (
-                <TableRow key={row._id}>
-                  <TableCell component="th" scope="row">
-                    {row.name}
-                  </TableCell>
-                  <TableCell>
-                    <Rating
-                      name={`rating-${row._id}`}
-                      value={calculateAverageRating(row.ratings)}
-                      precision={0.5}
-                      readOnly
-                    />
-                    {row.ratings &&
-                      !row.ratings.find(
-                        (rating) =>
-                          rating.userId.toString() ===
-                          localStorage.getItem("userId")
-                      ) && (
-                        <IconButton
-                          aria-label="rate recipe"
-                          size="small"
-                          onClick={() => {
-                            setSelectedRow(row);
-                            setIsRateModalOpen(true);
-                          }}
-                        >
-                          <ThumbsUpDownIcon />
-                        </IconButton>
-                      )}
-                  </TableCell>
-                  <TableCell>
-                    <IconButton
-                      aria-label="edit recipe"
-                      size="small"
-                      onClick={() => handleEditClick(row)}
-                      disabled={row.creator !== localStorage.getItem("userId")}
+            </TableHead>
+            <TableBody>
+              {isLoadingMeals ? (
+                <TableRow>
+                  <TableCell colSpan={6} align="center">
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "100%",
+                        height: "100%",
+                      }}
                     >
-                      <EditIcon />
-                    </IconButton>
-                  </TableCell>
-                  <TableCell>
-                    <IconButton
-                      aria-label="view ingredients"
-                      size="small"
-                      onClick={() => handleOpenDialog(row)}
-                    >
-                      <ReceiptLongIcon />
-                    </IconButton>
-                    <DialogMessage
-                      open={openDialogs[row._id] || false}
-                      setOpen={handleCloseDialog}
-                      ingredients={row.foods}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <IconButton
-                      aria-label="view info"
-                      size="small"
-                      onClick={() => handleInfoClick(row)}
-                      disabled={
-                        row.steps.length === 1 &&
-                        row.steps[0].images.length === 0 &&
-                        row.steps[0].text === ""
-                      }
-                    >
-                      <InfoIcon />
-                    </IconButton>
-                  </TableCell>
-                  <TableCell>
-                    <Tooltip title="Add Meal">
-                      <IconButton
-                        aria-label="add meal"
-                        size="small"
-                        onClick={() => handleAddMeal(row)}
-                      >
-                        <RestaurantIcon />
-                      </IconButton>
-                    </Tooltip>
+                      <CircularProgress />
+                    </Box>
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+              ) : noResults ? (
+                <TableRow>
+                  <TableCell colSpan={6} align="center">
+                    No results found.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                (filteredRecipes.length > 0
+                  ? filteredRecipes.slice(page * 5, page * 5 + 5)
+                  : filteredRecipes
+                ).map((row) => (
+                  <TableRow key={row._id}>
+                    <TableCell component="th" scope="row">
+                      {row.name}
+                    </TableCell>
+                    <TableCell>
+                      <Rating
+                        name={`rating-${row._id}`}
+                        value={calculateAverageRating(row.ratings)}
+                        precision={0.5}
+                        readOnly
+                      />
+                      {row.ratings &&
+                        !row.ratings.find(
+                          (rating) =>
+                            rating.userId.toString() ===
+                            localStorage.getItem("userId")
+                        ) && (
+                          <IconButton
+                            aria-label="rate recipe"
+                            size="small"
+                            onClick={() => {
+                              setSelectedRow(row);
+                              setIsRateModalOpen(true);
+                            }}
+                          >
+                            <ThumbsUpDownIcon />
+                          </IconButton>
+                        )}
+                    </TableCell>
+                    <TableCell>
+                      <IconButton
+                        aria-label="edit recipe"
+                        size="small"
+                        onClick={() => handleEditClick(row)}
+                        disabled={
+                          row.creator !== localStorage.getItem("userId")
+                        }
+                      >
+                        <EditIcon />
+                      </IconButton>
+                    </TableCell>
+                    <TableCell>
+                      <IconButton
+                        aria-label="view ingredients"
+                        size="small"
+                        onClick={() => handleOpenDialog(row)}
+                      >
+                        <ReceiptLongIcon />
+                      </IconButton>
+                      <DialogMessage
+                        open={openDialogs[row._id] || false}
+                        setOpen={handleCloseDialog}
+                        ingredients={row.foods}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <IconButton
+                        aria-label="view info"
+                        size="small"
+                        onClick={() => handleInfoClick(row)}
+                        disabled={
+                          row.steps.length === 1 &&
+                          row.steps[0].images.length === 0 &&
+                          row.steps[0].text === ""
+                        }
+                      >
+                        <InfoIcon />
+                      </IconButton>
+                    </TableCell>
+                    <TableCell>
+                      <Tooltip title="Add Meal">
+                        <IconButton
+                          aria-label="add meal"
+                          size="small"
+                          onClick={() => handleAddMeal(row)}
+                        >
+                          <RestaurantIcon />
+                        </IconButton>
+                      </Tooltip>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
 
-        <Box sx={{ display: "flex", justifyContent: "center" }}>
-          <TablePaginationActions
-            count={totalItems}
-            page={page}
-            onPageChange={handleChangePage}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              position: "absolute",
+              bottom: "0",
+              left: "0",
+              right: "0",
+              padding: "16px", // Reducir padding para reducir el espacio
+              backgroundColor: "white", // O el color que desees
+              borderTop: "1px solid #ddd",
+            }}
+          >
+            <TablePaginationActions
+              count={totalItems}
+              page={page}
+              onPageChange={handleChangePage}
+            />
+          </Box>
+          <RecipeForm
+            openRecipe={isModalRecipeOpen}
+            setRecipeOpen={(value) => {
+              setIsModalRecipeOpen(value);
+              if (!value) {
+                getRecipes();
+              }
+            }}
+            initialData={editMeal}
+            foodModal={isModalFoodOpen}
+            setOpenFoodModal={(value) => {
+              setIsModalFoodOpen(value);
+              if (!value) {
+                getRecipes();
+              }
+            }}
           />
-        </Box>
-        <RecipeForm
-          openRecipe={isModalRecipeOpen}
-          setRecipeOpen={(value) => {
-            setIsModalRecipeOpen(value);
-            if (!value) {
-              getRecipes();
-            }
-          }}
-          initialData={editMeal}
-          foodModal={isModalFoodOpen}
-          setOpenFoodModal={(value) => {
-            setIsModalFoodOpen(value);
-            if (!value) {
-              getRecipes();
-            }
-          }}
-        />
-        <PicsModal
-          open={isPicModalOpen}
-          setOpen={setIsPicModalOpen}
-          initialData={infoMeal}
-        />
-        <RateModal
-          open={isRateModalOpen}
-          setOpen={(value) => {
-            setIsRateModalOpen(value);
-            if (!value) {
-              getRecipes();
-            }
-          }}
-          row={selectedRow}
-          setLoaded={setLoaded}
-        />
-      </TableContainer>
+          <PicsModal
+            open={isPicModalOpen}
+            setOpen={setIsPicModalOpen}
+            initialData={infoMeal}
+          />
+          <RateModal
+            open={isRateModalOpen}
+            setOpen={(value) => {
+              setIsRateModalOpen(value);
+              if (!value) {
+                getRecipes();
+              }
+            }}
+            row={selectedRow}
+            setLoaded={setLoaded}
+          />
+        </TableContainer>
+      </div>
       <IconButton onClick={handleOpenForm}>
         <AddCircleRoundedIcon />
       </IconButton>

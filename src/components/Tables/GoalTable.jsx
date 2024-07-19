@@ -22,6 +22,7 @@ import { Select, MenuItem, InputLabel, FormControl } from "@mui/material";
 import SentimentVerySatisfiedIcon from "@mui/icons-material/SentimentVerySatisfied";
 import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAlt";
 import SentimentDissatisfiedIcon from "@mui/icons-material/SentimentDissatisfied";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const apiUrl = getApiUrl();
 
@@ -72,6 +73,7 @@ export default function GoalTable({ filterOpen, isCreateModalOpen }) {
   const [selectedGoal, setSelectedGoal] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -93,6 +95,7 @@ export default function GoalTable({ filterOpen, isCreateModalOpen }) {
   ]);
 
   const handleGetGoals = async () => {
+    setIsLoading(true);
     const response = await fetch(apiUrl + "/api/goals/goalsWithProgress/", {
       method: "GET",
       headers: {
@@ -118,6 +121,7 @@ export default function GoalTable({ filterOpen, isCreateModalOpen }) {
       setGoals(data.goalsWithProgress);
       setTotalItems(data.goalsWithProgress.length);
     }
+    setIsLoading(false);
   };
 
   const handleDeleteGoal = async (goal) => {
@@ -199,7 +203,17 @@ export default function GoalTable({ filterOpen, isCreateModalOpen }) {
   };
 
   return (
-    <div>
+    <div
+      style={{
+        textAlign: "center",
+        maxWidth: "100%",
+        margin: "auto",
+        minHeight: "400px",
+        overflowY: "auto",
+        position: "relative", // Asegúrate de que el contenedor tenga posición relativa
+        paddingBottom: "60px", // Ajusta esto según el alto de tus flechas de paginación
+      }}
+    >
       {filterOpen && (
         <div style={{ marginBottom: "20px" }}>
           <FormControl
@@ -222,26 +236,60 @@ export default function GoalTable({ filterOpen, isCreateModalOpen }) {
       )}
       <TableContainer component={Paper} sx={{ minWidth: 200, minHeight: 420 }}>
         <Table aria-label="custom pagination table">
-          <TableHead sx={{ fontWeight: "bold" }}>
+          <TableHead sx={{ height: "80px", bgcolor: "grey.200" }}>
             <TableRow sx={{ fontWeight: "bold" }}>
-              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  width: 120,
+                  padding: "1px",
+                }}
+              >
                 Name
               </TableCell>
-              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  width: 120,
+                  padding: "1px",
+                }}
+              >
                 State
               </TableCell>
-              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  width: 120,
+                  padding: "1px",
+                }}
+              >
                 Recurrency
               </TableCell>
-              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  width: 120,
+                  padding: "1px",
+                }}
+              >
                 Info
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {totalItems === 0 ? (
+            {isLoading ? ( // Muestra CircularProgress si loading es true
               <TableRow>
-                <TableCell colSpan={3} align="center">
+                <TableCell colSpan={6} align="center">
+                  <CircularProgress style={{ margin: "20px" }} />
+                </TableCell>
+              </TableRow>
+            ) : totalItems === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} align="center">
                   No results found.
                 </TableCell>
               </TableRow>
@@ -278,7 +326,19 @@ export default function GoalTable({ filterOpen, isCreateModalOpen }) {
             )}
           </TableBody>
         </Table>
-        <Box sx={{ display: "flex", justifyContent: "center" }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            position: "absolute",
+            bottom: "0",
+            left: "0",
+            right: "0",
+            padding: "16px", // Reducir padding para reducir el espacio
+            backgroundColor: "white", // O el color que desees
+            borderTop: "1px solid #ddd",
+          }}
+        >
           <TablePaginationActions
             count={totalItems}
             page={page}

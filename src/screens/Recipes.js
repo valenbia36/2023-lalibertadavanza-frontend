@@ -28,17 +28,21 @@ const Recipes = () => {
   const [showConfetti, setShowConfetti] = useState(false);
   const [openIntermittentFastingModal, setOpenIntermittentFastingModal] =
     useState(false);
+
+  const checkIsMobile = () => {
+    setIsMobile(window.innerWidth <= theme.breakpoints.values.sm);
+  };
+
   useEffect(() => {
     function handleResize() {
-      setIsMobile(window.innerWidth <= theme.breakpoints.values.sm);
+      checkIsMobile();
     }
     window.addEventListener("resize", handleResize);
-    handleResize();
+    checkIsMobile(); // Forzar la verificación al montar el componente
     return () => {
       window.removeEventListener("resize", handleResize);
     };
   }, [theme]);
-
   const handleCreateWaterGlass = () => {
     fetch(apiUrl + "/api/waterGlass", {
       method: "POST",

@@ -76,12 +76,12 @@ function Row(props) {
 
   return (
     <React.Fragment>
-      <TableRow sx={{ "& > *": { borderBottom: "unset", height: "79px" } }}>
+      <TableRow sx={{ "& > *": { borderBottom: "unset", height: "73px" } }}>
         <TableCell
           width={5}
           align="center"
           sx={{ textAlign: "center" }}
-          style={{ width: 160, border: "1px solid #ddd", padding: "6px" }}
+          style={{ width: 160, border: "1px solid #ddd", padding: "4px" }}
         >
           <IconButton
             aria-label="expand row"
@@ -95,26 +95,26 @@ function Row(props) {
           component="th"
           scope="row"
           align="center"
-          style={{ width: 160, border: "1px solid #ddd", padding: "6px" }}
+          style={{ width: 160, border: "1px solid #ddd", padding: "4px" }}
         >
           {row.name}
         </TableCell>
         <TableCell
           align="center"
-          style={{ width: 160, border: "1px solid #ddd", padding: "6px" }}
+          style={{ width: 160, border: "1px solid #ddd", padding: "4px" }}
         >
           {row.date}
         </TableCell>
         <TableCell
           align="center"
-          style={{ width: 160, border: "1px solid #ddd", padding: "6px" }}
+          style={{ width: 160, border: "1px solid #ddd", padding: "4px" }}
         >
           {row.hour}
         </TableCell>
         {
           <TableCell
             align="center"
-            style={{ width: 160, border: "1px solid #ddd", padding: "6px" }}
+            style={{ width: 160, border: "1px solid #ddd", padding: "4px" }}
           >
             <IconButton
               aria-label="edit row"
@@ -171,7 +171,7 @@ function Row(props) {
                         style={{
                           width: 160,
                           border: "1px solid #ddd",
-                          padding: "6px",
+                          padding: "4px",
                         }}
                       >
                         {foodRow.foodId.name}
@@ -181,7 +181,7 @@ function Row(props) {
                         style={{
                           width: 160,
                           border: "1px solid #ddd",
-                          padding: "6px",
+                          padding: "4px",
                         }}
                       >
                         {foodRow.caloriesPerFood}
@@ -191,7 +191,7 @@ function Row(props) {
                         style={{
                           width: 160,
                           border: "1px solid #ddd",
-                          padding: "6px",
+                          padding: "4px",
                         }}
                       >
                         {foodRow.carbsPerFood}
@@ -201,7 +201,7 @@ function Row(props) {
                         style={{
                           width: 160,
                           border: "1px solid #ddd",
-                          padding: "6px",
+                          padding: "4px",
                         }}
                       >
                         {foodRow.proteinsPerFood}
@@ -211,7 +211,7 @@ function Row(props) {
                         style={{
                           width: 160,
                           border: "1px solid #ddd",
-                          padding: "6px",
+                          padding: "4px",
                         }}
                       >
                         {foodRow.fatsPerFood}
@@ -221,7 +221,7 @@ function Row(props) {
                         style={{
                           width: 160,
                           border: "1px solid #ddd",
-                          padding: "6px",
+                          padding: "4px",
                         }}
                       >
                         {foodRow.weightConsumed}
@@ -235,7 +235,7 @@ function Row(props) {
                       style={{
                         width: 160,
                         border: "1px solid #ddd",
-                        padding: "6px",
+                        padding: "4px",
                       }}
                     >
                       Total
@@ -245,7 +245,7 @@ function Row(props) {
                       style={{
                         width: 160,
                         border: "1px solid #ddd",
-                        padding: "6px",
+                        padding: "4px",
                       }}
                     >
                       {row.totalCalories}
@@ -255,7 +255,7 @@ function Row(props) {
                       style={{
                         width: 160,
                         border: "1px solid #ddd",
-                        padding: "6px",
+                        padding: "4px",
                       }}
                     >
                       {row.totalCarbs}
@@ -265,7 +265,7 @@ function Row(props) {
                       style={{
                         width: 160,
                         border: "1px solid #ddd",
-                        padding: "6px",
+                        padding: "4px",
                       }}
                     >
                       {row.totalProteins}
@@ -275,7 +275,7 @@ function Row(props) {
                       style={{
                         width: 160,
                         border: "1px solid #ddd",
-                        padding: "6px",
+                        padding: "4px",
                       }}
                     >
                       {row.totalFats}
@@ -367,110 +367,108 @@ export default function MealTable({ modalOpen }) {
   };
 
   return (
-    <TableContainer
-      component={Paper}
-      sx={{ overflowX: "auto", minHeight: "512px", position: "relative" }}
-    >
-      <Table aria-label="collapsible table">
-        <TableHead>
-          <TableRow>
-            <TableCell
-              align="center"
-              sx={{ fontWeight: "bold", bgcolor: "grey.200" }}
-            />
-            <TableCell
-              align="center"
-              sx={{ fontWeight: "bold", bgcolor: "grey.200" }}
-            >
-              Name
-            </TableCell>
-            <TableCell
-              align="center"
-              sx={{ fontWeight: "bold", bgcolor: "grey.200" }}
-            >
-              Date&nbsp;
-            </TableCell>
-            <TableCell
-              align="center"
-              sx={{ fontWeight: "bold", bgcolor: "grey.200" }}
-            >
-              Hours&nbsp;
-            </TableCell>
-            <TableCell
-              align="center"
-              sx={{ fontWeight: "bold", bgcolor: "grey.200" }}
-            >
-              Actions&nbsp;
-            </TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody sx={{ textAlign: "center" }}>
-          {isLoadingMeals ? (
+    <Paper sx={{ maxWidth: "100%", minWidht: "100%" }}>
+      <TableContainer
+        sx={{
+          overflowX: "auto",
+          minHeight: "449px",
+          position: "relative",
+          //maxWidth: "100%",
+        }}
+      >
+        <Table aria-label="collapsible table">
+          <TableHead sx={{ height: "80px", bgcolor: "grey.200" }}>
             <TableRow>
-              <TableCell colSpan={6} align="center" sx={{ padding: "20px" }}>
-                <CircularProgress />
+              <TableCell
+                sx={{ fontWeight: "bold", width: 160, padding: "6px" }}
+                align="center"
+              />
+              <TableCell
+                sx={{ fontWeight: "bold", width: 160, padding: "6px" }}
+                align="center"
+              >
+                Name
+              </TableCell>
+              <TableCell
+                sx={{ fontWeight: "bold", width: 160, padding: "6px" }}
+                align="center"
+              >
+                Date&nbsp;
+              </TableCell>
+              <TableCell
+                sx={{ fontWeight: "bold", width: 160, padding: "6px" }}
+                align="center"
+              >
+                Hours&nbsp;
+              </TableCell>
+              <TableCell
+                sx={{ fontWeight: "bold", width: 160, padding: "6px" }}
+                align="center"
+              >
+                Actions&nbsp;
               </TableCell>
             </TableRow>
-          ) : meals.length > 0 ? (
-            meals
-              .slice(startIndex, endIndex)
-              .map((row) => (
-                <Row
-                  key={row._id}
-                  row={row}
-                  sx={{ textAlign: "center" }}
-                  onEditClick={handleEditClick}
-                  onDelete={handleDelete}
-                  page={page}
-                  endIndex={endIndex}
-                  totalMeals={totalMeals}
-                  onPageChange={handlePageChange}
-                />
-              ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={6} align="center" sx={{ padding: "10px" }}>
-                No meals to show
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-
+          </TableHead>
+          <TableBody sx={{ textAlign: "center" }}>
+            {isLoadingMeals ? (
+              <TableRow>
+                <TableCell colSpan={6} align="center" sx={{ padding: "20px" }}>
+                  <CircularProgress />
+                </TableCell>
+              </TableRow>
+            ) : meals.length > 0 ? (
+              meals
+                .slice(startIndex, endIndex)
+                .map((row) => (
+                  <Row
+                    key={row._id}
+                    row={row}
+                    sx={{ textAlign: "center" }}
+                    onEditClick={handleEditClick}
+                    onDelete={handleDelete}
+                    page={page}
+                    endIndex={endIndex}
+                    totalMeals={totalMeals}
+                    onPageChange={handlePageChange}
+                  />
+                ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={6} align="center" sx={{ padding: "10px" }}>
+                  No meals to show
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
       <Box
         sx={{
           display: "flex",
           justifyContent: "center",
-          position: "absolute",
-          bottom: "0",
-          left: "0",
-          right: "0",
-          padding: "8px", // Reducir padding para reducir el espacio
-          backgroundColor: "white", // O el color que desees
+          padding: "11px", // Reducir padding para reducir el espacio
+          backgroundColor: "grey.200", // O el color que desees
           borderTop: "1px solid #ddd",
         }}
       >
         <IconButton
           onClick={() => handlePageChange(page - 1)}
           disabled={page === 0}
-          sx={{ color: theme.palette.primary.main }} // Utilizar theme aquí
         >
           <ArrowBackIosIcon />
         </IconButton>
         <IconButton
           onClick={() => handlePageChange(page + 1)}
           disabled={endIndex >= totalMeals}
-          sx={{ color: theme.palette.primary.main }} // Utilizar theme aquí
         >
           <ArrowForwardIosIcon />
         </IconButton>
       </Box>
-
       <MealForm
         open={isModalOpen}
         setOpen={setIsModalOpen}
         initialData={editMeal}
       />
-    </TableContainer>
+    </Paper>
   );
 }

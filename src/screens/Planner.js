@@ -55,7 +55,6 @@ const Planner = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, [theme]);
-
   useEffect(() => {
     async function fetchData() {
       await Promise.all([getPlan(), getRecipes()]);

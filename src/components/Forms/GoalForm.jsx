@@ -181,6 +181,11 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
           <TextField
             label="Name"
             variant="outlined"
+            InputProps={{
+              inputProps: {
+                maxLength: 17,
+              },
+            }}
             fullWidth
             margin="normal"
             value={newGoal.name}
@@ -194,10 +199,11 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
 
           <TextField
             InputProps={{
-              inputProps: { min: 1 },
+              inputProps: {
+                maxLength: 10,
+              },
             }}
             label="Goal (calories)"
-            type="number"
             variant="outlined"
             fullWidth
             value={newGoal.calories}

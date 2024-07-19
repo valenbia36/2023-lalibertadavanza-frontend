@@ -98,6 +98,11 @@ const CategoryForm = ({ open, setOpen }) => {
             label="Name"
             variant="outlined"
             fullWidth
+            InputProps={{
+              inputProps: {
+                maxLength: 17,
+              },
+            }}
             margin="normal"
             value={newCategory.name}
             disabled={isLoading}

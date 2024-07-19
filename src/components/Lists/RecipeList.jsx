@@ -8,13 +8,17 @@ const RecipeList = () => {
   const [tableWidth, setTableWidth] = useState("100%");
   const theme = useTheme();
   const [isMobile, setIsMobile] = useState(false);
+  const [width, setWidth] = useState(300);
+
+  const handleResize = () => {
+    const isMobileSize = window.innerWidth <= theme.breakpoints.values.sm;
+    setIsMobile(isMobileSize);
+    setWidth(isMobileSize ? 300 : 600);
+  };
 
   useEffect(() => {
-    function handleResize() {
-      setIsMobile(window.innerWidth <= theme.breakpoints.values.sm);
-    }
     window.addEventListener("resize", handleResize);
-    handleResize();
+    handleResize(); // Forzar la verificación al montar el componente
     return () => {
       window.removeEventListener("resize", handleResize);
     };
@@ -29,7 +33,7 @@ const RecipeList = () => {
         margin: "auto",
         //bgcolor: "grey",
         //width: tableWidth,
-        minWidth: isMobile ? 300 : 600,
+        minWidth: width,
         minHeight: 800,
       }}
     >

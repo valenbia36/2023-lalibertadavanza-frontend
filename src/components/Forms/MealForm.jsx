@@ -313,6 +313,11 @@ const MealForm = ({ open, setOpen, initialData }) => {
           <Grid item xs={12}>
             <TextField
               label="Name"
+              InputProps={{
+                inputProps: {
+                  maxLength: 17,
+                },
+              }}
               variant="outlined"
               fullWidth
               margin="normal"
@@ -417,10 +422,11 @@ const MealForm = ({ open, setOpen, initialData }) => {
               <Grid item xs={4}>
                 <TextField
                   InputProps={{
-                    inputProps: { min: 1 },
+                    inputProps: {
+                      maxLength: 6,
+                    },
                   }}
                   label={`Weight (gr/ml)`}
-                  type="number"
                   variant="outlined"
                   fullWidth
                   value={food.weightConsumed}

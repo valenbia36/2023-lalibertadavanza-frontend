@@ -144,7 +144,9 @@ const SignUp = () => {
                     style: { color: "black" },
                   }}
                   InputProps={{
-                    style: { color: "black" },
+                    inputProps: {
+                      maxLength: 25,
+                    },
                   }}
                   autoFocus
                   onChange={(e) =>
@@ -169,7 +171,9 @@ const SignUp = () => {
                     style: { color: "black" },
                   }}
                   InputProps={{
-                    style: { color: "black" },
+                    inputProps: {
+                      maxLength: 25,
+                    },
                   }}
                   onChange={(e) =>
                     setUser({ ...user, lastName: e.target.value })
@@ -193,7 +197,9 @@ const SignUp = () => {
                     style: { color: "black" },
                   }}
                   InputProps={{
-                    style: { color: "black" },
+                    inputProps: {
+                      maxLength: 50,
+                    },
                   }}
                   onChange={(e) => setUser({ ...user, email: e.target.value })}
                   onKeyPress={(event) => {
@@ -241,14 +247,14 @@ const SignUp = () => {
                   id="age"
                   label="Age"
                   name="age"
-                  type="number"
                   value={user.age}
                   InputLabelProps={{
                     style: { color: "black" },
                   }}
                   InputProps={{
-                    style: { color: "black" },
-                    inputProps: { min: 1 },
+                    inputProps: {
+                      maxLength: 2,
+                    },
                   }}
                   onChange={(e) => handleAgeInputChange(e)}
                   onKeyPress={(event) => {
@@ -290,16 +296,14 @@ const SignUp = () => {
                   id="height"
                   label="Height (cm)"
                   name="height"
-                  type="number"
                   value={user.height}
                   InputLabelProps={{
                     style: { color: "black" },
                   }}
                   InputProps={{
-                    style: {
-                      color: "black",
+                    inputProps: {
+                      maxLength: 3,
                     },
-                    inputProps: { min: 1 },
                   }}
                   onChange={(e) => handleHeightInputChange(e)}
                   onKeyPress={(event) => {
@@ -316,16 +320,14 @@ const SignUp = () => {
                   id="weight"
                   label="Weight (kg)"
                   name="weight"
-                  type="number"
                   value={user.weight}
                   InputLabelProps={{
                     style: { color: "black" },
                   }}
                   InputProps={{
-                    style: {
-                      color: "black",
+                    inputProps: {
+                      maxLength: 3,
                     },
-                    inputProps: { min: 1 },
                   }}
                   onChange={(e) => handleWeightInputChange(e)}
                   onKeyPress={(event) => {

@@ -185,41 +185,67 @@ export default function FoodTable({ filterOpen, modalOpen }) {
         }}
       >
         <Table aria-label="custom pagination table">
-          <TableHead>
-            <TableRow>
+          <TableHead
+            sx={{ fontWeight: "bold", bgcolor: "grey.200", height: "80px" }}
+          >
+            <TableRow sx={{ maxWidth: "1px" }}>
               <TableCell
-                align="center"
-                sx={{ fontWeight: "bold", bgcolor: "grey.200" }}
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  width: 100,
+                  padding: "1px",
+                }}
               >
                 Name (gr/ml)
               </TableCell>
               <TableCell
-                align="center"
-                sx={{ fontWeight: "bold", bgcolor: "grey.200" }}
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  width: 100,
+                  padding: "1px",
+                }}
               >
                 Calories
               </TableCell>
               <TableCell
-                align="center"
-                sx={{ fontWeight: "bold", bgcolor: "grey.200" }}
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  width: 100,
+                  padding: "1px",
+                }}
               >
                 Carbs
               </TableCell>
               <TableCell
-                align="center"
-                sx={{ fontWeight: "bold", bgcolor: "grey.200" }}
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  width: 100,
+                  padding: "1px",
+                }}
               >
                 Proteins
               </TableCell>
               <TableCell
-                align="center"
-                sx={{ fontWeight: "bold", bgcolor: "grey.200" }}
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  width: 100,
+                  padding: "1px",
+                }}
               >
                 Fats
               </TableCell>
               <TableCell
-                align="center"
-                sx={{ fontWeight: "bold", bgcolor: "grey.200" }}
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  width: 100,
+                  padding: "1px",
+                }}
               >
                 Category
               </TableCell>
