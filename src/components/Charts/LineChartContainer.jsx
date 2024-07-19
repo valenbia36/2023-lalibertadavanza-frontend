@@ -56,6 +56,12 @@ const LineChartContainer = () => {
         },
       }
     );
+    if (response.status === 401) {
+      // Token ha expirado, desloguear al usuario
+      localStorage.removeItem("token");
+
+      window.location.href = "/";
+    }
     const data = await response.json();
     setData(data.fechasIntermedias);
   };
