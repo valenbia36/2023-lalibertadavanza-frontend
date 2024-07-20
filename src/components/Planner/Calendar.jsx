@@ -467,7 +467,11 @@ const Calendar = ({
           type="submit"
           aria-label="search"
           endIcon={<ShoppingCartCheckoutIcon />}
-          style={{ marginRight: "10px" }}
+          style={{
+            marginRight: "5px", // Menos espacio a la derecha
+            fontSize: "0.875rem", // Tamaño de fuente más pequeño
+            padding: "6px 12px", // Ajuste del relleno
+          }}
           onClick={handleShoppingList}
           disabled={isLoading}
         >
@@ -479,7 +483,12 @@ const Calendar = ({
           aria-label="search"
           onClick={handleAddToCalendar}
           endIcon={<SaveIcon />}
-          style={{ marginLeft: "10px" }}
+          style={{
+            marginLeft: "5px", // Menos espacio a la izquierda
+            marginRight: "5px", // Menos espacio a la derecha
+            fontSize: "0.875rem", // Tamaño de fuente más pequeño
+            padding: "6px 12px", // Ajuste del relleno
+          }}
           disabled={isLoading}
         >
           Save Plan
@@ -488,7 +497,11 @@ const Calendar = ({
           variant="contained"
           type="submit"
           aria-label="search"
-          style={{ marginLeft: "10px" }}
+          style={{
+            marginLeft: "5px", // Menos espacio a la izquierda
+            fontSize: "0.875rem", // Tamaño de fuente más pequeño
+            padding: "6px 12px", // Ajuste del relleno
+          }}
           endIcon={<SaveAltIcon />}
           disabled={isLoading}
           onClick={handleDownloadPlan}
@@ -522,8 +535,7 @@ const Calendar = ({
         <DialogTitle>Confirm</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            You have already added a meal today. Are you sure you want to add
-            another one?
+            Are you sure you want to add this meal to your meals registry?
           </DialogContentText>
         </DialogContent>
         <DialogActions>

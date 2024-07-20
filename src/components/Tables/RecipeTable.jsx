@@ -94,6 +94,7 @@ export default function RecipeTable({}) {
   const [isLoading, setIsLoading] = useState(false);
   const [previousSearchQuery, setPreviousSearchQuery] = useState("");
   const [isLoadingMeals, setIsLoadingMeals] = useState(false);
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
 
   const handleOpenForm = () => {
     setIsModalRecipeOpen(true);

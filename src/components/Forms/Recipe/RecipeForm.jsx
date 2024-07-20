@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Modal,
   Box,
@@ -6,6 +6,7 @@ import {
   Grid,
   TextField,
   CircularProgress,
+  Button,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import getApiUrl from "../../../helpers/apiConfig";
@@ -41,6 +42,7 @@ const RecipeForm = ({
   const [mealData, setMealData] = useState(initialMealState);
   const [foodOptions, setFoodOptions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSending, setIsSending] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const [showInstructions, setShowInstructions] = useState(false);
   const [dontShowAgain, setDontShowAgain] = useState(false);
@@ -132,8 +134,7 @@ const RecipeForm = ({
     setShowInstructions(false);
   };
 
-  const handleAddRecipe = () => {
-    setIsLoading(true);
+  const handleAddRecipe = async () => {
     if (
       mealData.name === "" ||
       !mealData.foods.every(
@@ -141,7 +142,6 @@ const RecipeForm = ({
       ) ||
       !mealData.steps.every((step) => step.text.trim().length > 0)
     ) {
-      setIsLoading(false);
       enqueueSnackbar(
         "Please complete all the fields correctly (Image is optional).",
         {
@@ -150,12 +150,13 @@ const RecipeForm = ({
       );
       return;
     } else {
+      setIsSending(true);
       const requestBody = JSON.stringify(mealData);
       const url = initialData
         ? apiUrl + `/api/recipes/${initialData._id}`
         : apiUrl + "/api/recipes";
       const method = initialData ? "PUT" : "POST";
-      fetch(url, {
+      await fetch(url, {
         method: method,
         headers: {
           "Content-Type": "application/json",
@@ -192,8 +193,8 @@ const RecipeForm = ({
             variant: "error",
           });
         });
-      setIsLoading(false);
     }
+    setIsSending(false);
   };
 
   const handleOpenFoodModal = () => {
@@ -342,16 +343,20 @@ const RecipeForm = ({
     setMealData({ ...mealData, foods: updatedFoods });
   };
 
-  const handleQuantityInputChange = (e, index) => {
-    const inputValue = Number(e.target.value);
-    const updatedFoods = [...mealData.foods];
-    if (!isNaN(inputValue) && inputValue >= 1) {
-      updatedFoods[index].weightConsumed = inputValue;
+  const handleQuantityInputChange = useCallback(
+    (e, index) => {
+      const inputValue = Number(e.target.value);
+      const updatedFoods = [...mealData.foods];
+      if (!isNaN(inputValue) && inputValue >= 1) {
+        updatedFoods[index].weightConsumed = inputValue;
+        setMealData({ ...mealData, foods: updatedFoods });
+      } else {
+        updatedFoods[index].weightConsumed = "";
+      }
       setMealData({ ...mealData, foods: updatedFoods });
-    } else {
-      updatedFoods[index].weightConsumed = "";
-    }
-  };
+    },
+    [mealData]
+  );
 
   return (
     <>
@@ -528,11 +533,29 @@ const RecipeForm = ({
               ))}
             </Grid>
             <FoodForm open={foodModal} setOpen={setOpenFoodModal} />
-            <AddMealButton
+            {/* <AddMealButton
               initialData={initialData}
               handleAddMeal={handleAddRecipe}
               disable={isLoading}
-            />
+            /> */}
+            <Grid item xs={12}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleAddRecipe}
+                sx={{
+                  mt: 3,
+                  mb: 2,
+                  backgroundColor: "#373D20",
+                  "&:hover": { backgroundColor: "#373D20" },
+                  fontWeight: "bold",
+                }}
+                fullWidth
+                disabled={isSending}
+              >
+                {initialData ? "Update Recipe" : "Add Recipe"}
+              </Button>
+            </Grid>
           </Grid>
         </Box>
       </Modal>
