@@ -9,8 +9,6 @@ import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import LabelBottomNavigation from "../components/Menu/BottomMenu";
-import LabelBottomNavigationNutritionist from "../components/Menu/BottomMenuNutritionist";
-import DrawerNutritionist from "../components/Menu/DrawerNutritionist";
 import {
   FormControl,
   FormControlLabel,
@@ -57,17 +55,20 @@ const MyProfile = () => {
   }, []);
 
   const getUserById = async () => {
-    const response = await fetch(
-      apiUrl + "/api/auth/users/" + localStorage.getItem("userId"),
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      }
-    );
-
+    const response = await fetch(apiUrl + "/api/auth/users/", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    });
+    if (response.status === 401) {
+      // Token ha expirado, desloguear al usuario
+      localStorage.removeItem("token");
+      localStorage.setItem("sessionExpired", "true");
+      window.location.href = "/";
+      return;
+    }
     const data = await response.json();
     setUser(data.data);
   };
@@ -118,13 +119,21 @@ const MyProfile = () => {
       return;
     }
 
-    fetch(apiUrl + "/api/auth/users/" + localStorage.getItem("userId"), {
+    fetch(apiUrl + "/api/auth/users/", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
       },
       body: JSON.stringify(user),
     }).then(function (response) {
+      if (response.status === 401) {
+        // Token ha expirado, desloguear al usuario
+        localStorage.removeItem("token");
+        localStorage.setItem("sessionExpired", "true");
+        window.location.href = "/";
+        return;
+      }
       if (response.status === 200) {
         enqueueSnackbar("User updated successfully.", { variant: "success" });
         getUserById();
@@ -138,13 +147,7 @@ const MyProfile = () => {
   return (
     <div className="container">
       {isMobile ? (
-        localStorage.getItem("roles") === "nutritionist" ? (
-          <LabelBottomNavigationNutritionist />
-        ) : (
-          <LabelBottomNavigation />
-        )
-      ) : localStorage.getItem("roles") === "nutritionist" ? (
-        <DrawerNutritionist user={localStorage.getItem("username")} />
+        <LabelBottomNavigation />
       ) : (
         <Drawer user={localStorage.getItem("username")} />
       )}
@@ -172,7 +175,9 @@ const MyProfile = () => {
                       style: { color: "black" },
                     }}
                     InputProps={{
-                      style: { color: "black" },
+                      inputProps: {
+                        maxLength: 25,
+                      },
                     }}
                     autoFocus
                     value={user.firstName}
@@ -194,7 +199,9 @@ const MyProfile = () => {
                       style: { color: "black" },
                     }}
                     InputProps={{
-                      style: { color: "black" },
+                      inputProps: {
+                        maxLength: 25,
+                      },
                     }}
                     onChange={(e) =>
                       setUser({ ...user, lastName: e.target.value })
@@ -214,7 +221,9 @@ const MyProfile = () => {
                       style: { color: "black" },
                     }}
                     InputProps={{
-                      style: { color: "black" },
+                      inputProps: {
+                        maxLength: 50,
+                      },
                     }}
                     onChange={(e) =>
                       setUser({ ...user, email: e.target.value })
@@ -228,14 +237,14 @@ const MyProfile = () => {
                     id="age"
                     label="Age"
                     name="age"
-                    type="number"
                     value={user.age}
                     InputLabelProps={{
                       style: { color: "black" },
                     }}
                     InputProps={{
-                      style: { color: "black" },
-                      inputProps: { min: 1 },
+                      inputProps: {
+                        maxLength: 2,
+                      },
                     }}
                     onChange={(e) => handleAgeInputChange(e)}
                   />
@@ -272,16 +281,14 @@ const MyProfile = () => {
                     id="height"
                     label="Height (cm)"
                     name="height"
-                    type="number"
                     value={user.height}
                     InputLabelProps={{
                       style: { color: "black" },
                     }}
                     InputProps={{
-                      style: {
-                        color: "black",
+                      inputProps: {
+                        maxLength: 3,
                       },
-                      inputProps: { min: 1 },
                     }}
                     onChange={(e) => handleHeightInputChange(e)}
                   />
@@ -293,16 +300,14 @@ const MyProfile = () => {
                     id="weight"
                     label="Weight (kg)"
                     name="weight"
-                    type="number"
                     value={user.weight}
                     InputLabelProps={{
                       style: { color: "black" },
                     }}
                     InputProps={{
-                      style: {
-                        color: "black",
+                      inputProps: {
+                        maxLength: 3,
                       },
-                      inputProps: { min: 1 },
                     }}
                     onChange={(e) => handleWeightInputChange(e)}
                   />

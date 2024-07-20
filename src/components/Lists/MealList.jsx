@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { IconButton, Tooltip, Typography } from "@mui/material";
+import { IconButton, Tooltip, Typography, Button } from "@mui/material";
 import MealForm from "../Forms/MealForm";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import MealTable from "../Tables/MealTable";
@@ -26,34 +26,51 @@ const MealList = () => {
       <div
         style={{
           display: "flex",
-          justifyContent: "flex-start",
+          justifyContent: "center", // Alinea los elementos al centro horizontalmente
           maxWidth: "100%",
+          marginBottom: "10px", // Agregamos margen inferior para separar del resto del contenido
         }}
       >
         <MealTable modalOpen={isModalOpen} />
       </div>
-
       <React.Fragment>
         <MealForm open={isModalOpen} setOpen={setIsModalOpen} />
       </React.Fragment>
-      {localStorage.getItem("viewAs") === "false" && (
+
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {" "}
+        {/* Estilo de flexbox para centrar los botones */}
         <IconButton
           onClick={() => {
             setIsModalOpen(true);
           }}
+          style={{ marginRight: "10px" }}
         >
-          <AddCircleRoundedIcon />
+          <AddCircleRoundedIcon fontSize="small" />{" "}
         </IconButton>
-      )}
-      <Tooltip title="Plan Meals">
-        <IconButton
-          onClick={() => {
-            navigatePlanerScreen();
-          }}
-        >
-          <CalendarMonthIcon />
-        </IconButton>
-      </Tooltip>
+        <Tooltip title="Plan Meals">
+          <Button
+            variant="contained"
+            size="small"
+            endIcon={
+              <IconButton size="small">
+                <CalendarMonthIcon />
+              </IconButton>
+            }
+            onClick={() => {
+              navigatePlanerScreen();
+            }}
+          >
+            Plan your Meals
+          </Button>
+        </Tooltip>
+      </div>
     </div>
   );
 };

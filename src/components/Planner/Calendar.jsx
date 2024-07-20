@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import html2canvas from "html2canvas";
+import { saveAs } from "file-saver";
 import {
   Container,
   Grid,
@@ -6,15 +8,23 @@ import {
   Paper,
   Tooltip,
   Typography,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
 import RecipeAutocomplete from "./RecipeAutocomplete";
 import getApiUrl from "../../helpers/apiConfig";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
+import SaveIcon from "@mui/icons-material/Save";
 import CheckIcon from "@mui/icons-material/Check";
-import ConfirmButton from "./ConfirmButton";
 import { useSnackbar } from "notistack";
 import { ShoppingList } from "./ShoppingList";
+import RecipeInfoDialog from "../RecipeInfoDialog";
+import InfoIcon from "@mui/icons-material/Info";
 
 const apiUrl = getApiUrl();
 const today = new Date();
@@ -38,20 +48,35 @@ const initialPlanState = {
   Sunday: { breakfast: null, lunch: null, snack: null, dinner: null },
 };
 
-const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
+const Calendar = ({
+  initialData,
+  recipes,
+  isMobile,
+  setPlan,
+  isModalRecipeOpen,
+}) => {
   const { enqueueSnackbar } = useSnackbar();
   const [openList, setOpenList] = useState(false);
   const [selectedRecipes, setSelectedRecipes] = useState([]);
-  const [shoppingListData, setShoppingListData] = useState({});
-  const [weeklyTotalPerFood, setWeeklyTotalPerFood] = useState({});
-  const [refresh, setRefresh] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
+  const [addedMealsCount, setAddedMealsCount] = useState(0);
+  const [mealToAdd, setMealToAdd] = useState(null);
+  const [infoDialogOpen, setInfoDialogOpen] = useState(false);
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
+
   useEffect(() => {
     if (initialData && Object.keys(initialData).length > 0) {
       setSelectedRecipes({ ...initialData });
     } else {
       setSelectedRecipes({ ...initialPlanState });
     }
-  }, []);
+  }, [initialData, isModalRecipeOpen]);
+
+  const handleShoppingList = async () => {
+    await handleAddToCalendar();
+    setOpenList(true);
+  };
 
   const handleRecipeChange = (day, meal, recipe) => {
     setSelectedRecipes({
@@ -59,153 +84,165 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
       [day]: { ...selectedRecipes[day], [meal]: recipe },
     });
   };
-  const handleShoppingList = () => {
-    const shoppingListData = {};
-    const dailyTotalPerFood = {}; // New object to store daily total consumption for each food
 
-    for (const day of daysOfWeek) {
-      const breakfast = selectedRecipes[day]?.breakfast;
-      const lunch = selectedRecipes[day]?.lunch;
-      const snack = selectedRecipes[day]?.snack;
-      const dinner = selectedRecipes[day]?.dinner;
-
-      shoppingListData[day] = {};
-
-      const calculateTotalPerFood = (meal) => {
-        if (selectedRecipes[day][meal] && selectedRecipes[day][meal].foods) {
-          const foods = selectedRecipes[day][meal].foods;
-          foods.forEach((food) => {
-            // Initialize daily total for each food if not present
-            if (!dailyTotalPerFood[food.name]) {
-              dailyTotalPerFood[food.name] = 0;
-            }
-
-            // Increment daily total for each food
-            dailyTotalPerFood[food.name] += food.weightConsumed;
-
-            // Add food to shopping list data
-            if (!shoppingListData[day][meal]) {
-              shoppingListData[day][meal] = [];
-            }
-            shoppingListData[day][meal].push(food);
-          });
-        }
-      };
-
-      calculateTotalPerFood("breakfast");
-      calculateTotalPerFood("lunch");
-      calculateTotalPerFood("snack");
-      calculateTotalPerFood("dinner");
-    }
-
-    setOpenList(true);
-    setShoppingListData(shoppingListData);
-    setWeeklyTotalPerFood(dailyTotalPerFood); // Update the state with the daily total consumption per food
-  };
-
-  const handleAddToCalendar = () => {
-    fetch(apiUrl + "/api/weeks/", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-      body: JSON.stringify({
-        ...selectedRecipes,
-        userId: localStorage.getItem("userId"),
-      }),
-    })
-      .then(function (response) {
-        if (response.status === 200) {
-          enqueueSnackbar("The plan was created successfully.", {
-            variant: "success",
-          });
-          setPlan({ ...initialData, lastUpdate: new Date() });
-        } else {
-          enqueueSnackbar("An error occurred while creating the plan.", {
-            variant: "error",
-          });
-        }
-      })
-      .catch((error) => {
-        console.error("Error during fetch:", error);
-      });
-  };
-  const handleAddMeal = (meal, timeOfTheDay, hour) => {
-    handleAddToCalendar();
-    if (meal && meal != []) {
-      const mealToAdd = {
-        name: timeOfTheDay + meal.name,
-        foods: meal.foods,
-        date: new Date(),
-        hour: hour,
-        userId: localStorage.getItem("userId"),
-      };
-      mealToAdd.calories = meal.foods
-        .map((food) => parseInt(food.totalCalories))
-        .reduce((acc, calories) => acc + calories, 0);
-
-      mealToAdd.carbs = meal.foods
-        .map((food) => parseInt(food.totalCarbs))
-        .reduce((acc, carbs) => acc + carbs, 0);
-
-      mealToAdd.proteins = meal.foods
-        .map((food) => parseInt(food.totalProteins))
-        .reduce((acc, proteins) => acc + proteins, 0);
-
-      mealToAdd.fats = meal.foods
-        .map((food) => parseInt(food.totalFats))
-        .reduce((acc, fats) => acc + fats, 0);
-
-      fetch(apiUrl + "/api/meals", {
-        method: "POST",
+  const handleAddToCalendar = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(apiUrl + "/api/weeks/", {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
-        body: JSON.stringify(mealToAdd),
-      })
-        .then(function (response) {
-          if (response.status === 200) {
-            enqueueSnackbar("The meal was created successfully.", {
-              variant: "success",
-            });
-          } else {
-            enqueueSnackbar("An error occurred while saving the meal.", {
-              variant: "error",
-            });
-          }
-        })
-        .catch(function (error) {
+        body: JSON.stringify({ ...selectedRecipes }),
+      });
+      if (response.status === 401) {
+        // Token ha expirado, desloguear al usuario
+        localStorage.removeItem("token");
+        localStorage.setItem("sessionExpired", "true");
+        window.location.href = "/";
+        return;
+      }
+
+      if (response.ok) {
+        enqueueSnackbar("The plan was created successfully.", {
+          variant: "success",
+        });
+        setPlan({ ...selectedRecipes, lastUpdate: new Date() });
+      } else {
+        enqueueSnackbar("An error occurred while creating the plan.", {
+          variant: "error",
+        });
+      }
+    } catch (error) {
+      console.error("Error during fetch:", error);
+      enqueueSnackbar("An error occurred while creating the plan.", {
+        variant: "error",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const handleDownloadPlan = async () => {
+    try {
+      // Selecciona el contenedor que deseas capturar
+      const container = document.querySelector("#calendar");
+
+      // Captura el contenido del contenedor
+      const canvas = await html2canvas(container);
+      const dataURL = canvas.toDataURL("image/png");
+
+      // Crea un blob a partir del dataURL y lo descarga
+      const blob = await (await fetch(dataURL)).blob();
+      saveAs(blob, "meal-plan.png");
+    } catch (error) {
+      console.error("Error capturing plan:", error);
+    }
+  };
+
+  const handleAddMeal = (meal, timeOfTheDay, hour) => {
+    if (meal) {
+      setMealToAdd({ meal, timeOfTheDay, hour });
+      setShowConfirmationDialog(true);
+    } else {
+      addMealToCalendar(meal, timeOfTheDay, hour);
+      setAddedMealsCount(addedMealsCount + 1);
+    }
+  };
+
+  const addMealToCalendar = async (meal, timeOfTheDay, hour) => {
+    try {
+      setIsLoading(true);
+      const fechaActual = new Date();
+      const horas = fechaActual.getHours();
+      const minutos = fechaActual.getMinutes();
+      const horaFormateada = `${horas < 10 ? "0" : ""}${horas}:${
+        minutos < 10 ? "0" : ""
+      }${minutos}`;
+
+      if (meal && meal !== []) {
+        const mealToAdd = {
+          name: meal.name,
+          foods: meal.foods,
+          date: fechaActual,
+          hour: horaFormateada,
+        };
+
+        const response = await fetch(apiUrl + "/api/meals", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+          body: JSON.stringify(mealToAdd),
+        });
+        if (response.status === 401) {
+          // Token ha expirado, desloguear al usuario
+          localStorage.removeItem("token");
+          localStorage.setItem("sessionExpired", "true");
+          window.location.href = "/";
+          return;
+        }
+
+        if (response.ok) {
+          enqueueSnackbar("The meal was created successfully.", {
+            variant: "success",
+          });
+        } else {
           enqueueSnackbar("An error occurred while saving the meal.", {
             variant: "error",
           });
+        }
+      } else {
+        enqueueSnackbar("An error occurred while saving the meal.", {
+          variant: "error",
         });
-    } else {
+      }
+    } catch (error) {
       enqueueSnackbar("An error occurred while saving the meal.", {
         variant: "error",
       });
+    } finally {
+      setIsLoading(false);
+    }
+    await handleAddToCalendar();
+  };
+
+  const handleConfirmAddMeal = () => {
+    if (mealToAdd && mealToAdd.meal) {
+      addMealToCalendar(mealToAdd.meal, mealToAdd.timeOfTheDay, mealToAdd.hour);
+      setShowConfirmationDialog(false);
     }
   };
-  function getFecha(fecha) {
-    var cadenaFecha = fecha;
-    var fechaObjeto = new Date(cadenaFecha);
-    var hora = fechaObjeto.getHours();
-    var minutos = fechaObjeto.getMinutes();
-    var dia = fechaObjeto.getDate();
-    var mes = fechaObjeto.getMonth() + 1;
-    var anio = fechaObjeto.getFullYear();
-    minutos = minutos < 10 ? "0" + minutos : minutos;
-    var resultado = hora + ":" + minutos + " " + dia + "/" + mes + "/" + anio;
 
-    if (fecha) return resultado;
-    else {
-      return "---";
-    }
+  const handleCloseConfirmationDialog = () => {
+    setShowConfirmationDialog(false);
+  };
+
+  function getFecha(fecha) {
+    const fechaObjeto = new Date(fecha);
+    const horas = fechaObjeto.getHours();
+    const minutos = fechaObjeto.getMinutes();
+    const dia = fechaObjeto.getDate();
+    const mes = fechaObjeto.getMonth() + 1;
+    const anio = fechaObjeto.getFullYear();
+    return `${horas < 10 ? "0" : ""}${horas}:${
+      minutos < 10 ? "0" : ""
+    }${minutos} ${dia}/${mes}/${anio}`;
   }
+  const handleOpenInfoDialog = (recipe) => {
+    setSelectedRecipe(recipe);
+    setInfoDialogOpen(true);
+  };
+
+  const handleCloseInfoDialog = () => {
+    setInfoDialogOpen(false);
+    setSelectedRecipe(null);
+  };
 
   return (
     <Container
+      id="calendar"
       maxWidth="lg"
       style={{
         paddingBottom: isMobile ? "45px" : "0",
@@ -213,7 +250,7 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
         justifyContent: "center",
         flexDirection: "column",
         alignItems: "center",
-        marginBottom: 0, // Ajusta este valor según tus necesidades
+        marginBottom: 0,
       }}
     >
       <Grid container spacing={2}>
@@ -232,7 +269,7 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
                   today.toLocaleDateString("en", { weekday: "long" }) === day
                     ? "0 0 15px rgba(255, 0, 0, 0.8)"
                     : "none",
-                marginBottom: 0, // Ajusta este valor según tus necesidades
+                marginBottom: 0,
               }}
             >
               <Typography variant="h6" align="center" gutterBottom>
@@ -241,20 +278,35 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
 
               <div>
                 <Typography variant="subtitle1">
-                  Breakfast:{}
+                  Breakfast:
                   {today.toLocaleDateString("en", { weekday: "long" }) ===
-                    day && (
-                    <Tooltip title="Add to meals">
+                    day &&
+                    (selectedRecipes[day] || {}).breakfast && (
+                      <Tooltip title="Add to meals">
+                        <IconButton
+                          onClick={() => {
+                            handleAddMeal(
+                              (selectedRecipes[day] || {}).breakfast,
+                              "Breakfast: ",
+                              "10:00"
+                            );
+                          }}
+                          disabled={isLoading}
+                        >
+                          <CheckIcon />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                  {(selectedRecipes[day] || {}).breakfast && (
+                    <Tooltip title="View recipe info">
                       <IconButton
-                        onClick={() => {
-                          handleAddMeal(
-                            (selectedRecipes[day] || {}).breakfast,
-                            "Breakfast: ",
-                            "10:00"
-                          );
-                        }}
+                        onClick={() =>
+                          handleOpenInfoDialog(
+                            (selectedRecipes[day] || {}).breakfast
+                          )
+                        }
                       >
-                        <CheckIcon />
+                        <InfoIcon />
                       </IconButton>
                     </Tooltip>
                   )}
@@ -273,18 +325,33 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
                 <Typography variant="subtitle1">
                   Lunch:
                   {today.toLocaleDateString("en", { weekday: "long" }) ===
-                    day && (
-                    <Tooltip title="Add to meals">
+                    day &&
+                    (selectedRecipes[day] || {}).lunch && (
+                      <Tooltip title="Add to meals">
+                        <IconButton
+                          onClick={() => {
+                            handleAddMeal(
+                              (selectedRecipes[day] || {}).lunch,
+                              "Lunch: ",
+                              "12:00"
+                            );
+                          }}
+                          disabled={isLoading}
+                        >
+                          <CheckIcon />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                  {(selectedRecipes[day] || {}).lunch && (
+                    <Tooltip title="View recipe info">
                       <IconButton
-                        onClick={() => {
-                          handleAddMeal(
-                            (selectedRecipes[day] || {}).lunch,
-                            "Lunch: ",
-                            "12:00"
-                          );
-                        }}
+                        onClick={() =>
+                          handleOpenInfoDialog(
+                            (selectedRecipes[day] || {}).lunch
+                          )
+                        }
                       >
-                        <CheckIcon />
+                        <InfoIcon />
                       </IconButton>
                     </Tooltip>
                   )}
@@ -302,18 +369,33 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
                 <Typography variant="subtitle1">
                   Snack:
                   {today.toLocaleDateString("en", { weekday: "long" }) ===
-                    day && (
-                    <Tooltip title="Add to meals">
+                    day &&
+                    (selectedRecipes[day] || {}).snack && (
+                      <Tooltip title="Add to meals">
+                        <IconButton
+                          onClick={() => {
+                            handleAddMeal(
+                              (selectedRecipes[day] || {}).snack,
+                              "Snack: ",
+                              "16:00"
+                            );
+                          }}
+                          disabled={isLoading}
+                        >
+                          <CheckIcon />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                  {(selectedRecipes[day] || {}).snack && (
+                    <Tooltip title="View recipe info">
                       <IconButton
-                        onClick={() => {
-                          handleAddMeal(
-                            (selectedRecipes[day] || {}).snack,
-                            "Snack: ",
-                            "16:00"
-                          );
-                        }}
+                        onClick={() =>
+                          handleOpenInfoDialog(
+                            (selectedRecipes[day] || {}).snack
+                          )
+                        }
                       >
-                        <CheckIcon />
+                        <InfoIcon />
                       </IconButton>
                     </Tooltip>
                   )}
@@ -330,23 +412,37 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
                 <Typography variant="subtitle1">
                   Dinner:
                   {today.toLocaleDateString("en", { weekday: "long" }) ===
-                    day && (
-                    <Tooltip title="Add to meals">
+                    day &&
+                    (selectedRecipes[day] || {}).dinner && (
+                      <Tooltip title="Add to meals">
+                        <IconButton
+                          onClick={() => {
+                            handleAddMeal(
+                              (selectedRecipes[day] || {}).dinner,
+                              "Dinner: ",
+                              "20:00"
+                            );
+                          }}
+                          disabled={isLoading}
+                        >
+                          <CheckIcon />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                  {(selectedRecipes[day] || {}).dinner && (
+                    <Tooltip title="View recipe info">
                       <IconButton
-                        onClick={() => {
-                          handleAddMeal(
-                            (selectedRecipes[day] || {}).dinner,
-                            "Dinner: ",
-                            "20:00"
-                          );
-                        }}
+                        onClick={() =>
+                          handleOpenInfoDialog(
+                            (selectedRecipes[day] || {}).dinner
+                          )
+                        }
                       >
-                        <CheckIcon />
+                        <InfoIcon />
                       </IconButton>
                     </Tooltip>
                   )}
                 </Typography>
-
                 <RecipeAutocomplete
                   selectedRecipe={(selectedRecipes[day] || {}).dinner}
                   recipes={recipes}
@@ -366,21 +462,52 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
           marginTop: "10px",
         }}
       >
-        <IconButton
+        <Button
+          variant="contained"
           type="submit"
           aria-label="search"
+          endIcon={<ShoppingCartCheckoutIcon />}
+          style={{
+            marginRight: "5px", // Menos espacio a la derecha
+            fontSize: "0.875rem", // Tamaño de fuente más pequeño
+            padding: "6px 12px", // Ajuste del relleno
+          }}
           onClick={handleShoppingList}
+          disabled={isLoading}
         >
-          <ShoppingCartCheckoutIcon fontSize="large" />
-        </IconButton>
-
-        <IconButton
+          View Cart
+        </Button>
+        <Button
+          variant="contained"
           type="submit"
           aria-label="search"
           onClick={handleAddToCalendar}
+          endIcon={<SaveIcon />}
+          style={{
+            marginLeft: "5px", // Menos espacio a la izquierda
+            marginRight: "5px", // Menos espacio a la derecha
+            fontSize: "0.875rem", // Tamaño de fuente más pequeño
+            padding: "6px 12px", // Ajuste del relleno
+          }}
+          disabled={isLoading}
         >
-          <SaveAltIcon fontSize="large" />
-        </IconButton>
+          Save Plan
+        </Button>
+        <Button
+          variant="contained"
+          type="submit"
+          aria-label="search"
+          style={{
+            marginLeft: "5px", // Menos espacio a la izquierda
+            fontSize: "0.875rem", // Tamaño de fuente más pequeño
+            padding: "6px 12px", // Ajuste del relleno
+          }}
+          endIcon={<SaveAltIcon />}
+          disabled={isLoading}
+          onClick={handleDownloadPlan}
+        >
+          Download
+        </Button>
       </div>
       {initialData?.lastUpdate && (
         <Typography variant="h6" align="center" gutterBottom>
@@ -399,9 +526,34 @@ const Calendar = ({ initialData, recipes, isMobile, setPlan }) => {
         setOpen={setOpenList}
         initialData={selectedRecipes}
         daysOfWeek={daysOfWeek}
-        shoppingListData={shoppingListData}
-        weeklyTotalPerFood={weeklyTotalPerFood} // Pasar las foods al componente ShoppingList
       />
+
+      <Dialog
+        open={showConfirmationDialog}
+        onClose={handleCloseConfirmationDialog}
+      >
+        <DialogTitle>Confirm</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to add this meal to your meals registry?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseConfirmationDialog} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleConfirmAddMeal} color="primary" autoFocus>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+      {selectedRecipe && (
+        <RecipeInfoDialog
+          open={infoDialogOpen}
+          onClose={handleCloseInfoDialog}
+          recipe={selectedRecipe}
+        />
+      )}
     </Container>
   );
 };

@@ -1,40 +1,61 @@
 import React from "react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Legend, Tooltip } from "recharts";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Legend,
+  Tooltip,
+} from "recharts";
 
 export default function LineChartWithCustomFontSize(data) {
-  const caloriasArray = data.data.map((item) => item.calories);
+  const caloriasArray = data.data.map((item) => item.totalCalories);
   const totalCalorias = caloriasArray.reduce((acc, curr) => acc + curr, 0);
   const promedioCalorias = totalCalorias / caloriasArray.length;
 
   const dataWithAverage = data.data.map((item) => ({
-    date: item.date.split('T')[0],
-    calories: item.calories,
+    date: item.date.split("T")[0],
+    calories: item.totalCalories,
     promedio: promedioCalorias,
   }));
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (active) {
-      const filteredPayload = payload.filter((entry) => entry.dataKey !== "promedio");
-  
+      const filteredPayload = payload.filter(
+        (entry) => entry.dataKey !== "promedio"
+      );
+
       return (
-        <div className="custom-tooltip" style={{
-          background: '#f0f0f0', 
-          border: '1px solid #333', 
-          borderRadius: '5px', 
-          padding:  '10px 10px 3px 10px',
-          fontFamily: 'Arial, sans-serif',
-          boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)' ,
-        }}>
-          <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#666'}}>Date: {label}</p> 
+        <div
+          className="custom-tooltip"
+          style={{
+            background: "#f0f0f0",
+            border: "1px solid #333",
+            borderRadius: "5px",
+            padding: "10px 10px 3px 10px",
+            fontFamily: "Arial, sans-serif",
+            boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.2)",
+          }}
+        >
+          <p style={{ fontSize: "12px", fontWeight: "bold", color: "#666" }}>
+            Date: {label}
+          </p>
           {filteredPayload.map((entry) => (
-            <p key={entry.dataKey} style={{ fontSize: '12px' , fontWeight: 'bold',}}>
-              <span style={{ color: entry.color, marginRight: '5px' }}>{entry.name}:</span> {entry.value}
+            <p
+              key={entry.dataKey}
+              style={{ fontSize: "12px", fontWeight: "bold" }}
+            >
+              <span style={{ color: entry.color, marginRight: "5px" }}>
+                {entry.name}:
+              </span>{" "}
+              {entry.value}
             </p>
           ))}
         </div>
       );
     }
-  
+
     return null;
   };
 
@@ -46,7 +67,7 @@ export default function LineChartWithCustomFontSize(data) {
         data={dataWithAverage}
         margin={{ top: 10, right: 20, left: 0, bottom: 30 }}
       >
-      <Tooltip content={<CustomTooltip />} />
+        <Tooltip content={<CustomTooltip />} />
         <Legend
           verticalAlign="bottom"
           iconSize={25}
@@ -71,7 +92,6 @@ export default function LineChartWithCustomFontSize(data) {
             fontSize: 14,
             fontWeight: "bold",
             offset: 20,
-            
           }}
         />
         <Legend verticalAlign="top" width={100} />

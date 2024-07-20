@@ -18,18 +18,21 @@ import MealForm from "../Forms/MealForm";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useSnackbar } from "notistack";
 import getApiUrl from "../../helpers/apiConfig";
-
+import { CircularProgress } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 const apiUrl = getApiUrl();
 
 function Row(props) {
   const { row, onEditClick } = props;
   const [open, setOpen] = React.useState(false);
   const [isModalRecipeOpen, setIsModalRecipeOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { enqueueSnackbar } = useSnackbar();
 
   const handleDeleteClick = (meal) => {
     try {
+      setIsLoading(true);
       fetch(apiUrl + "/api/meals/" + meal._id, {
         method: "DELETE",
         headers: {
@@ -37,6 +40,14 @@ function Row(props) {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       }).then(function (response) {
+        if (response.status === 401) {
+          // Token ha expirado, desloguear al usuario
+          localStorage.removeItem("token");
+          localStorage.setItem("sessionExpired", "true");
+          window.location.href = "/";
+          return;
+        }
+
         if (response.status === 200) {
           enqueueSnackbar("The meal was deleted successfully.", {
             variant: "success",
@@ -44,6 +55,7 @@ function Row(props) {
 
           props.onDelete(meal);
 
+          // Adjust page if necessary
           if (props.endIndex >= props.totalMeals - 1) {
             const newPage = props.page === 0 ? 0 : props.page - 1;
             props.onPageChange(newPage);
@@ -54,6 +66,7 @@ function Row(props) {
           });
         }
       });
+      setIsLoading(false);
     } catch (error) {
       enqueueSnackbar("An error occurred while deleting the meal.", {
         variant: "error",
@@ -63,8 +76,13 @@ function Row(props) {
 
   return (
     <React.Fragment>
-      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
-        <TableCell width={5} align="center" sx={{ textAlign: "center" }}>
+      <TableRow sx={{ "& > *": { borderBottom: "unset", height: "73px" } }}>
+        <TableCell
+          width={5}
+          align="center"
+          sx={{ textAlign: "center" }}
+          style={{ width: 160, border: "1px solid #ddd", padding: "4px" }}
+        >
           <IconButton
             aria-label="expand row"
             size="small"
@@ -73,13 +91,31 @@ function Row(props) {
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <TableCell component="th" scope="row" align="center">
+        <TableCell
+          component="th"
+          scope="row"
+          align="center"
+          style={{ width: 160, border: "1px solid #ddd", padding: "4px" }}
+        >
           {row.name}
         </TableCell>
-        <TableCell align="center">{row.date}</TableCell>
-        <TableCell align="center">{row.hour}</TableCell>
-        {localStorage.getItem("viewAs") === "false" && (
-          <TableCell align="center">
+        <TableCell
+          align="center"
+          style={{ width: 160, border: "1px solid #ddd", padding: "4px" }}
+        >
+          {row.date}
+        </TableCell>
+        <TableCell
+          align="center"
+          style={{ width: 160, border: "1px solid #ddd", padding: "4px" }}
+        >
+          {row.hour}
+        </TableCell>
+        {
+          <TableCell
+            align="center"
+            style={{ width: 160, border: "1px solid #ddd", padding: "4px" }}
+          >
             <IconButton
               aria-label="edit row"
               size="small"
@@ -90,12 +126,13 @@ function Row(props) {
             <IconButton
               aria-label="delete row"
               size="small"
+              disabled={isLoading}
               onClick={() => handleDeleteClick(row)}
             >
               <DeleteIcon />
             </IconButton>
           </TableCell>
-        )}
+        }
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
@@ -127,30 +164,122 @@ function Row(props) {
                 <TableBody>
                   {row.foods.map((foodRow) => (
                     <TableRow key={foodRow._id}>
-                      <TableCell component="th" scope="row" align="center">
-                        {foodRow.name}
+                      <TableCell
+                        component="th"
+                        scope="row"
+                        align="center"
+                        style={{
+                          width: 160,
+                          border: "1px solid #ddd",
+                          padding: "4px",
+                        }}
+                      >
+                        {foodRow.foodId.name}
                       </TableCell>
-                      <TableCell align="center">
-                        {foodRow.totalCalories}
+                      <TableCell
+                        align="center"
+                        style={{
+                          width: 160,
+                          border: "1px solid #ddd",
+                          padding: "4px",
+                        }}
+                      >
+                        {foodRow.caloriesPerFood}
                       </TableCell>
-                      <TableCell align="center">{foodRow.totalCarbs}</TableCell>
-                      <TableCell align="center">
-                        {foodRow.totalProteins}
+                      <TableCell
+                        align="center"
+                        style={{
+                          width: 160,
+                          border: "1px solid #ddd",
+                          padding: "4px",
+                        }}
+                      >
+                        {foodRow.carbsPerFood}
                       </TableCell>
-                      <TableCell align="center">{foodRow.totalFats}</TableCell>
-                      <TableCell align="center">
+                      <TableCell
+                        align="center"
+                        style={{
+                          width: 160,
+                          border: "1px solid #ddd",
+                          padding: "4px",
+                        }}
+                      >
+                        {foodRow.proteinsPerFood}
+                      </TableCell>
+                      <TableCell
+                        align="center"
+                        style={{
+                          width: 160,
+                          border: "1px solid #ddd",
+                          padding: "4px",
+                        }}
+                      >
+                        {foodRow.fatsPerFood}
+                      </TableCell>
+                      <TableCell
+                        align="center"
+                        style={{
+                          width: 160,
+                          border: "1px solid #ddd",
+                          padding: "4px",
+                        }}
+                      >
                         {foodRow.weightConsumed}
                       </TableCell>
                     </TableRow>
                   ))}
                   <TableRow>
-                    <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                    <TableCell
+                      align="center"
+                      sx={{ fontWeight: "bold" }}
+                      style={{
+                        width: 160,
+                        border: "1px solid #ddd",
+                        padding: "4px",
+                      }}
+                    >
                       Total
                     </TableCell>
-                    <TableCell align="center">{row.calories}</TableCell>
-                    <TableCell align="center">{row.carbs}</TableCell>
-                    <TableCell align="center">{row.proteins}</TableCell>
-                    <TableCell align="center">{row.fats}</TableCell>
+                    <TableCell
+                      align="center"
+                      style={{
+                        width: 160,
+                        border: "1px solid #ddd",
+                        padding: "4px",
+                      }}
+                    >
+                      {row.totalCalories}
+                    </TableCell>
+                    <TableCell
+                      align="center"
+                      style={{
+                        width: 160,
+                        border: "1px solid #ddd",
+                        padding: "4px",
+                      }}
+                    >
+                      {row.totalCarbs}
+                    </TableCell>
+                    <TableCell
+                      align="center"
+                      style={{
+                        width: 160,
+                        border: "1px solid #ddd",
+                        padding: "4px",
+                      }}
+                    >
+                      {row.totalProteins}
+                    </TableCell>
+                    <TableCell
+                      align="center"
+                      style={{
+                        width: 160,
+                        border: "1px solid #ddd",
+                        padding: "4px",
+                      }}
+                    >
+                      {row.totalFats}
+                    </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
@@ -170,36 +299,52 @@ export default function MealTable({ modalOpen }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editMeal, setEditMeal] = useState(null);
   const [totalMeals, setTotalMeals] = useState(0);
+  const [isLoadingMeals, setIsLoadingMeals] = useState(false);
+  const theme = useTheme();
+
+  const rowsPerPage = 5; // Asumiendo un número de filas por página
 
   const startIndex = page * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
 
   useEffect(() => {
     getMeals();
-  }, [isModalOpen, modalOpen]);
+  }, [isModalOpen, modalOpen, page]);
 
   const getMeals = async () => {
-    const response = await fetch(
-      apiUrl + "/api/meals/user/" + localStorage.getItem("userId"),
-      {
+    setIsLoadingMeals(true); // Activar el spinner
+
+    try {
+      const response = await fetch(apiUrl + "/api/meals/user/", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
+      });
+
+      const data = await response.json();
+      if (response.status === 401) {
+        // Token ha expirado, desloguear al usuario
+        localStorage.removeItem("token");
+        localStorage.setItem("sessionExpired", "true");
+        window.location.href = "/";
+        return;
       }
-    );
-    const data = await response.json();
-
-    const mealsWithShortenedDates = data.data.map((meal) => {
-      return {
-        ...meal,
-        date: meal.date.substring(0, 10),
-      };
-    });
-
-    setMeals(mealsWithShortenedDates);
-    setTotalMeals(mealsWithShortenedDates.length);
+      const mealsWithShortenedDates = data.data.map((meal) => {
+        return {
+          ...meal,
+          date: meal.date.substring(0, 10),
+        };
+      });
+      setMeals(mealsWithShortenedDates);
+      setTotalMeals(mealsWithShortenedDates.length);
+    } catch (error) {
+      console.error("Error fetching meals:", error);
+      // Manejar errores aquí si es necesario
+    } finally {
+      setIsLoadingMeals(false); // Desactivar el spinner
+    }
   };
 
   const handleEditClick = (meal) => {
@@ -212,81 +357,118 @@ export default function MealTable({ modalOpen }) {
   };
 
   const handleDelete = (deletedMeal) => {
-    setMeals(meals.filter((meal) => meal._id !== deletedMeal._id));
+    const updatedMeals = meals.filter((meal) => meal._id !== deletedMeal._id);
+    setMeals(updatedMeals);
+    setTotalMeals(updatedMeals.length); // Update totalMeals
+    // Adjust page if necessary
+    if (page > 0 && updatedMeals.length <= rowsPerPage * page) {
+      setPage(page - 1);
+    }
   };
 
   return (
-    <TableContainer
-      component={Paper}
-      sx={{ overflowX: "auto", minHeight: "450px" }}
-    >
-      <Table aria-label="collapsible table">
-        <TableHead>
-          <TableRow>
-            <TableCell />
-            <TableCell sx={{ fontWeight: "bold" }} align="center">
-              Name
-            </TableCell>
-            <TableCell sx={{ fontWeight: "bold" }} align="center">
-              Date&nbsp;
-            </TableCell>
-            <TableCell sx={{ fontWeight: "bold" }} align="center">
-              Hours&nbsp;
-            </TableCell>
-            {localStorage.getItem("viewAs") === "false" && (
-              <TableCell sx={{ fontWeight: "bold" }} align="center">
+    <Paper sx={{ maxWidth: "100%", minWidht: "100%" }}>
+      <TableContainer
+        sx={{
+          overflowX: "auto",
+          minHeight: "449px",
+          position: "relative",
+          //maxWidth: "100%",
+        }}
+      >
+        <Table aria-label="collapsible table">
+          <TableHead sx={{ height: "80px", bgcolor: "grey.200" }}>
+            <TableRow>
+              <TableCell
+                sx={{ fontWeight: "bold", width: 160, padding: "6px" }}
+                align="center"
+              />
+              <TableCell
+                sx={{ fontWeight: "bold", width: 160, padding: "6px" }}
+                align="center"
+              >
+                Name
+              </TableCell>
+              <TableCell
+                sx={{ fontWeight: "bold", width: 160, padding: "6px" }}
+                align="center"
+              >
+                Date&nbsp;
+              </TableCell>
+              <TableCell
+                sx={{ fontWeight: "bold", width: 160, padding: "6px" }}
+                align="center"
+              >
+                Hours&nbsp;
+              </TableCell>
+              <TableCell
+                sx={{ fontWeight: "bold", width: 160, padding: "6px" }}
+                align="center"
+              >
                 Actions&nbsp;
               </TableCell>
-            )}
-          </TableRow>
-        </TableHead>
-        <TableBody sx={{ textAlign: "center" }}>
-          {meals.length > 0 ? (
-            meals
-              .slice(startIndex, endIndex)
-              .map((row) => (
-                <Row
-                  key={row._id}
-                  row={row}
-                  sx={{ textAlign: "center" }}
-                  onEditClick={handleEditClick}
-                  onDelete={handleDelete}
-                  page={page}
-                  endIndex={endIndex}
-                  totalMeals={totalMeals}
-                  onPageChange={handlePageChange}
-                />
-              ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={5} align="center">
-                No meals to show
-              </TableCell>
             </TableRow>
-          )}
-        </TableBody>
-      </Table>
-
-      <div>
+          </TableHead>
+          <TableBody sx={{ textAlign: "center" }}>
+            {isLoadingMeals ? (
+              <TableRow>
+                <TableCell colSpan={6} align="center" sx={{ padding: "20px" }}>
+                  <CircularProgress />
+                </TableCell>
+              </TableRow>
+            ) : meals.length > 0 ? (
+              meals
+                .slice(startIndex, endIndex)
+                .map((row) => (
+                  <Row
+                    key={row._id}
+                    row={row}
+                    sx={{ textAlign: "center" }}
+                    onEditClick={handleEditClick}
+                    onDelete={handleDelete}
+                    page={page}
+                    endIndex={endIndex}
+                    totalMeals={totalMeals}
+                    onPageChange={handlePageChange}
+                  />
+                ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={6} align="center" sx={{ padding: "10px" }}>
+                  No meals to show
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          padding: "11px", // Reducir padding para reducir el espacio
+          backgroundColor: "grey.200", // O el color que desees
+          borderTop: "1px solid #ddd",
+        }}
+      >
         <IconButton
-          onClick={(e) => handlePageChange(page - 1)}
+          onClick={() => handlePageChange(page - 1)}
           disabled={page === 0}
         >
           <ArrowBackIosIcon />
         </IconButton>
         <IconButton
-          onClick={(e) => handlePageChange(page + 1)}
+          onClick={() => handlePageChange(page + 1)}
           disabled={endIndex >= totalMeals}
         >
           <ArrowForwardIosIcon />
         </IconButton>
-      </div>
-
+      </Box>
       <MealForm
         open={isModalOpen}
         setOpen={setIsModalOpen}
         initialData={editMeal}
       />
-    </TableContainer>
+    </Paper>
   );
 }

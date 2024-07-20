@@ -17,6 +17,7 @@ import getApiUrl from "../helpers/apiConfig";
 import { useSnackbar } from "notistack";
 import getUrl from "../helpers/urlConfig";
 import RecipeList from "../components/Lists/RecipeList";
+import IntermittentFastingForm from "../components/Forms/IntermittentFastingForm";
 
 const apiUrl = getApiUrl();
 
@@ -27,17 +28,21 @@ const Recipes = () => {
   const [showConfetti, setShowConfetti] = useState(false);
   const [openIntermittentFastingModal, setOpenIntermittentFastingModal] =
     useState(false);
+
+  const checkIsMobile = () => {
+    setIsMobile(window.innerWidth <= theme.breakpoints.values.sm);
+  };
+
   useEffect(() => {
     function handleResize() {
-      setIsMobile(window.innerWidth <= theme.breakpoints.values.sm);
+      checkIsMobile();
     }
     window.addEventListener("resize", handleResize);
-    handleResize();
+    checkIsMobile(); // Forzar la verificación al montar el componente
     return () => {
       window.removeEventListener("resize", handleResize);
     };
   }, [theme]);
-
   const handleCreateWaterGlass = () => {
     fetch(apiUrl + "/api/waterGlass", {
       method: "POST",
@@ -47,15 +52,21 @@ const Recipes = () => {
       },
       body: JSON.stringify({
         date: new Date(),
-        userId: localStorage.getItem("userId"),
       }),
     }).then(function (response) {
+      if (response.status === 401) {
+        // Token ha expirado, desloguear al usuario
+        localStorage.removeItem("token");
+        localStorage.setItem("sessionExpired", "true");
+        window.location.href = "/";
+        return;
+      }
       if (response.status === 200) {
         enqueueSnackbar("The water glass was add successfully.", {
           variant: "success",
         });
       } else {
-        enqueueSnackbar("An error occurred while adding the water glss.", {
+        enqueueSnackbar("An error occurred while adding the water glass.", {
           variant: "error",
         });
       }
@@ -96,7 +107,7 @@ const Recipes = () => {
       {showConfetti && (
         <Confetti width={window.innerWidth} height={window.innerHeight} />
       )}
-      {localStorage.getItem("viewAs") === "false" && (
+      {
         <SpeedDial
           ariaLabel="SpeedDial basic example"
           sx={{ position: "fixed", bottom: "70px", right: "25px" }}
@@ -111,7 +122,7 @@ const Recipes = () => {
             />
           ))}
         </SpeedDial>
-      )}
+      }
       <div className="row justify-content-center">
         <div className="col-lg-10">
           <div className="row justify-content-center">
@@ -121,6 +132,10 @@ const Recipes = () => {
           </div>
         </div>
       </div>
+      <IntermittentFastingForm
+        openIntermittentFastingModal={openIntermittentFastingModal}
+        closeModal={closeModal}
+      />
     </div>
   );
 };

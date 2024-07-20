@@ -23,7 +23,7 @@ export default function DialogMessage({ open, setOpen, ingredients }) {
         <DialogContent>
           {ingredients.map((ingredient, index) => (
             <DialogContentText key={index} id="alert-dialog-description">
-              {`- ${ingredient.name} - ${ingredient.weightConsumed} gr/ml`}
+              {`- ${ingredient.foodId.name} - ${ingredient.weightConsumed} gr/ml`}
             </DialogContentText>
           ))}
         </DialogContent>

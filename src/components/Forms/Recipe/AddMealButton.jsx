@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Grid } from "@mui/material";
 
-export default function AddMealButton({ initialData, handleAddMeal }) {
+export default function AddMealButton({ initialData, handleAddMeal, disable }) {
   return (
     <Grid item xs={12}>
       <Button
@@ -16,6 +16,7 @@ export default function AddMealButton({ initialData, handleAddMeal }) {
           fontWeight: "bold",
         }}
         fullWidth
+        disabled={disable}
       >
         {initialData ? "Update Recipe" : "Add Recipe"}
       </Button>

@@ -28,6 +28,7 @@ const defaultTheme = createTheme();
 const SignUp = () => {
   const { enqueueSnackbar } = useSnackbar();
   const [showPassword, setShowPassword] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
   const [user, setUser] = React.useState({
     firstName: "",
     lastName: "",
@@ -37,7 +38,6 @@ const SignUp = () => {
     sex: "",
     height: "",
     weight: "",
-    role: "",
   });
 
   const handleSexChange = (event) => {
@@ -80,12 +80,12 @@ const SignUp = () => {
       user.sex === "" ||
       user.age === "" ||
       user.height === "" ||
-      user.weight === "" ||
-      user.role === ""
+      user.weight === ""
     ) {
       enqueueSnackbar("Some fields are empty.", { variant: "error" });
       return;
     }
+    setIsLoading(true);
     fetch(apiUrl + "/api/auth/register", {
       method: "POST",
       headers: {
@@ -95,9 +95,11 @@ const SignUp = () => {
     }).then(function (response) {
       if (response.status === 200) {
         enqueueSnackbar("Registered successfully.", { variant: "success" });
+        setIsLoading(false);
         window.location.replace("/");
       } else {
         enqueueSnackbar("Something went wrong.", { variant: "error" });
+        setIsLoading(false);
       }
     });
   };
@@ -130,35 +132,6 @@ const SignUp = () => {
           </Typography>
           <Box sx={{ mt: 3 }}>
             <Grid container spacing={2}>
-              <Grid
-                item
-                xs={12}
-                sm={12}
-                sx={{ alignItems: "center", textAlign: "center" }}
-              >
-                <FormControl component="fieldset">
-                  <RadioGroup
-                    row
-                    aria-label="user role"
-                    name="userRole"
-                    value={user.role}
-                    onChange={handleUserRoleChange}
-                  >
-                    <FormControlLabel
-                      value="user"
-                      control={<Radio style={{ color: "black" }} />}
-                      label="User"
-                      style={{ color: "black" }}
-                    />
-                    <FormControlLabel
-                      value="nutritionist"
-                      control={<Radio style={{ color: "black" }} />}
-                      label="Nutritionist"
-                      style={{ color: "black" }}
-                    />
-                  </RadioGroup>
-                </FormControl>
-              </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
                   autoComplete="given-name"
@@ -171,7 +144,9 @@ const SignUp = () => {
                     style: { color: "black" },
                   }}
                   InputProps={{
-                    style: { color: "black" },
+                    inputProps: {
+                      maxLength: 25,
+                    },
                   }}
                   autoFocus
                   onChange={(e) =>
@@ -196,7 +171,9 @@ const SignUp = () => {
                     style: { color: "black" },
                   }}
                   InputProps={{
-                    style: { color: "black" },
+                    inputProps: {
+                      maxLength: 25,
+                    },
                   }}
                   onChange={(e) =>
                     setUser({ ...user, lastName: e.target.value })
@@ -220,7 +197,9 @@ const SignUp = () => {
                     style: { color: "black" },
                   }}
                   InputProps={{
-                    style: { color: "black" },
+                    inputProps: {
+                      maxLength: 50,
+                    },
                   }}
                   onChange={(e) => setUser({ ...user, email: e.target.value })}
                   onKeyPress={(event) => {
@@ -268,14 +247,14 @@ const SignUp = () => {
                   id="age"
                   label="Age"
                   name="age"
-                  type="number"
                   value={user.age}
                   InputLabelProps={{
                     style: { color: "black" },
                   }}
                   InputProps={{
-                    style: { color: "black" },
-                    inputProps: { min: 1 },
+                    inputProps: {
+                      maxLength: 2,
+                    },
                   }}
                   onChange={(e) => handleAgeInputChange(e)}
                   onKeyPress={(event) => {
@@ -317,16 +296,14 @@ const SignUp = () => {
                   id="height"
                   label="Height (cm)"
                   name="height"
-                  type="number"
                   value={user.height}
                   InputLabelProps={{
                     style: { color: "black" },
                   }}
                   InputProps={{
-                    style: {
-                      color: "black",
+                    inputProps: {
+                      maxLength: 3,
                     },
-                    inputProps: { min: 1 },
                   }}
                   onChange={(e) => handleHeightInputChange(e)}
                   onKeyPress={(event) => {
@@ -343,16 +320,14 @@ const SignUp = () => {
                   id="weight"
                   label="Weight (kg)"
                   name="weight"
-                  type="number"
                   value={user.weight}
                   InputLabelProps={{
                     style: { color: "black" },
                   }}
                   InputProps={{
-                    style: {
-                      color: "black",
+                    inputProps: {
+                      maxLength: 3,
                     },
-                    inputProps: { min: 1 },
                   }}
                   onChange={(e) => handleWeightInputChange(e)}
                   onKeyPress={(event) => {
@@ -375,6 +350,7 @@ const SignUp = () => {
                 fontWeight: "bold",
               }}
               onClick={handleRegister}
+              disabled={isLoading}
             >
               Sign Up
             </Button>

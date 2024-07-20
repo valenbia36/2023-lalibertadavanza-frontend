@@ -4,11 +4,9 @@ import BottomNavigationAction from "@mui/material/BottomNavigationAction";
 import LogoutIcon from "@mui/icons-material/Logout";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import HomeIcon from "@mui/icons-material/Home";
-import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
-import SettingsIcon from '@mui/icons-material/Settings';
+import SettingsIcon from "@mui/icons-material/Settings";
 import RestaurantIcon from "@mui/icons-material/Restaurant";
 import { useNavigate, useLocation } from "react-router-dom";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 
 export default function LabelBottomNavigation() {
@@ -43,7 +41,6 @@ export default function LabelBottomNavigation() {
   }, [location.pathname]);
 
   const handleChange = (event, newValue) => {
-    console.log(newValue);
     setValue(newValue);
 
     switch (newValue) {
@@ -51,9 +48,7 @@ export default function LabelBottomNavigation() {
         navigate("/main");
         break;
       case "return":
-        localStorage.setItem("userId", localStorage.getItem("nutritionistUserId"));
-        localStorage.removeItem("nutritionistUserId");
-        localStorage.setItem("viewAs", false);
+        localStorage.setItem("userId");
         navigate("/main");
         break;
       case "stats":
@@ -71,7 +66,6 @@ export default function LabelBottomNavigation() {
       case "logout":
         localStorage.removeItem("token");
         localStorage.removeItem("userId");
-        localStorage.removeItem("viewAs");
         window.location.replace("/");
         break;
       default:
@@ -93,18 +87,6 @@ export default function LabelBottomNavigation() {
       onChange={handleChange}
     >
       <BottomNavigationAction
-        label="Return"
-        value="return"
-        icon={<ArrowBackIcon />}
-        sx={{
-          minWidth: 0,
-          paddingLeft: 0,
-          paddingRight: 0,
-          marginLeft: 0,
-          marginRight: 0,
-        }}
-      />
-      <BottomNavigationAction
         label="Home"
         value="home"
         icon={<HomeIcon />}
@@ -117,7 +99,7 @@ export default function LabelBottomNavigation() {
         }}
       />
       <BottomNavigationAction
-        label="My Meals"
+        label="Meals"
         value="meals"
         icon={<RestaurantIcon />}
         sx={{
@@ -140,7 +122,7 @@ export default function LabelBottomNavigation() {
           marginRight: 0,
         }}
       />
-      {localStorage.getItem("viewAs") === "false" && (
+      {
         <BottomNavigationAction
           label="Recipes"
           value="recipes"
@@ -152,8 +134,9 @@ export default function LabelBottomNavigation() {
             marginLeft: 0,
             marginRight: 0,
           }}
-        />)}
-      {localStorage.getItem("viewAs") === "false" && (
+        />
+      }
+      {
         <BottomNavigationAction
           label="Profile"
           value="profile"
@@ -165,8 +148,9 @@ export default function LabelBottomNavigation() {
             marginLeft: 0,
             marginRight: 0,
           }}
-        />)}
-      {localStorage.getItem("viewAs") === "false" && (
+        />
+      }
+      {
         <BottomNavigationAction
           label="Logout"
           value="logout"
@@ -178,7 +162,8 @@ export default function LabelBottomNavigation() {
             marginLeft: 0,
             marginRight: 0,
           }}
-        />)}
+        />
+      }
     </BottomNavigation>
   );
 }

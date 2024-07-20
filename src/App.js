@@ -1,20 +1,18 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./screens/Login";
 import SignUp from "./screens/SignUp";
 import Main from "./screens/Main";
-import MainNutritionist from "./screens/MainNutritionist";
 import ResetPassword from "./screens/ResetPassword";
 import Statistics from "./screens/Statistics";
 import MyProfile from "./screens/MyProfile";
-import Nutritionist from "./screens/Nutritionist";
 import Recipes from "./screens/Recipes";
 import "./styles/Home.css";
-import { SnackbarProvider } from "notistack";
+import { SnackbarProvider, closeSnackbar } from "notistack";
 import Meals from "./screens/Meals";
 import { ThemeProvider, createTheme } from "@mui/material";
-import RelationshipRequestInbox from "./screens/RelationshipRequestInbox";
 import Planner from "./screens/Planner";
+import ProtectedRoute from "./ProtectedRoute";
 
 const customTheme = createTheme({
   typography: {
@@ -23,25 +21,75 @@ const customTheme = createTheme({
 });
 
 export default function App() {
+  const isAuthenticated = !!localStorage.getItem("token");
   return (
     <ThemeProvider theme={customTheme}>
       <div className="Home-header" style={{ backgroundColor: "#CECFC7" }}>
-        <SnackbarProvider>
+        <SnackbarProvider
+          action={(snackbarId) => (
+            <button
+              onClick={() => {
+                closeSnackbar(snackbarId);
+              }}
+            >
+              Dismiss
+            </button>
+          )}
+        >
           <Routes>
-            <Route path="/" element={<Login />} />
-            <Route path="signUp" element={<SignUp />} />
-            <Route path="main" element={<Main />} />
-            <Route path="mainNutritionist" element={<MainNutritionist />} />
-            <Route path="meals" element={<Meals />} />
-            {/*<Route path="nutritionist" element={<Nutritionist />} />*/}
-            <Route path="recipes" element={<Recipes />} />
-            <Route path="myPlanner" element={<Planner />} />
-            <Route path="resetPassword" element={<ResetPassword />} />
-            <Route path="statistics" element={<Statistics />} />
-            <Route path="myProfile" element={<MyProfile />} />
             <Route
-              path="relationshipRequestInbox"
-              element={<RelationshipRequestInbox />}
+              path="/"
+              element={isAuthenticated ? <Navigate to="main" /> : <Login />}
+            />
+            <Route path="signUp" element={<SignUp />} />
+            <Route
+              path="main"
+              element={
+                <ProtectedRoute>
+                  <Main />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="meals"
+              element={
+                <ProtectedRoute>
+                  <Meals />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="recipes"
+              element={
+                <ProtectedRoute>
+                  <Recipes />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="myPlanner"
+              element={
+                <ProtectedRoute>
+                  <Planner />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="resetPassword" element={<ResetPassword />} />
+            <Route
+              path="statistics"
+              element={
+                <ProtectedRoute>
+                  <Statistics />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="myProfile"
+              element={
+                <ProtectedRoute>
+                  <MyProfile />
+                </ProtectedRoute>
+              }
             />
           </Routes>
         </SnackbarProvider>

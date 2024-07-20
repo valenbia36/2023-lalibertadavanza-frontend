@@ -11,7 +11,6 @@ import Confetti from "react-confetti";
 import getApiUrl from "../helpers/apiConfig";
 import { useSnackbar } from "notistack";
 import IntermittentFastingForm from "../components/Forms/IntermittentFastingForm";
-import ViewingMessage from "../components/ViewingMessage";
 
 const apiUrl = getApiUrl();
 
@@ -46,6 +45,13 @@ const Meals = () => {
         userId: localStorage.getItem("userId"),
       }),
     }).then(function (response) {
+      if (response.status === 401) {
+        // Token ha expirado, desloguear al usuario
+        localStorage.removeItem("token");
+        localStorage.setItem("sessionExpired", "true");
+        window.location.href = "/";
+        return;
+      }
       if (response.status === 200) {
         enqueueSnackbar("The water glass was add successfully.", {
           variant: "success",
@@ -93,7 +99,7 @@ const Meals = () => {
       {showConfetti && (
         <Confetti width={window.innerWidth} height={window.innerHeight} />
       )}
-      {localStorage.getItem("viewAs") === "false" && (
+      {
         <SpeedDial
           ariaLabel="SpeedDial basic example"
           sx={{ position: "fixed", bottom: "70px", right: "25px" }}
@@ -108,12 +114,8 @@ const Meals = () => {
             />
           ))}
         </SpeedDial>
-      )}
-      {localStorage.getItem("viewAs") === "true" && (
-        <ViewingMessage
-          patientUserName={localStorage.getItem("patientUserName")}
-        />
-      )}
+      }
+
       <div className="row justify-content-center">
         <div className="col-lg-10">
           <div className="row justify-content-center">

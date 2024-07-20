@@ -10,7 +10,7 @@ import {
   FormControlLabel,
   Radio,
   FormGroup,
-  RadioGroup
+  RadioGroup,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import CloseIcon from "@mui/icons-material/Close";
@@ -24,34 +24,34 @@ const apiUrl = getApiUrl();
 const initialGoalState = {
   name: "",
   calories: "",
-  userId: localStorage.getItem("userId"),
   startDate: new Date(),
   endDate: new Date(),
 };
 
 const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
   const { enqueueSnackbar } = useSnackbar();
-  const [selectedRecuringValue, setSelectedRecurringValue] = useState('Non-Recurring');
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedRecuringValue, setSelectedRecurringValue] =
+    useState("Non-Recurring");
   const closeModal = () => {
     setOpen(false);
-    setSelectedRecurringValue("Non-Recurring")
+    setSelectedRecurringValue("Non-Recurring");
     setNewGoal(initialGoalState);
   };
 
   const [newGoal, setNewGoal] = useState({
     name: "",
     calories: "",
-    userId: localStorage.getItem("userId"),
     startDate: new Date(),
     endDate: new Date(),
-    recurrency: "Non-Recurring"
+    recurrency: "Non-Recurring",
   });
 
   useEffect(() => {
     if (initialData) {
       const parsedStartDate = new Date(initialData.startDate);
       const parsedEndDate = new Date(initialData.endDate);
-      setSelectedRecurringValue(initialData.recurrency)
+      setSelectedRecurringValue(initialData.recurrency);
       setNewGoal({
         ...initialData,
         startDate: parsedStartDate,
@@ -61,10 +61,9 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
       setNewGoal({
         name: "",
         calories: "",
-        userId: localStorage.getItem("userId"),
         startDate: new Date(),
         endDate: new Date(),
-        recurrency: "Non-Recurring"
+        recurrency: "Non-Recurring",
       });
     }
   }, [initialData, open]);
@@ -73,7 +72,6 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
     if (
       newGoal.name === "" ||
       newGoal.calories === "" ||
-      newGoal.userId === "" ||
       newGoal.startDate === "" ||
       newGoal.endDate === "" ||
       newGoal.endDate < newGoal.startDate
@@ -83,13 +81,14 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
       });
       return;
     } else {
+      setIsLoading(true);
       const url = initialData
         ? apiUrl + `/api/goals/${initialData._id}`
         : apiUrl + "/api/goals";
       const method = initialData ? "PUT" : "POST";
 
-      newGoal.startDate.setHours(0, 0);
-      newGoal.endDate.setHours(23, 59);
+      newGoal.startDate.setHours(-3, 0, 0, 0);
+      newGoal.endDate.setHours(20, 59, 59, 999);
 
       fetch(url, {
         method: method,
@@ -99,7 +98,13 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
         },
         body: JSON.stringify(newGoal),
       }).then(function (response) {
-
+        if (response.status === 401) {
+          // Token ha expirado, desloguear al usuario
+          localStorage.removeItem("token");
+          localStorage.setItem("sessionExpired", "true");
+          window.location.href = "/";
+          return;
+        }
         if (response.status === 200) {
           enqueueSnackbar(
             initialData
@@ -115,6 +120,7 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
               "## " + typeof newGoal + " - " + typeof newGoal.startDate
             );
           }
+          setIsLoading(false);
           closeModal();
         } else {
           enqueueSnackbar("An error occurred while creating the goal.", {
@@ -134,7 +140,7 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
     }
   };
   const handleRecurrencyChange = (event) => {
-    setSelectedRecurringValue(event.target.value)
+    setSelectedRecurringValue(event.target.value);
     setNewGoal({ ...newGoal, recurrency: event.target.value });
   };
 
@@ -175,6 +181,11 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
           <TextField
             label="Name"
             variant="outlined"
+            InputProps={{
+              inputProps: {
+                maxLength: 17,
+              },
+            }}
             fullWidth
             margin="normal"
             value={newGoal.name}
@@ -188,10 +199,11 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
 
           <TextField
             InputProps={{
-              inputProps: { min: 1 },
+              inputProps: {
+                maxLength: 10,
+              },
             }}
             label="Goal (calories)"
-            type="number"
             variant="outlined"
             fullWidth
             value={newGoal.calories}
@@ -259,7 +271,12 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
               </LocalizationProvider>
             </FormControl>
             <FormGroup>
-              <RadioGroup onChange={handleRecurrencyChange} row value={selectedRecuringValue} style={{ justifyContent: 'center' }}>
+              <RadioGroup
+                onChange={handleRecurrencyChange}
+                row
+                value={selectedRecuringValue}
+                style={{ justifyContent: "center" }}
+              >
                 <FormControlLabel
                   control={<Radio />}
                   label="Non-Recurring"
@@ -283,6 +300,7 @@ const GoalForm = ({ open, setOpen, initialData, setSelectedGoal }) => {
             variant="contained"
             color="primary"
             onClick={handleAddGoal}
+            disabled={isLoading}
             sx={{
               mt: 3,
               mb: 2,

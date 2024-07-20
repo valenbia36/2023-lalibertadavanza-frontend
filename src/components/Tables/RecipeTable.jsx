@@ -25,7 +25,15 @@ import DialogMessage from "../DialogMessage";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import RestaurantIcon from "@mui/icons-material/Restaurant";
 import { useSnackbar } from "notistack";
+import CircularProgress from "@mui/material/CircularProgress";
+
 const apiUrl = getApiUrl();
+const initialMealState = {
+  name: "",
+  date: new Date(),
+  hour: new Date(),
+  foods: [{ foodId: "", weightConsumed: "" }],
+};
 
 function TablePaginationActions(props) {
   const theme = useTheme();
@@ -82,19 +90,24 @@ export default function RecipeTable({}) {
   const [selectedRow, setSelectedRow] = useState(null);
   const [openDialogs, setOpenDialogs] = useState({});
   const [loaded, setLoaded] = useState(false);
-  const { enqueueSnackbar } = useSnackbar();
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const [isLoading, setIsLoading] = useState(false);
+  const [previousSearchQuery, setPreviousSearchQuery] = useState("");
+  const [isLoadingMeals, setIsLoadingMeals] = useState(false);
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+
   const handleOpenForm = () => {
-    // Open the RecipeForm modal when the button is clicked
     setIsModalRecipeOpen(true);
     setEditMeal(null);
   };
+
   const filteredRecipes = recipes.filter((row) =>
     row.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   function calculateAverageRating(ratingsArray) {
     if (!Array.isArray(ratingsArray) || ratingsArray.length === 0) {
-      return 0; // Manejar el caso en que el array esté vacío o no sea un array
+      return 0;
     }
 
     const totalRatings = ratingsArray.reduce((accumulator, ratingObj) => {
@@ -108,27 +121,55 @@ export default function RecipeTable({}) {
     getRecipes();
     setLoaded(false);
   }, [isModalRecipeOpen, loaded]);
+
   useEffect(() => {
+    if (previousSearchQuery !== searchQuery) {
+      setPage(0);
+      setPreviousSearchQuery(searchQuery);
+    }
     setNoResults(filteredRecipes.length === 0);
-  }, [filteredRecipes]);
+    setTotalItems(filteredRecipes.length);
+  }, [filteredRecipes, searchQuery, previousSearchQuery]);
 
   const getRecipes = async () => {
-    const response = await fetch(apiUrl + "/api/recipes/", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-    });
-    const data = await response.json();
-    const sortedRecipes = data.data.sort((a, b) => {
-      const ratingA = calculateAverageRating(a.ratings);
-      const ratingB = calculateAverageRating(b.ratings);
-      return ratingB - ratingA; // Sort in descending order
-    });
+    setIsLoadingMeals(true);
+    try {
+      const response = await fetch(apiUrl + "/api/recipes/", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      });
+      if (response.status === 401) {
+        // Token ha expirado, desloguear al usuario
+        localStorage.removeItem("token");
+        localStorage.setItem("sessionExpired", "true");
+        window.location.href = "/";
+        return;
+      }
+      const data = await response.json();
 
-    setRecipes(data.data);
-    setTotalItems(data.data.length);
+      if (data.data && data.data.length > 0) {
+        // Ordena las recetas por rating
+        const sortedRecipes = data.data.sort((a, b) => {
+          const ratingA = calculateAverageRating(a.ratings);
+          const ratingB = calculateAverageRating(b.ratings);
+          return ratingB - ratingA;
+        });
+
+        setRecipes(sortedRecipes); // Actualiza el estado con las recetas ordenadas
+      } else {
+        setRecipes([]); // Establece un arreglo vacío si no hay datos
+      }
+    } catch (error) {
+      console.error("Error fetching recipes:", error);
+      enqueueSnackbar("An error occurred while fetching recipes.", {
+        variant: "error",
+      });
+    } finally {
+      setIsLoadingMeals(false);
+    }
   };
 
   const handleChangePage = (event, newPage) => {
@@ -139,23 +180,25 @@ export default function RecipeTable({}) {
     setEditMeal(meal);
     setIsModalRecipeOpen(true);
   };
+
   const handleInfoClick = (meal) => {
     setInfoMeal(meal);
     setIsPicModalOpen(true);
   };
+
   const handleSearch = (query) => {
     setSearchQuery(query);
   };
+
   const handleOpenDialog = (row) => {
     setSelectedRow(row);
-    // Set the state for the specific row to true
     setOpenDialogs((prev) => ({ ...prev, [row._id]: true }));
   };
 
   const handleCloseDialog = () => {
-    // Close the dialog for the current row
     setOpenDialogs((prev) => ({ ...prev, [selectedRow._id]: false }));
   };
+
   const handleAddMeal = (meal) => {
     const fechaActual = new Date();
     const horas = fechaActual.getHours();
@@ -163,30 +206,17 @@ export default function RecipeTable({}) {
     const horaFormateada = `${horas < 10 ? "0" : ""}${horas}:${
       minutos < 10 ? "0" : ""
     }${minutos}`;
-    console.log(meal);
     if (meal && meal != []) {
       const mealToAdd = {
         name: meal.name,
-        foods: meal.foods,
+        foods: meal.foods.map((food) => ({
+          foodId: food.foodId._id,
+          weightConsumed: food.weightConsumed,
+        })),
         date: fechaActual,
         hour: horaFormateada,
-        userId: localStorage.getItem("userId"),
       };
-      mealToAdd.calories = meal.foods
-        .map((food) => parseInt(food.totalCalories))
-        .reduce((acc, calories) => acc + calories, 0);
-
-      mealToAdd.carbs = meal.foods
-        .map((food) => parseInt(food.totalCarbs))
-        .reduce((acc, carbs) => acc + carbs, 0);
-
-      mealToAdd.proteins = meal.foods
-        .map((food) => parseInt(food.totalProteins))
-        .reduce((acc, proteins) => acc + proteins, 0);
-
-      mealToAdd.fats = meal.foods
-        .map((food) => parseInt(food.totalFats))
-        .reduce((acc, fats) => acc + fats, 0);
+      setIsLoading(true);
 
       fetch(apiUrl + "/api/meals", {
         method: "POST",
@@ -197,6 +227,13 @@ export default function RecipeTable({}) {
         body: JSON.stringify(mealToAdd),
       })
         .then(function (response) {
+          if (response.status === 401) {
+            // Token ha expirado, desloguear al usuario
+            localStorage.removeItem("token");
+            localStorage.setItem("sessionExpired", "true");
+            window.location.href = "/";
+            return;
+          }
           if (response.status === 200) {
             enqueueSnackbar("The meal was created successfully.", {
               variant: "success",
@@ -212,7 +249,9 @@ export default function RecipeTable({}) {
             variant: "error",
           });
         });
+      setIsLoading(false);
     } else {
+      setIsLoading(false);
       enqueueSnackbar("An error occurred while saving the meal.", {
         variant: "error",
       });
@@ -220,221 +259,242 @@ export default function RecipeTable({}) {
   };
 
   return (
-    <div
-      style={{
-        textAlign: "center",
-        maxWidth: "100%",
-        margin: "auto",
-        minHeight: "400px",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        overflowY: "auto",
+    <Box
+      sx={{
+        //textAlign: "center",
+        //margin: "auto",
+        //display: "flex",
+        //flexDirection: "column",
+        //alignItems: "center",
+        //overflowX: "auto",
+        width: "100%",
+        minHeight: "100%",
+        //bgcolor: "blue", // Asegura que el contenedor ocupe todo el ancho disponible
       }}
     >
       <SearchBar setSearchQuery={handleSearch} />
-      <TableContainer
-        component={Paper}
-        sx={{ overflowX: "auto", minHeight: "450px", minWidth: "200px" }}
+      <div
+        style={{
+          textAlign: "center",
+          maxWidth: "100%",
+          margin: "auto",
+          minHeight: "400px",
+          overflowY: "auto",
+          position: "relative", // Asegúrate de que el contenedor tenga posición relativa
+          paddingBottom: "60px", // Ajusta esto según el alto de tus flechas de paginación
+        }}
       >
-        <Table aria-label="custom pagination table">
-          <TableHead sx={{ fontWeight: "bold" }}>
-            <TableRow sx={{ fontWeight: "bold" }}>
-              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
-                Name
-              </TableCell>
-              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
-                Rating
-              </TableCell>
-              {
-                <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
-                  Actions
-                </TableCell>
-              }
-              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
-                Ingredients
-              </TableCell>
-              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
-                Info
-              </TableCell>
-              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
-                Add to Meals
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {noResults ? (
+        <TableContainer
+          component={Paper}
+          sx={{
+            paddingBottom: "20px",
+            marginTop: "20px",
+            //width: "100%",
+            //bgcolor: "red",
+            width: "100%",
+            minWidth: "100%",
+            minHeight: "500px", // Asegura que el contenedor ocupe todo el ancho disponible
+          }}
+        >
+          <Table
+            aria-label="custom pagination table"
+            sx={{
+              "& .MuiTableCell-root": {
+                textAlign: "center",
+                fontWeight: "bold",
+                padding: "8px",
+              },
+              "& .MuiTableCell-head": {
+                backgroundColor: "#f5f5f5",
+              },
+              //width: "100%",
+              //minHeight: "100%",
+              //bgcolor: "yellow",
+              minWidth: "100%",
+              //height: "450px", // Asegura que la tabla ocupe todo el ancho disponible
+            }}
+          >
+            <TableHead>
               <TableRow>
-                <TableCell colSpan={3} align="center">
-                  No results found.{" "}
-                </TableCell>
+                <TableCell>Name</TableCell>
+                <TableCell>Rating</TableCell>
+                <TableCell>Actions</TableCell>
+                <TableCell>Ingredients</TableCell>
+                <TableCell>Info</TableCell>
+                <TableCell>Add to Meals</TableCell>
               </TableRow>
-            ) : (
-              (filteredRecipes && 5 > 0
-                ? filteredRecipes.slice(page * 5, page * 5 + 5)
-                : filteredRecipes
-              ).map((row) => (
-                <TableRow key={row._id}>
-                  <TableCell
-                    component="th"
-                    scope="row"
-                    style={{ width: 160 }}
-                    align="center"
-                  >
-                    {row.name}
+            </TableHead>
+            <TableBody>
+              {isLoadingMeals ? (
+                <TableRow>
+                  <TableCell colSpan={6} align="center">
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "100%",
+                        height: "100%",
+                      }}
+                    >
+                      <CircularProgress />
+                    </Box>
                   </TableCell>
-                  <TableCell
-                    component="th"
-                    scope="row"
-                    style={{ width: 160 }}
-                    align="center"
-                  >
-                    <Rating
-                      name={`rating-${row._id}`}
-                      value={calculateAverageRating(row.ratings)}
-                      precision={0.5}
-                      readOnly={true}
-                    />
-                    {!row.ratings.find(
-                      (rating) =>
-                        rating.userId === localStorage.getItem("userId")
-                    ) && (
-                      <IconButton
-                        aria-label="edit row"
-                        size="small"
-                        onClick={() => {
-                          setSelectedRow(row);
-                          setIsRateModalOpen(true);
-                        }}
-                      >
-                        <ThumbsUpDownIcon />
-                      </IconButton>
-                    )}
+                </TableRow>
+              ) : noResults ? (
+                <TableRow>
+                  <TableCell colSpan={6} align="center">
+                    No results found.
                   </TableCell>
-
-                  <TableCell align="center">
-                    {row.creator === localStorage.getItem("userId") ? (
+                </TableRow>
+              ) : (
+                (filteredRecipes.length > 0
+                  ? filteredRecipes.slice(page * 5, page * 5 + 5)
+                  : filteredRecipes
+                ).map((row) => (
+                  <TableRow key={row._id}>
+                    <TableCell component="th" scope="row">
+                      {row.name}
+                    </TableCell>
+                    <TableCell>
+                      <Rating
+                        name={`rating-${row._id}`}
+                        value={calculateAverageRating(row.ratings)}
+                        precision={0.5}
+                        readOnly
+                      />
+                      {row.ratings &&
+                        !row.ratings.find(
+                          (rating) =>
+                            rating.userId.toString() ===
+                            localStorage.getItem("userId")
+                        ) && (
+                          <IconButton
+                            aria-label="rate recipe"
+                            size="small"
+                            onClick={() => {
+                              setSelectedRow(row);
+                              setIsRateModalOpen(true);
+                            }}
+                          >
+                            <ThumbsUpDownIcon />
+                          </IconButton>
+                        )}
+                    </TableCell>
+                    <TableCell>
                       <IconButton
-                        aria-label="edit row"
+                        aria-label="edit recipe"
                         size="small"
                         onClick={() => handleEditClick(row)}
+                        disabled={
+                          row.creator !== localStorage.getItem("userId")
+                        }
                       >
                         <EditIcon />
                       </IconButton>
-                    ) : (
+                    </TableCell>
+                    <TableCell>
                       <IconButton
-                        aria-label="edit row"
-                        size="small"
-                        onClick={() => handleEditClick(row)}
-                        disabled
-                      >
-                        <EditIcon />
-                      </IconButton>
-                    )}
-                  </TableCell>
-                  <TableCell align="center">
-                    {
-                      <IconButton
-                        aria-label="edit row"
+                        aria-label="view ingredients"
                         size="small"
                         onClick={() => handleOpenDialog(row)}
                       >
                         <ReceiptLongIcon />
                       </IconButton>
-                    }
-                    <DialogMessage
-                      open={openDialogs[row._id] || false}
-                      setOpen={handleCloseDialog}
-                      ingredients={row.foods}
-                    />
-                  </TableCell>
-                  <TableCell align="center">
-                    {!(
-                      row.steps.length === 1 &&
-                      row.steps[0].images.length === 0 &&
-                      row.steps[0].text === ""
-                    ) ? (
+                      <DialogMessage
+                        open={openDialogs[row._id] || false}
+                        setOpen={handleCloseDialog}
+                        ingredients={row.foods}
+                      />
+                    </TableCell>
+                    <TableCell>
                       <IconButton
-                        aria-label="edit row"
+                        aria-label="view info"
                         size="small"
                         onClick={() => handleInfoClick(row)}
+                        disabled={
+                          row.steps.length === 1 &&
+                          row.steps[0].images.length === 0 &&
+                          row.steps[0].text === ""
+                        }
                       >
                         <InfoIcon />
                       </IconButton>
-                    ) : (
-                      <IconButton
-                        aria-label="edit row"
-                        size="small"
-                        onClick={() => handleInfoClick(row)}
-                        disabled
-                      >
-                        <InfoIcon />
-                      </IconButton>
-                    )}
-                  </TableCell>
-                  <TableCell align="center">
-                    <Tooltip title="Add Meal">
-                      <IconButton
-                        aria-label="edit row"
-                        size="small"
-                        onClick={() => handleAddMeal(row)}
-                      >
-                        <RestaurantIcon />
-                      </IconButton>
-                    </Tooltip>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-        <Box sx={{ display: "flex", justifyContent: "center" }}>
-          <TablePaginationActions
-            count={totalItems}
-            page={page}
-            onPageChange={handleChangePage}
+                    </TableCell>
+                    <TableCell>
+                      <Tooltip title="Add Meal">
+                        <IconButton
+                          aria-label="add meal"
+                          size="small"
+                          onClick={() => handleAddMeal(row)}
+                        >
+                          <RestaurantIcon />
+                        </IconButton>
+                      </Tooltip>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              position: "absolute",
+              bottom: "0",
+              left: "0",
+              right: "0",
+              padding: "16px", // Reducir padding para reducir el espacio
+              backgroundColor: "white", // O el color que desees
+              borderTop: "1px solid #ddd",
+            }}
+          >
+            <TablePaginationActions
+              count={totalItems}
+              page={page}
+              onPageChange={handleChangePage}
+            />
+          </Box>
+          <RecipeForm
+            openRecipe={isModalRecipeOpen}
+            setRecipeOpen={(value) => {
+              setIsModalRecipeOpen(value);
+              if (!value) {
+                getRecipes();
+              }
+            }}
+            initialData={editMeal}
+            foodModal={isModalFoodOpen}
+            setOpenFoodModal={(value) => {
+              setIsModalFoodOpen(value);
+              if (!value) {
+                getRecipes();
+              }
+            }}
           />
-        </Box>
-        <RecipeForm
-          openRecipe={isModalRecipeOpen}
-          setRecipeOpen={(value) => {
-            setIsModalRecipeOpen(value);
-            // Call getRecipes when the RecipeForm is closed
-            if (!value) {
-              getRecipes();
-            }
-          }}
-          initialData={editMeal}
-          foodModal={isModalFoodOpen}
-          setOpenFoodModal={(value) => {
-            setIsModalFoodOpen(value);
-            // Call getRecipes when the RecipeForm is closed
-            if (!value) {
-              getRecipes();
-            }
-          }}
-        />
-        <PicsModal
-          open={isPicModalOpen}
-          setOpen={setIsPicModalOpen}
-          initialData={infoMeal}
-        />
-        <RateModal
-          open={isRateModalOpen}
-          setOpen={(value) => {
-            setIsRateModalOpen(value);
-            // Call getRecipes when the RateModal is closed
-            if (!value) {
-              getRecipes();
-            }
-          }}
-          row={selectedRow}
-          setLoaded={setLoaded}
-        />
-      </TableContainer>
+          <PicsModal
+            open={isPicModalOpen}
+            setOpen={setIsPicModalOpen}
+            initialData={infoMeal}
+          />
+          <RateModal
+            open={isRateModalOpen}
+            setOpen={(value) => {
+              setIsRateModalOpen(value);
+              if (!value) {
+                getRecipes();
+              }
+            }}
+            row={selectedRow}
+            setLoaded={setLoaded}
+          />
+        </TableContainer>
+      </div>
       <IconButton onClick={handleOpenForm}>
         <AddCircleRoundedIcon />
       </IconButton>
-    </div>
+    </Box>
   );
 }

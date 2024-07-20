@@ -23,9 +23,15 @@ const CategoryAutocomplete = ({
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
     });
+    if (response.status === 401) {
+      // Token ha expirado, desloguear al usuario
+      localStorage.removeItem("token");
+      localStorage.setItem("sessionExpired", "true");
+      window.location.href = "/";
+      return;
+    }
     const data = await response.json();
-    const categories = data.data.map((item) => item.name);
-    setCategoriesOptions(categories);
+    setCategoriesOptions(data.data);
   };
 
   return (
@@ -36,7 +42,7 @@ const CategoryAutocomplete = ({
         onCategoryChange(newValue);
       }}
       options={categoriesOptions}
-      getOptionLabel={(option) => option}
+      getOptionLabel={(option) => option.name}
       renderInput={(params) => (
         <TextField {...params} label="Choose a Category" variant="outlined" />
       )}

@@ -11,7 +11,6 @@ import Confetti from "react-confetti";
 import getApiUrl from "../helpers/apiConfig";
 import { useSnackbar } from "notistack";
 import IntermittentFastingForm from "../components/Forms/IntermittentFastingForm";
-import ViewingMessage from "../components/ViewingMessage";
 
 const apiUrl = getApiUrl();
 
@@ -46,12 +45,19 @@ const Main = () => {
         userId: localStorage.getItem("userId"),
       }),
     }).then(function (response) {
+      if (response.status === 401) {
+        // Token ha expirado, desloguear al usuario
+        localStorage.removeItem("token");
+        localStorage.setItem("sessionExpired", "true");
+        window.location.href = "/";
+        return;
+      }
       if (response.status === 200) {
-        enqueueSnackbar("The water glass was add successfully.", {
+        enqueueSnackbar("The water glass was added successfully.", {
           variant: "success",
         });
       } else {
-        enqueueSnackbar("An error occurred while adding the water glss.", {
+        enqueueSnackbar("An error occurred while adding the water glass.", {
           variant: "error",
         });
       }
@@ -93,7 +99,7 @@ const Main = () => {
       {showConfetti && (
         <Confetti width={window.innerWidth} height={window.innerHeight} />
       )}
-      {localStorage.getItem("viewAs") === "false" && (
+      {
         <SpeedDial
           ariaLabel="SpeedDial"
           sx={{ position: "fixed", bottom: "70px", right: "25px" }}
@@ -108,12 +114,7 @@ const Main = () => {
             />
           ))}
         </SpeedDial>
-      )}
-      {localStorage.getItem("viewAs") === "true" && (
-        <ViewingMessage
-          patientUserName={localStorage.getItem("patientUserName")}
-        />
-      )}
+      }
       <div className="row justify-content-center">
         <div className="col-lg-10">
           <div className="row justify-content-center">

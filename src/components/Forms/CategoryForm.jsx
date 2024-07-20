@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { TextField, Button, Modal, Box, IconButton } from "@mui/material";
 import { useSnackbar } from "notistack";
 import CloseIcon from "@mui/icons-material/Close";
-import getApiUrl from '../../helpers/apiConfig';
+import getApiUrl from "../../helpers/apiConfig";
 
 const apiUrl = getApiUrl();
 
@@ -13,12 +13,16 @@ const initialCategoryState = {
 const CategoryForm = ({ open, setOpen }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [newCategory, setNewCategory] = useState(initialCategoryState);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleAddCategory = () => {
     if (newCategory.name === "") {
+      setIsLoading(true);
       enqueueSnackbar("Please complete all the fields.", { variant: "error" });
+      setIsLoading(false);
       return;
     } else {
+      setIsLoading(true);
       fetch(apiUrl + "/api/category", {
         method: "POST",
         headers: {
@@ -27,15 +31,25 @@ const CategoryForm = ({ open, setOpen }) => {
         },
         body: JSON.stringify(newCategory),
       }).then(function (response) {
+        if (response.status === 401) {
+          // Token ha expirado, desloguear al usuario
+          localStorage.removeItem("token");
+          localStorage.setItem("sessionExpired", "true");
+          window.location.href = "/";
+          return;
+        }
         if (response.status === 200) {
           enqueueSnackbar("The category was created successfully.", {
             variant: "success",
           });
+          setIsLoading(false);
           closeModal();
         } else {
+          setIsLoading(true);
           enqueueSnackbar("An error occurred while creating the category.", {
             variant: "error",
           });
+          setIsLoading(false);
         }
       });
     }
@@ -84,8 +98,14 @@ const CategoryForm = ({ open, setOpen }) => {
             label="Name"
             variant="outlined"
             fullWidth
+            InputProps={{
+              inputProps: {
+                maxLength: 17,
+              },
+            }}
             margin="normal"
             value={newCategory.name}
+            disabled={isLoading}
             onChange={(e) =>
               setNewCategory({ ...newCategory, name: e.target.value })
             }
@@ -99,6 +119,7 @@ const CategoryForm = ({ open, setOpen }) => {
           <Button
             variant="contained"
             color="primary"
+            disabled={isLoading}
             onClick={handleAddCategory}
             sx={{
               mt: 3,

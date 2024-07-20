@@ -15,7 +15,7 @@ const initialFoodState = {
   name: "",
   calories: "",
   weight: "",
-  category: "",
+  category: { name: "" },
   carbs: "",
   proteins: "",
   fats: "",
@@ -26,21 +26,26 @@ const FoodForm = ({ open, setOpen }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newFood, setNewFood] = useState(initialFoodState);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleAddFood = () => {
     if (
       newFood.name === "" ||
       newFood.calories === "" ||
       newFood.weight === "" ||
-      newFood.category === "" ||
+      newFood.category.name === "" ||
       Number(newFood.calories) < 1 ||
       Number(newFood.weight) < 1
     ) {
+      setIsLoading(true);
       enqueueSnackbar("Please complete all the fields correctly.", {
         variant: "error",
       });
+      setIsLoading(false);
       return;
     } else {
+      setIsLoading(true);
+      setNewFood({ ...newFood, category: newFood.category._id });
       fetch(apiUrl + "/api/foods", {
         method: "POST",
         headers: {
@@ -49,15 +54,25 @@ const FoodForm = ({ open, setOpen }) => {
         },
         body: JSON.stringify(newFood),
       }).then(function (response) {
+        if (response.status === 401) {
+          // Token ha expirado, desloguear al usuario
+          localStorage.removeItem("token");
+          localStorage.setItem("sessionExpired", "true");
+          window.location.href = "/";
+          return;
+        }
         if (response.status === 200) {
           enqueueSnackbar("The food was created successfully.", {
             variant: "success",
           });
+          setIsLoading(false);
           closeModal();
         } else {
+          setIsLoading(true);
           enqueueSnackbar("An error occurred while creating the food.", {
             variant: "error",
           });
+          setIsLoading(false);
         }
       });
     }
@@ -135,6 +150,11 @@ const FoodForm = ({ open, setOpen }) => {
           <TextField
             label="Name"
             variant="outlined"
+            InputProps={{
+              inputProps: {
+                maxLength: 17,
+              },
+            }}
             fullWidth
             margin="normal"
             value={newFood.name}
@@ -148,10 +168,11 @@ const FoodForm = ({ open, setOpen }) => {
 
           <TextField
             InputProps={{
-              inputProps: { min: 1 },
+              inputProps: {
+                maxLength: 5,
+              },
             }}
             label={`Weight (gr/ml)`}
-            type="number"
             variant="outlined"
             fullWidth
             value={newFood.weight}
@@ -187,11 +208,10 @@ const FoodForm = ({ open, setOpen }) => {
               <TextField
                 InputProps={{
                   inputProps: {
-                    step: 1,
+                    maxLength: 4,
                   },
                 }}
                 label={`Calories`}
-                type="number"
                 variant="outlined"
                 fullWidth
                 value={newFood.calories}
@@ -248,6 +268,7 @@ const FoodForm = ({ open, setOpen }) => {
               fontWeight: "bold",
             }}
             fullWidth
+            disabled={isLoading}
           >
             Add Food
           </Button>

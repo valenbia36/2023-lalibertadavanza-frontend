@@ -1,35 +1,36 @@
 import React, { useState, useEffect } from "react";
 import { Grid } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
-import getApiUrl from '../../helpers/apiConfig';
+import getApiUrl from "../../helpers/apiConfig";
 import WaterGlassBarChart from "./WaterGlassBarChart";
 
 const apiUrl = getApiUrl();
 
-const WaterGlassBarChartContainer = ({flag}) => {
-
+const WaterGlassBarChartContainer = ({ flag }) => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState();
 
   const getWaterGlasses = async () => {
-      const response = await fetch(
-          apiUrl +
-          "/api/waterGlass/countByDay/" +
-          localStorage.getItem("userId"),
-          {
-              method: "GET",
-              headers: {
-                  "Content-Type": "application/json",
-                  Authorization: "Bearer " + localStorage.getItem("token"),
-              },
-          }
-      );
-      const data = await response.json();
-      setData(data.result);
-  }
+    const response = await fetch(apiUrl + "/api/waterGlass/countByDay/", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    });
+    if (response.status === 401) {
+      // Token ha expirado, desloguear al usuario
+      localStorage.removeItem("token");
+      localStorage.setItem("sessionExpired", "true");
+      window.location.href = "/";
+      return;
+    }
+    const data = await response.json();
+    setData(data.data);
+  };
 
   useEffect(() => {
-      getWaterGlasses()
+    getWaterGlasses();
   }, [flag]);
 
   return (
@@ -40,8 +41,15 @@ const WaterGlassBarChartContainer = ({flag}) => {
         maxWidth: 300,
       }}
     >
-      <Grid sx={{ maxHeight: "450px", minWidth: "310px", alignContent: 'center', textAlign: 'center' }}>
-        <h2 style={{fontWeight: 'bold'}}>Water Glass By Day</h2>
+      <Grid
+        sx={{
+          maxHeight: "450px",
+          minWidth: "310px",
+          alignContent: "center",
+          textAlign: "center",
+        }}
+      >
+        <h2 style={{ fontWeight: "bold" }}>Water Glass By Day</h2>
         <div style={{ position: "relative", minHeight: 320, marginTop: "10%" }}>
           {loading ? (
             <CircularProgress />
